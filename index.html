@@ -866,7 +866,7 @@ let site=SITES[0], L=null, ROWS=[], ROW_LV=[], BAY_Z=[], STAGE_Z=0;
 const SAVE_KEY='waretrack.game.v2';
 function defaults(){return {v:2,best:{},credits:0,up:{fl:0,spd:0,chg:0},builds:{},xp:0,ach:{},
   stats:{shifts:0,pallets:0,orders:0,rush:0,fixes:0,builds:0,threeStars:0,bestScore:0},
-  daily:{last:null,streak:0,bestStreak:0,best:{},cleared:[]},settings:{sound:true,music:true,vol:0.7},tutorial:false,town:{owned:[],b:{},unit7:false,bank:0,names:0},cos:{owned:['fl-classic','van-classic'],fl:'fl-classic',van:'van-classic'}};}
+  daily:{last:null,streak:0,bestStreak:0,best:{},cleared:[]},settings:{sound:true,music:true,vol:0.7},tutorial:false,town:{owned:[],b:{},unit7:false,bank:0,names:0},cos:{owned:['fl-classic','van-classic'],fl:'fl-classic',van:'van-classic'},constr:[],simClock:0};}
 function loadSave(){
   const d=defaults(); let s=null;
   try{s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');}catch(e){}
@@ -876,6 +876,7 @@ function loadSave(){
   out.up=Object.assign(defaults().up,s.up||{}); out.stats=Object.assign(defaults().stats,s.stats||{});
   out.daily=Object.assign(defaults().daily,s.daily||{}); out.settings=Object.assign(defaults().settings,s.settings||{});
   out.best=out.best||{}; out.builds=out.builds||{}; out.ach=out.ach||{}; out.cos=Object.assign(defaults().cos,s.cos||{}); out.town=Object.assign(defaults().town,s.town||{});
+  out.constr=Array.isArray(s.constr)?s.constr:[]; out.simClock=typeof s.simClock==='number'?s.simClock:0;
   return out;
 }
 let save=loadSave(); const LAST_SEEN=save.lastSeen||0;
@@ -3819,6 +3820,8 @@ function tickBody(now){
   const dt=rdt*sim.speed;
   if(dt>0){
     sim.sec+=dt;
+    save.simClock+=dt;
+    tickConstr(dt);
     const surge=game.surgeUntil>sim.sec;
     sim.nextOrder-=dt*(surge?2:1);
     if(sim.nextOrder<=0){ releaseOrder(); sim.nextOrder=rand(site.orderRate[0],site.orderRate[1])*(game.mods.has('calm')?0.77:1); }
