@@ -39,7 +39,8 @@
 .seg button{font-size:10.5px;padding:3px 7px;border-radius:6px;font-weight:700;color:var(--ink-3);white-space:nowrap}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,30,60,.12)}
 .acts-empty{font-size:11.5px;color:var(--ink-3);line-height:1.4}
-.act-card{position:relative;display:flex;gap:8px;padding:8px 8px 10px;border-radius:10px;background:var(--mute-soft);margin-top:6px;overflow:hidden;animation:slidein .25s ease-out}
+.act-card{position:relative;display:flex;gap:8px;padding:8px 8px 10px;border-radius:10px;background:var(--mute-soft);margin-top:6px;overflow:hidden}
+.act-card.new{animation:slidein .25s ease-out}
 .act-card.bad{background:var(--bad-soft)}.act-card.warn{background:var(--warn-soft)}.act-card.info{background:var(--cobalt-soft)}
 .ac-ic{flex:none;width:26px;height:26px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--cobalt)}.ac-ic svg{width:15px;height:15px}
 .ac-t{flex:1;min-width:0}.ac-t b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ac-t small{display:block;font-size:11px;color:var(--ink-2);line-height:1.35}
@@ -706,7 +707,7 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
 <div class="tag3d" id="tag3d" hidden></div>
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="WareTrack menu"></div></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="document.write('\x3Cscript src=\x22https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js\x22\x3E\x3C/script\x3E')"></script>
 <script>
 (function(){
 'use strict';
@@ -1984,6 +1985,7 @@ function buildActs(){
   return A;
 }
 let actsList=[];
+let actsSeen=new Set();
 function renderActs(force){
   const el=$('#acts'); if(!el)return;
   el.hidden=!!(game.building||game.town); if(el.hidden)return;
@@ -1992,9 +1994,12 @@ function renderActs(force){
   let h='<div class="acts-h"><b>Actions</b>'+(actsList.length?'<span class="pill '+(actsList.some(a=>a.tone==='bad')?'bad':'info')+'">'+actsList.length+'</span>':'')+
     '<span class="seg"><button data-hands="0" class="'+(game.hands?'':'on')+'">Autopilot</button><button data-hands="1" class="'+(game.hands?'on':'')+'">Hands-on ×1.25</button></span></div>';
   if(!show.length)h+='<div class="acts-empty">'+(game.hands?'All caught up. Trucks, orders and vans that need you show up here.':game.phase==='shift'?'Order requests pop up here. Accept them before the timer runs out.':'Start a shift to get order requests, or switch to Hands-on to run everything yourself.')+'</div>';
+  const seenNow=new Set();
   show.forEach((a,i)=>{
-    h+='<div class="act-card '+a.tone+'"><span class="ac-ic">'+a.icon+'</span><div class="ac-t"><b>'+esc(a.title)+'</b><small>'+esc(a.sub)+'</small><div class="ac-b">'+
+    const key=a.kind+':'+(a.ref&&a.ref.id!=null?a.ref.id:i); seenNow.add(key);
+    h+='<div class="act-card '+a.tone+(!actsSeen.has(key)?' new':'')+'"><span class="ac-ic">'+a.icon+'</span><div class="ac-t"><b>'+esc(a.title)+'</b><small>'+esc(a.sub)+'</small><div class="ac-b">'+
       a.btns.map(b=>'<button class="act'+(b.p?' solid':'')+'" data-ac="'+i+':'+b.a+'"'+(b.dis?' disabled':'')+'>'+esc(b.l)+'</button>').join('')+'</div></div><i class="ac-bar" style="width:'+a.pct+'%"></i></div>';});
+  actsSeen=seenNow;
   if(actsList.length>show.length)h+='<div class="acts-more">+'+(actsList.length-show.length)+' more</div>';
   el.innerHTML=h;
 }
@@ -3788,6 +3793,10 @@ let hintGone=false;function hideHint(){if(hintGone)return;hintGone=true;const h=
 let perf=0,last=performance.now(),hudT=0,slowT=0;
 const tmpV=new THREE.Vector3();
 function tick(now){
+  try{tickBody(now);}catch(e){console.error('tick error',e);}
+  requestAnimationFrame(tick);
+}
+function tickBody(now){
   let rdt=Math.min(.05,Math.max(0,(now-last)/1000)); last=now; if(document.hidden)rdt=0; perf+=rdt;
   const dt=rdt*sim.speed;
   if(dt>0){
@@ -3870,7 +3879,6 @@ function tick(now){
   $('#clock').textContent=fmtT(clockMin());
   hudT+=rdt;
   if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();renderActs();renderMissions();}
-  requestAnimationFrame(tick);
 }
 
 /* ---------------- boot ---------------- */
