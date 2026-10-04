@@ -1347,6 +1347,7 @@ function genTown(){
   });
   T.owned.forEach(k=>{const t=town.tiles.get(k);if(t&&t.type==='grass')t.owner='player';});
   Object.entries(T.b).forEach(([k,b])=>{const t=town.tiles.get(k);if(t&&t.owner==='player'&&t.type==='grass'){Object.assign(t,{type:b.type,face:b.face,name:b.name,color:b.color,wild:false});}});
+  save.constr.forEach(c=>{if(c.kind==='town'){const t=town.tiles.get(c.key);if(t&&t.owner==='player'&&t.type==='grass'){t.type='constr';t.name=c.meta.name;t.color=c.meta.color;}}});
   if(T.unit7) town.tiles.forEach(t=>{if(t.type==='lease'){t.type='bigdepot';t.owner='player';}});
 }
 function roadMask(t){const m=[];for(let d=0;d<4;d++){const n=nbT(t,d);m.push(n?linkT(n):true);}return m;}
