@@ -1101,7 +1101,7 @@ function floorText(txt,x,z,w,h,opts){
   m.position.set(x,0.07,z); world.add(m); return m;
 }
 function badgeTex(bg,glyph){return canvasTex(128,128,g=>{g.fillStyle=bg;g.beginPath();g.arc(64,64,58,0,TAU);g.fill();g.fillStyle='#fff';g.font='900 92px Figtree, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(glyph,64,70);});}
-const warnTex=badgeTex('#d24b42','!'), plusTex=badgeTex('#2f5be0','+');
+const warnTex=badgeTex('#d24b42','!'), plusTex=badgeTex('#2f5be0','+'), orderTex=badgeTex('#f0a623','$');
 function sprite(tex,s){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false,transparent:true}));sp.scale.set(s||.9,s||.9,1);sp.renderOrder=10;return sp;}
 
 /* ---------------- environment ---------------- */
@@ -1840,6 +1840,18 @@ function liteXferTick(L,dt){
 const STREETS=['Maple St','Birch Ln','Cedar Ave','Elm Rd','Oak Ct','Willow Way','Aspen Dr','Pine St','Harbor Rd','Linden Pl','Chestnut St','Rowan Ave'];
 const MSTREETS=['Market St','Main St','High St','Commerce Ave','Station Rd'];
 function destStats(key){if(!del.dest)del.dest=new Map();let d=del.dest.get(key);if(!d){d={recv:0,onTime:0,late:0,last:null,cr:0};del.dest.set(key,d);}return d;}
+const cityBadges=new Map();
+function renderCityBadges(){
+  const live=new Set();
+  customers().forEach(t=>{
+    const open=openOrdersFor(t.key).length>0||reqs.some(r=>r.o.shop&&r.o.shop.key===t.key);
+    if(!open)return; live.add(t.key);
+    let b=cityBadges.get(t.key);
+    if(!b){b=sprite(orderTex,1.1);b.position.set(t.x,t.home?3.2:4.4,t.z);env.add(b);cityBadges.set(t.key,b);}
+    b.visible=true;
+  });
+  cityBadges.forEach((b,k)=>{if(!live.has(k))b.visible=false;});
+}
 function openOrdersFor(key){
   const out=[], m=o=>o&&o.shop&&o.shop.key===key;
   sim.orders.filter(m).forEach(o=>out.push({id:o.id,s:'In the pick queue'}));
@@ -3007,7 +3019,7 @@ function townAccrue(dt){
 }
 function resetTown(){
   while(env.children.length)env.remove(env.children[0]); env.add(townStatic);
-  cars.length=0; vans.length=0; town.objs.clear(); town.lights.clear(); town.lightObjs=[]; town.trees=town.lamps=null; town.unit7=null; town.built=false;
+  cars.length=0; vans.length=0; town.objs.clear(); town.lights.clear(); town.lightObjs=[]; town.trees=town.lamps=null; town.unit7=null; town.built=false; cityBadges.clear();
   initTown(); if(townTint){townOv.remove(townTint);townTint=null;}
 }
 function updateTownHover(){
@@ -3884,7 +3896,7 @@ function tickBody(now){
   renderer.render(scene,cam);
   $('#clock').textContent=fmtT(clockMin());
   hudT+=rdt;
-  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();renderActs();renderMissions();}
+  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();renderActs();renderMissions();if(town.built)renderCityBadges();}
 }
 
 /* ---------------- boot ---------------- */
