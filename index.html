@@ -1623,7 +1623,7 @@ function routeTiles(a,b){const p=bfs(a,b);return p?p.length:null;}
 function queueDelivery(o){
   if(!o||!o.shop)return;
   const s=town.tiles.get(tkey(12*site.k-1,0)); const n=s?routeTiles(s.key,o.shop.road):null; if(n==null)return;
-  const now=clockMin(), due=now+25+Math.round(3*n)+(dlv('disp')?5:0);
+  const now=clockMin(), due=now+30+Math.round(3*n)+(dlv('disp')?5:0);
   del.jobs.push({id:o.id,shop:o.shop,dist:n,created:now,due,rush:!!o.rush});
   dirty=true;
 }
@@ -1634,7 +1634,7 @@ function deliverJob(v,j){
   if(left>=10){fee*=1.25;res='early';} else if(left>=0)res='on time'; else {fee*=0.5;res='late';}
   if(dlv('scan'))fee+=1;
   const cr=Math.max(1,Math.round(fee));
-  const target=res==='early'?5:res==='on time'?4.3:1.5; D.rating=Math.round((D.rating+(target-D.rating)*0.15)*100)/100;
+  const target=res==='early'?5:res==='on time'?4.3:2.5; D.rating=Math.round((D.rating+(target-D.rating)*0.15)*100)/100;
   save.credits+=cr; D.earned+=cr; D.done++; if(res!=='late')D.onTime++; del.today+=cr; v.earned+=cr;
   if(game.phase==='shift'&&game.st){game.st.del=(game.st.del||0)+cr; if(res!=='late'){game.st.delOn=(game.st.delOn||0)+1; if(game.st.delOn>=10)unlock('courier');}}
   del.recent.unshift({id:j.id,shop:j.shop.name,cr,res,t:now,wait:Math.round(j.sent-j.created),drive:Math.round(now-j.sent),promise:j.due-j.created}); if(del.recent.length>6)del.recent.pop();
