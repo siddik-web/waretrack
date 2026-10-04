@@ -1157,6 +1157,7 @@ function makeVan(){
 }
 
 /* ---------------- town: plot grid, roads, signals, buildings, traffic ---------------- */
+const onMap=(x,z)=>x>=20+8*GI0-66&&x<=20+8*GI1+66&&z>=-22+8*GJ0-66&&z<=-22+8*GJ1+66;
 const TS=8, GI0=-37, GI1=33, GJ0=-6, GJ1=11, SLICES=[-2,-1,0,1,2], SLICE_W=96;
 let OX=0;
 const wx=o=>o.x+(o.loc?OX:0);
@@ -1219,9 +1220,9 @@ function genTown(){
   });
   const T=save.town, taken=new Set([...T.owned,...Object.keys(T.b)]);
   SLICES.forEach(k=>{const o=12*k, R2=mulberry32(900+k*31), cand=[];
-    for(const j of [-5,-4,-1,7,8,9,11])for(let i=o-7;i<=o+3;i++){const t=getT(i,j); if(!t||t.type!=='grass'||t.owner||taken.has(t.key))continue;
+    for(const j of [-1,7,9,8,-4,11])for(let i=o-6;i<=o+3;i++){const t=getT(i,j); if(!t||t.type!=='grass'||t.owner||taken.has(t.key))continue;
       let face=-1; for(const d of [2,0,1,3]){const n=nbT(t,d); if(n&&n.type==='road'&&n.owner==='city'){face=d;break;}} if(face>=0)cand.push([t,face,R2()]);}
-    cand.sort((a,b)=>a[2]-b[2]).slice(0,10).forEach(([t,face],n)=>Object.assign(t,{type:'chouse',owner:'city',face,wild:false,addr:(2+((n*17+k*29+60)%96))+' '+STREETS[(n*5+k*3+12)%STREETS.length]}));
+    cand.sort((a,b)=>(Math.abs(a[0].i-o)+Math.abs(a[0].j)*0.6+a[2]*3)-(Math.abs(b[0].i-o)+Math.abs(b[0].j)*0.6+b[2]*3)).slice(0,10).forEach(([t,face],n)=>Object.assign(t,{type:'chouse',owner:'city',face,wild:false,addr:(2+((n*17+k*29+60)%96))+' '+STREETS[(n*5+k*3+12)%STREETS.length]}));
     let m=0; town.tiles.forEach(t=>{if(t.type==='cshop'&&sliceOfI(t.i)===k)t.addr=(10+((m++)*23+k*11+40)%180)+' '+MSTREETS[(m+k+5)%MSTREETS.length];});
   });
   T.owned.forEach(k=>{const t=town.tiles.get(k);if(t&&t.type==='grass')t.owner='player';});
@@ -1347,7 +1348,7 @@ function makeGas(cx,cz){
 }
 function buildStatic(){
   while(townStatic.children.length) townStatic.remove(townStatic.children[0]);
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(1000,520),mat('#e8ebf6')); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; townStatic.add(ground);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(2600,2600),mat('#e8ebf6')); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; townStatic.add(ground);
   barriers.length=0;
   const barrier=(px,pz,len,dir,kind,ox)=>{const g=new THREE.Group();g.position.set(px,0,pz);townStatic.add(g);
     box(0.35,1.1,0.35,'#eef1f8',0,0.55,0,g); box(0.42,0.22,0.42,'#e0564b',0,1.16,0,g);
@@ -1355,7 +1356,12 @@ function buildStatic(){
     for(let k=0;k<Math.round(len/0.6);k++) box(0.6,0.12,0.12,k%2?'#ffffff':'#e0564b',dir*(0.35+k*0.6),0,0,arm,false);
     barriers.push({arm,pz,dir,kind,open:0,ox});};
   const ctr=(x,z,col,rib,ry)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry||0;townStatic.add(g);box(6,2.5,2.4,col,0,1.25,0,g);for(let k=-2.7;k<=2.71;k+=0.45)box(0.07,2.3,2.46,rib,k,1.25,0,g,false);plane(txtTex('OCEANIC LINE',null,'#ffffff',512,96,60),3.4,0.55,g,0,1.55,1.24);};
-  const stub=(x,z,w,d)=>{box(w,0.07,d,ASPH,x,0.04,z,townStatic,false);box(w+(w<d?2:0),0.06,d+(d<w?2:0),CURB,x,0.03,z,townStatic,false);const v=d>w;for(let u=-Math.max(w,d)/2+1;u<Math.max(w,d)/2;u+=2)box(v?.24:1.3,0.02,v?1.3:.24,'#ffffff',v?x:x+u,0.085,v?z+u:z,townStatic,false);};
+  const fadeA=canvasTex(8,256,(g,W,H)=>{const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#ffffff');gr.addColorStop(0.55,'#ffffff');gr.addColorStop(1,'#000000');g.fillStyle=gr;g.fillRect(0,0,W,H);});
+  const fadeM=new THREE.MeshStandardMaterial({color:'#e8ebf6',roughness:.82,alphaMap:fadeA,transparent:true,depthWrite:false});
+  const fade=(x,z,w,d)=>{const v=d>w, L=Math.max(w,d), sg=v?Math.sign(z-(-2)):Math.sign(x-4), far=(v?z:x)+sg*L/2;
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(14,64),fadeM); m.rotation.x=-Math.PI/2; m.rotation.z=v?(sg>0?0:Math.PI):(sg>0?-Math.PI/2:Math.PI/2);
+    if(v)m.position.set(x,0.13,far-sg*30); else m.position.set(far-sg*30,0.13,z); m.renderOrder=2; townStatic.add(m);};
+  const stub=(x,z,w,d)=>{if(Math.max(w,d)>=90)fade(x,z,w,d);box(w,0.07,d,ASPH,x,0.04,z,townStatic,false);box(w+(w<d?2:0),0.06,d+(d<w?2:0),CURB,x,0.03,z,townStatic,false);const v=d>w;for(let u=-Math.max(w,d)/2+1;u<Math.max(w,d)/2;u+=2)box(v?.24:1.3,0.02,v?1.3:.24,'#ffffff',v?x:x+u,0.085,v?z+u:z,townStatic,false);};
   [0,6,10].forEach(j=>{stub(tcx(GI0)-54,tcz(j),100,6);stub(tcx(GI1)+54,tcz(j),100,6);});
   SLICES.forEach(k=>{
     const ox=k*SLICE_W, o=12*k, sname=(SITES.find(x=>x.k===k)||{}).name||'';
@@ -1579,11 +1585,14 @@ function leaderBlocked(o){
   }
   return null;
 }
+let UID=0; const uidOf=o=>o.uid||(o.uid=++UID);
+function untangle(o,L){if(Math.hypot(wx(L)-wx(o),L.z-o.z)>=2.4)return null; if(uidOf(o)>uidOf(L)){o.blockT=0;o.gateT=0;return true;} o.ghost=0.5; return false;}
+function inCycle(o){let c=o.blocker,n=0;while(c&&n<10){if(c===o)return true;c=c.blocker;n++;}return false;}
 function vehBlocked(o,dt){
   if(o.ghost>0){o.ghost-=dt;return lightBlocked(o);}
-  const lb=lightBlocked(o); if(lb){o.blockT=0;return true;}
+  const lb=lightBlocked(o); if(lb){o.blockT=0;o.blocker=null;return true;}
   const L=leaderBlocked(o);
-  if(L){o.blocker=L;o.blockT=(o.blockT||0)+dt;if((L.blocker===o&&o.blockT>1.5)||o.blockT>25){o.ghost=1.6;o.blockT=0;}return true;}
+  if(L){o.blocker=L;{const u=untangle(o,L);if(u!==null)return u;}o.blockT=(o.blockT||0)+dt;if((inCycle(o)&&o.blockT>1.5)||o.blockT>25){o.ghost=1.6;o.blockT=0;}return true;}
   o.blocker=null;o.blockT=0;return false;
 }
 function updateCars(dt){
@@ -1597,7 +1606,8 @@ function updateCars(dt){
       if(d>1e-4)c.yaw=Math.atan2(-dz,dx);
       if(d<=move){c.x=p[0];c.z=p[1];c.pts.shift();move-=d;}else{c.x+=dx/d*move;c.z+=dz/d*move;move=0;}
     }
-    c.g.position.set(c.x,0,c.z); c.g.rotation.y=c.yaw;
+    c.g.position.set(c.x,0,c.z); c.g.rotation.y=c.yaw; c.g.visible=onMap(c.x,c.z);
+    if(c.exiting&&!c.pts.length)c.g.visible=false;
   }
   updateLights(dt);
 }
@@ -1628,7 +1638,7 @@ const DEL_UP=[
   {key:'big',group:'Tools',name:'Bigger vans',costs:[160],desc:()=>'Each van carries 2 deliveries per trip'},
   {key:'ev',group:'Tools',name:'Electric vans',costs:[120],desc:()=>'No more running cost: trips are free instead of 2 cr'},
 ];
-const FLEET=[3,4,5,6];
+const FLEET=[4,5,6,7];
 function delSave(){if(!save.del)save.del={};const d=save.del;d.lv=Object.assign({drv:0,train:0,disp:0,scan:0,gps:0,big:0,ev:0},d.lv||{});if(d.rating==null)d.rating=4;d.earned=d.earned|0;d.done=d.done|0;d.onTime=d.onTime|0;return d;}
 const dlv=k=>delSave().lv[k];
 const del={jobs:[],recent:[],today:0,seq:0};
@@ -1687,8 +1697,8 @@ function spawnVan(jobs){
 function vanAhead(o,dt){
   if(o.ghost>0){o.ghost-=dt;return false;}
   const [dx,dz]=heading(o),fx=o.x+dx*1.9,fz=o.z+dz*1.9;
-  for(const v of vans){if(v===o)continue;for(const p of bodyPts(v)){const rx=p[0]-fx,rz=p[1]-fz,ah=rx*dx+rz*dz;if(ah<-0.4||ah>2.6)continue;
-    if(Math.abs(rx*dz-rz*dx)<1.1){o.blocker=v;o.gateT=(o.gateT||0)+dt;if((v.blocker===o&&o.gateT>1.5)||o.gateT>20){o.ghost=1.2;o.gateT=0;return false;}return true;}}}
+  for(const arr of [vans,cars,trucks,liteTrucks])for(const v of arr){if(v===o||Math.abs(wx(v)-o.x)>14||Math.abs(v.z-o.z)>14)continue;for(const p of bodyPts(v)){const rx=p[0]-fx,rz=p[1]-fz,ah=rx*dx+rz*dz;if(ah<-0.4||ah>(v.kind==='van'?2.6:3.4))continue;
+    if(Math.abs(rx*dz-rz*dx)<1.1){o.blocker=v;{const u=untangle(o,v);if(u!==null)return u;}o.gateT=(o.gateT||0)+dt;if((inCycle(o)&&o.gateT>1.5)||o.gateT>60){o.ghost=1.2;o.gateT=0;return false;}return true;}}}
   o.gateT=0; o.blocker=null; return false;
 }
 function updateVans(dt){
@@ -2125,7 +2135,7 @@ function departTruck(t){
   t.steps=P.steps;
 }
 function updateTruck(t,dt){
-  runSteps(t,dt);
+  runSteps(t,dt); t.g.visible=onMap(t.x+OX,t.z);
   if(t.state==='unloading'&&t.unloaded>=t.cargo.length&&!t.busyBy&&!t.steps.length&&!trucks.some(x=>x.state==='docking'||(x.state==='departing'&&x.z>-16))) departTruck(t);
   place(t);
 }
@@ -2356,7 +2366,7 @@ function buildLite(idx){
   setStack(L);
   lites.set(idx,L); return L;
 }
-function placeL(o){o.g.position.set(o.x,0,o.z);o.g.rotation.y=o.yaw;}
+function placeL(o){o.g.position.set(o.x,0,o.z);o.g.rotation.y=o.yaw;o.g.visible=onMap(o.x,o.z);}
 function removeLite(idx){
   const L=lites.get(idx); if(!L)return;
   L.trucks.forEach(t=>{env.remove(t.g);const k=liteTrucks.indexOf(t);if(k>=0)liteTrucks.splice(k,1);});
