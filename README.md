@@ -1,5 +1,7 @@
 # WareTrack
 
+**Play it:** https://siddik-web.github.io/waretrack/
+
 A 3D warehouse strategy game that runs in the browser. Manage a distribution center like a strategy game: trucks dock, forklifts put pallets away and pick orders, problems pop up, and you decide how to handle them. Around the warehouse is a town you can buy and build.
 
 Everything lives in a single file, `index.html`. It uses [three.js r128](https://threejs.org/) from cdnjs and Google Fonts. There's no build step and no backend.
