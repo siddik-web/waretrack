@@ -32,6 +32,10 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+.trkmode{margin-left:auto;display:inline-flex;background:var(--mute-soft);border-radius:8px;padding:2px;gap:2px}
+.trkmode button{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;color:var(--ink-3)}
+.trkmode button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,30,60,.12)}
+.th .mono+.trkmode{margin-left:10px}
 .delhead{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 4px}
 .delhead .mini b{font-size:15px}
 .delnote{font-size:11.5px;color:var(--ink-2);margin:6px 2px 8px;line-height:1.45}
@@ -1213,7 +1217,13 @@ function genTown(){
     big(o+2,o+3,7,7,k%2?'cpark':'cbig'); big(o-7,o-5,-3,-2,'cbig'); big(o+1,o+3,-3,-2,'cbig'); big(o+1,o+3,8,9,'cbig'); big(o+1,o+3,1,4,'cpark'); big(o-6,o-6,2,4,'cbig'); big(o-2,o-2,-1,-1,'cbig');
     if(k===0) big(-7,-5,8,9,'lease',{owner:null}); else big(o-7,o-5,8,9,'cbig');
   });
-  const T=save.town;
+  const T=save.town, taken=new Set([...T.owned,...Object.keys(T.b)]);
+  SLICES.forEach(k=>{const o=12*k, R2=mulberry32(900+k*31), cand=[];
+    for(const j of [-5,-4,-1,7,8,9,11])for(let i=o-7;i<=o+3;i++){const t=getT(i,j); if(!t||t.type!=='grass'||t.owner||taken.has(t.key))continue;
+      let face=-1; for(const d of [2,0,1,3]){const n=nbT(t,d); if(n&&n.type==='road'&&n.owner==='city'){face=d;break;}} if(face>=0)cand.push([t,face,R2()]);}
+    cand.sort((a,b)=>a[2]-b[2]).slice(0,10).forEach(([t,face],n)=>Object.assign(t,{type:'chouse',owner:'city',face,wild:false,addr:(2+((n*17+k*29+60)%96))+' '+STREETS[(n*5+k*3+12)%STREETS.length]}));
+    let m=0; town.tiles.forEach(t=>{if(t.type==='cshop'&&sliceOfI(t.i)===k)t.addr=(10+((m++)*23+k*11+40)%180)+' '+MSTREETS[(m+k+5)%MSTREETS.length];});
+  });
   T.owned.forEach(k=>{const t=town.tiles.get(k);if(t&&t.type==='grass')t.owner='player';});
   Object.entries(T.b).forEach(([k,b])=>{const t=town.tiles.get(k);if(t&&t.owner==='player'&&t.type==='grass'){Object.assign(t,{type:b.type,face:b.face,name:b.name,color:b.color,wild:false});}});
   if(T.unit7) town.tiles.forEach(t=>{if(t.type==='lease'){t.type='bigdepot';t.owner='player';}});
@@ -1303,7 +1313,7 @@ function renderTile(t){
   if(['grass','hq','cbig','cpark','lease','bigdepot','road','private'].includes(t.type)&&!(t.type==='grass'&&t.owner==='player'))return;
   const g=new THREE.Group(); g.position.set(tcx(t.i),0,tcz(t.j));
   if(t.type==='cshop') makeShopTile(g,t.shop.name,t.shop.color,t.face);
-  else if(t.type==='house') makeHouse(g,t);
+  else if(t.type==='house'||t.type==='chouse') makeHouse(g,t);
   else if(t.type==='shop') makeShopTile(g,t.name,t.color,t.face);
   else if(t.type==='office') makeOffice(g,t);
   else if(t.type==='depot') makeDepot(g,t);
@@ -1311,6 +1321,7 @@ function renderTile(t){
   else if(t.type==='trees') box(7.6,0.04,7.6,'#d8eedd',0,0.03,0,g,false);
   else if(t.type==='grass') box(7.7,0.03,7.7,'#e0e5f4',0,0.022,0,g,false);
   if(BTYPES[t.type]&&BTYPES[t.type].inc&&t.owner==='player'&&!connected(t)) warnBadge(g);
+  if(t.type==='cshop'||t.type==='chouse'||(t.type==='shop'&&t.owner==='player'))g.userData.sel={kind:'dest',t};
   env.add(g); town.objs.set(t.key,g);
 }
 function makeNeighbor(name,cx,cz,trim,state,noTrucks){
@@ -1345,16 +1356,16 @@ function buildStatic(){
     barriers.push({arm,pz,dir,kind,open:0,ox});};
   const ctr=(x,z,col,rib,ry)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry||0;townStatic.add(g);box(6,2.5,2.4,col,0,1.25,0,g);for(let k=-2.7;k<=2.71;k+=0.45)box(0.07,2.3,2.46,rib,k,1.25,0,g,false);plane(txtTex('OCEANIC LINE',null,'#ffffff',512,96,60),3.4,0.55,g,0,1.55,1.24);};
   const stub=(x,z,w,d)=>{box(w,0.07,d,ASPH,x,0.04,z,townStatic,false);box(w+(w<d?2:0),0.06,d+(d<w?2:0),CURB,x,0.03,z,townStatic,false);const v=d>w;for(let u=-Math.max(w,d)/2+1;u<Math.max(w,d)/2;u+=2)box(v?.24:1.3,0.02,v?1.3:.24,'#ffffff',v?x:x+u,0.085,v?z+u:z,townStatic,false);};
-  [0,6,10].forEach(j=>{stub(tcx(GI0)-24,tcz(j),40,6);stub(tcx(GI1)+24,tcz(j),40,6);});
+  [0,6,10].forEach(j=>{stub(tcx(GI0)-54,tcz(j),100,6);stub(tcx(GI1)+54,tcz(j),100,6);});
   SLICES.forEach(k=>{
     const ox=k*SLICE_W, o=12*k, sname=(SITES.find(x=>x.k===k)||{}).name||'';
     box(50,0.04,31,'#edf0f8',2+ox,0.02,0,townStatic,false);
     [-13.55,13.55].forEach(z=>{[[0.6,9.4],[14.6,16.6]].forEach(([a,b])=>{box(b-a,0.05,0.05,'#9aa8bc',(a+b)/2+ox,0.55,z,townStatic,false);box(b-a,0.05,0.05,'#9aa8bc',(a+b)/2+ox,0.95,z,townStatic,false);for(let x=a;x<=b+0.01;x+=1.9)box(0.07,1.05,0.07,'#8a98ad',x+ox,0.52,z,townStatic);});
       box(0.25,1.6,0.25,'#3a5fd8',9.5+ox,0.8,z,townStatic); box(0.25,1.6,0.25,'#3a5fd8',14.5+ox,0.8,z,townStatic);});
     box(5,0.04,5,'#e1e6ee',12+ox,0.021,-16,townStatic,false);
-    stub(tcx(o),90,6,40);
-    [o-8,o,o+4].forEach(i=>stub(tcx(i),tcz(GJ0)-24,6,40));
-    [o-8,o+4].forEach(i=>stub(tcx(i),tcz(GJ1)+24,6,40));
+    stub(tcx(o),tcz(GJ1)+54,6,100);
+    [o-8,o,o+4].forEach(i=>stub(tcx(i),tcz(GJ0)-54,6,100));
+    [o-8,o+4].forEach(i=>stub(tcx(i),tcz(GJ1)+54,6,100));
     barrier(23.9+ox,20.8,5.4,-1,'tk',ox); barrier(14.6+ox,-14.2,4.8,-1,'van',ox);
     ctr(-16.5+ox,18.4,'#2fb3a5','#27998d',0); ctr(-8.5+ox,18.2,k%2?'#e0664f':'#3a5fd8',k%2?'#c4523d':'#3150bd',0.06);
     // site sign on the lawn
@@ -1489,8 +1500,8 @@ function landPrice(t){
 }
 function customers(){
   const out=[];
-  town.tiles.forEach(t=>{ if(t.type!=='cshop'||sliceOfI(t.i)!==site.k)return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={name:t.shop.name,road:r,x:tcx(t.i),z:tcz(t.j)})); });
-  town.tiles.forEach(t=>{ if(t.type==='shop'&&t.owner==='player'&&Math.abs(sliceOfI(t.i)-site.k)<=1){ const n=nbT(t,t.face); if(n&&town.reach.has(n.key)) out.push({name:t.name,road:n.key,x:tcx(t.i),z:tcz(t.j)}); }});
+  town.tiles.forEach(t=>{ if((t.type!=='cshop'&&t.type!=='chouse')||sliceOfI(t.i)!==site.k)return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={key:t.key,name:t.type==='cshop'?t.shop.name:t.addr,addr:t.addr,home:t.type==='chouse',road:r,x:tcx(t.i),z:tcz(t.j)})); });
+  town.tiles.forEach(t=>{ if(t.type==='shop'&&t.owner==='player'&&Math.abs(sliceOfI(t.i)-site.k)<=1){ const n=nbT(t,t.face); if(n&&town.reach.has(n.key)) out.push({key:t.key,name:t.name,addr:'Your shop',home:false,road:n.key,x:tcx(t.i),z:tcz(t.j)}); }});
   return out;
 }
 function initTown(){
@@ -1536,10 +1547,14 @@ function placeCarRandom(c){
   }
 }
 function advanceCar(c){
+  if(c.exiting){
+    const P=town.portals; const p=P[Math.floor(Math.random()*P.length)]; if(!p){placeCarRandom(c);c.exiting=false;return;}
+    const e=entryPt(p.t,p.h), D=DIRS[p.h], sx=e[0]-D[0]*88, sz=e[1]-D[1]*88;
+    if(cars.some(x=>x!==c&&Math.hypot(x.x-sx,x.z-sz)<7)){c.v=0;return;}
+    c.exiting=false; const o=pickExit(p.t,p.h); c.t=p.t; c.h=o; c.x=sx; c.z=sz; c.yaw=Math.atan2(-D[1],D[0]); c.pts=[e,...tilePathFrom(e,p.t,p.h,o)]; return;
+  }
   const n=nbT(c.t,c.h);
-  if(!n){ const P=town.portals.filter(p=>p.t!==c.t); const p=P.length?P[Math.floor(Math.random()*P.length)]:null; if(!p){placeCarRandom(c);return;}
-    const o=pickExit(p.t,p.h),pts=tilePath(p.t,p.h,o); if(cars.some(x=>x!==c&&Math.hypot(x.x-pts[0][0],x.z-pts[0][1])<5)){c.pts=[];c.v=0;return;}
-    c.t=p.t;c.h=o;c.x=pts[0][0];c.z=pts[0][1];c.pts=pts.slice(1);c.v=Math.min(c.v,2);return; }
+  if(!n){const D=DIRS[c.h], e=exitPt(c.t,c.h); c.pts=[[e[0]+D[0]*90,e[1]+D[1]*90]]; c.exiting=true; return;}
   if(!isRoadT(n)){placeCarRandom(c);return;}
   const h=c.h,o=pickExit(n,h); c.t=n; c.h=o; c.pts=tilePath(n,h,o);
 }
@@ -1624,7 +1639,7 @@ function queueDelivery(o){
   if(!o||!o.shop)return;
   const s=town.tiles.get(tkey(12*site.k-1,0)); const n=s?routeTiles(s.key,o.shop.road):null; if(n==null)return;
   const now=clockMin(), due=now+30+Math.round(3*n)+(dlv('disp')?5:0);
-  del.jobs.push({id:o.id,shop:o.shop,dist:n,created:now,due,rush:!!o.rush});
+  del.jobs.push({id:o.id,order:o,shop:o.shop,dist:n,created:now,due,rush:!!o.rush});
   dirty=true;
 }
 function delFee(j){return (2+0.25*j.dist)*(1+0.15*dlv('gps'))*(0.8+0.1*delSave().rating);}
@@ -1637,7 +1652,8 @@ function deliverJob(v,j){
   const target=res==='early'?5:res==='on time'?4.3:2.5; D.rating=Math.round((D.rating+(target-D.rating)*0.15)*100)/100;
   save.credits+=cr; D.earned+=cr; D.done++; if(res!=='late')D.onTime++; del.today+=cr; v.earned+=cr;
   if(game.phase==='shift'&&game.st){game.st.del=(game.st.del||0)+cr; if(res!=='late'){game.st.delOn=(game.st.delOn||0)+1; if(game.st.delOn>=10)unlock('courier');}}
-  del.recent.unshift({id:j.id,shop:j.shop.name,cr,res,t:now,wait:Math.round(j.sent-j.created),drive:Math.round(now-j.sent),promise:j.due-j.created}); if(del.recent.length>6)del.recent.pop();
+  j.deliveredAt=now; j.res=res; {const ds=destStats(j.shop.key);ds.recv++;ds.cr+=cr;ds.last=now;if(res==='late')ds.late++;else ds.onTime++;}
+  del.recent.unshift({job:j,id:j.id,shop:j.shop.name,cr,res,t:now,wait:Math.round(j.sent-j.created),drive:Math.round(now-j.sent),promise:j.due-j.created}); if(del.recent.length>12)del.recent.pop();
   popup('+'+cr+' cr'+(res==='early'?' · early':res==='late'?' · late':''),j.shop.x,5,j.shop.z,res==='late'?'bad':'gold');
   log(j.id+' delivered to '+j.shop.name+' '+res+' · +'+cr+' credits',res==='late'?'warn':'ok');
   writeSave(); dirty=true;
@@ -1689,6 +1705,94 @@ function buyDel(key){
   if(key==='drv'&&dlv('drv')>=3)unlock('fleet');
   dirty=true; renderPanel();
 }
+/* ---------------- network: transfer trucks between warehouses ---------------- */
+const xfers=[];
+function xferRoute(fromK,toK){
+  const a=town.tiles.get(tkey(12*fromK,0)), b=town.tiles.get(tkey(12*toK,10)); if(!a||!b||fromK===toK)return null;
+  const p=bfs(a.key,b.key); if(!p)return null;
+  const ox=fromK*SLICE_W, start=[21.6+ox,-18];
+  const r=routeThrough(p,0,start,0);
+  return [[21.6+ox,-12.5],start,...r.pts];
+}
+function laneFree(x,z,r){return ![...trucks.map(t=>[wx(t),t.z]),...liteTrucks.map(t=>[t.x,t.z]),...vans.map(v=>[v.x,v.z])].some(([a,b])=>Math.hypot(a-x,b-z)<r);}
+function spawnXfer(fromIdx,toIdx,opt){
+  opt=opt||{}; const A=SITES[fromIdx],B=SITES[toIdx]; const pts=xferRoute(A.k,B.k); if(!pts)return null;
+  if(!laneFree(pts[0][0],pts[0][1],9))return null;
+  const car=CARRIERS.find(c=>c.name==='WareTrack')||CARRIERS[0], g=makeTruck(car,!!opt.sku); env.add(g);
+  const now=clockMin();
+  const t={kind:'tk',xfer:true,from:fromIdx,to:toIdx,id:'TRF-'+(++liteSeq),ship:'#TRF-'+(30000+liteSeq),car,sku:opt.sku||null,n:opt.n||irand(4,6),g,
+    x:pts[0][0],z:pts[0][1],yaw:Math.PI/2,steps:pts.slice(1).map(p=>({t:'move',x:p[0],z:p[1]})),spd:6.5,rspd:2.2,turn:1.0,gate:1.25,blockT:0,ghost:0,state:'transfer',
+    times:{start:now},cargo:[],unloaded:0,requested:!!opt.requested};
+  t.total=xferLeft(t); g.userData.sel=t; xfers.push(t); liteTrucks.push(t); placeL(t);
+  return t;
+}
+function xferLeft(t){let d=0,x=t.x,z=t.z;for(const s of t.steps){if(s.t!=='move')continue;d+=Math.hypot(s.x-x,s.z-z);x=s.x;z=s.z;}return d;}
+function xferEta(t){return clockMin()+Math.round(xferLeft(t)/(t.spd*0.7))+2;}
+function arriveXfer(t){
+  const i=xfers.indexOf(t); if(i>=0)xfers.splice(i,1);
+  const A=SITES[t.from], B=SITES[t.to];
+  if(t.to===game.siteIdx){
+    const k=liteTrucks.indexOf(t); if(k>=0)liteTrucks.splice(k,1); env.remove(t.g);
+    const cargo=[]; for(let q=0;q<t.n;q++)cargo.push(t.sku&&q<t.n-1?t.sku:pick(SKU_KEYS));
+    const nt=spawnTruck({id:t.id,ship:t.ship,car:t.car,cargo,late:false,expedite:t.sku},null);
+    nt.x=t.x-OX; nt.z=t.z; nt.yaw=t.yaw; nt.xferFrom=A; place(nt);
+    log(t.id+' transfer from '+A.name+' reached the gate with '+cargo.length+' pallets','info');
+    if(t.requested)notify('ok','Transfer arrived',t.id+' from '+A.name+' is at the gate');
+    if(selected===t)select(nt);
+  }else{
+    const L=lites.get(t.to); if(!L){const k=liteTrucks.indexOf(t);if(k>=0)liteTrucks.splice(k,1);env.remove(t.g);if(selected===t)select(null);return;}
+    Object.assign(t,{xfer:false,lite:L,ox:L.ox,dir:'in',done:0,state:'queued',atGate:false,steps:[],from:A.code+' '+A.name+' (transfer)',dest:L.s.code+' '+L.s.name,
+      times:{gate:clockMin(),arrived:null,done:null,confirmed:t.times.start,picked:t.times.start,loaded:t.times.start}});
+    L.trucks.push(t); L.inbound++;
+  }
+  dirty=true;
+}
+function updateXfers(dt){for(const t of xfers.slice()){runSteps(t,dt);placeL(t);if(!t.steps.length)arriveXfer(t);}}
+function requestTransfer(sku){
+  const order=SITES.map((s,i)=>i).filter(i=>i!==game.siteIdx&&lites.has(i)).sort((a,b)=>Math.abs(SITES[a].k-site.k)-Math.abs(SITES[b].k-site.k));
+  for(const i of order){const Ls=lites.get(i); if(Ls.trucks.some(t=>t.state==='docking'||(t.state==='departing'&&t.z>-16)))continue; const t=spawnXfer(i,game.siteIdx,{sku,n:5,requested:true}); if(t){log(t.id+' transfer of '+SKUS[sku].name+' requested from '+SITES[i].name+' · due about '+fmtT(xferEta(t)),'info');return true;}}
+  toast('info','No truck free right now','Every nearby yard is busy. Try again in a moment.',ICON.truck); return false;
+}
+function liteXferTick(L,dt){
+  L.xferT=(L.xferT==null?rand(40,120):L.xferT)-dt;
+  if(L.xferT>0)return; L.xferT=rand(90,160);
+  const others=SITES.map((s,i)=>i).filter(i=>i!==L.idx); const to=others[Math.floor(L.R()*others.length)];
+  if(xfers.filter(t=>t.to===to).length<2&&!L.trucks.some(t=>t.state==='docking'||(t.state==='departing'&&t.z>-16))) spawnXfer(L.idx,to,{});
+}
+
+/* ---------------- customers: every shop and house in the city ---------------- */
+const STREETS=['Maple St','Birch Ln','Cedar Ave','Elm Rd','Oak Ct','Willow Way','Aspen Dr','Pine St','Harbor Rd','Linden Pl','Chestnut St','Rowan Ave'];
+const MSTREETS=['Market St','Main St','High St','Commerce Ave','Station Rd'];
+function destStats(key){if(!del.dest)del.dest=new Map();let d=del.dest.get(key);if(!d){d={recv:0,onTime:0,late:0,last:null,cr:0};del.dest.set(key,d);}return d;}
+function openOrdersFor(key){
+  const out=[], m=o=>o&&o.shop&&o.shop.key===key;
+  sim.orders.filter(m).forEach(o=>out.push({id:o.id,s:'In the pick queue'}));
+  forklifts.forEach(f=>{if(f.task&&f.task.order&&m(f.task.order))out.push({id:f.task.order.id,s:'Being picked · '+f.id});});
+  staging.forEach(x=>{if(m(x.order))out.push({id:x.order.id,s:'Staged at the dock'});});
+  del.jobs.forEach(j=>{if(j.shop.key===key)out.push({id:j.id,s:'Waiting for a van'});});
+  vans.forEach(v=>v.jobs.forEach(j=>{if(j.shop.key===key)out.push({id:j.id,s:'Out for delivery · '+v.id});}));
+  return out;
+}
+function orderTrack(id){
+  if(!id)return null;
+  let o=sim.orders.find(x=>x.id===id); if(o)return {o,stage:0,where:'In the pick queue',cls:''};
+  for(const f of forklifts)if(f.task&&f.task.order&&f.task.order.id===id)return {o:f.task.order,stage:f.task.picked?1:0,where:(f.task.picked?'On the forks of ':'Being picked by ')+f.id,cls:'info'};
+  for(const st of staging)if(st.order&&st.order.id===id)return {o:st.order,stage:2,where:'Staged, loading out',cls:'info'};
+  let j=del.jobs.find(x=>x.id===id); if(j)return {o:j.order,j,stage:3,where:'Waiting for a free van',cls:clockMin()>j.due?'bad':'warn'};
+  for(const v of vans){j=v.jobs.find(x=>x.id===id); if(j)return {o:j.order,j,v,stage:4,where:v.state,cls:clockMin()>j.due?'bad':'info'};}
+  const r=del.recent.find(x=>x.id===id); if(r&&r.job)return {o:r.job.order,j:r.job,stage:6,where:'Delivered '+r.res,cls:r.res==='late'?'bad':'ok'};
+  return null;
+}
+function defaultOutbound(){
+  for(const v of vans)if(v.jobs[0])return orderTrack(v.jobs[0].id);
+  if(del.jobs[0])return orderTrack(del.jobs[0].id);
+  const st=staging.find(x=>x.order); if(st)return orderTrack(st.order.id);
+  const f=forklifts.find(f=>f.task&&f.task.order); if(f)return orderTrack(f.task.order.id);
+  if(sim.orders[0])return orderTrack(sim.orders[0].id);
+  return del.recent[0]?orderTrack(del.recent[0].id):null;
+}
+const destIcon=home=>home?ICON.home:ICON.shop;
+
 const ratingStars=r=>{let s='';for(let k=1;k<=5;k++)s+='<span class="'+(r>=k-0.25?'on':'')+'">★</span>';return '<span class="rstars">'+s+'</span>';};
 function renderDelPanel(){
   const D=delSave(), now=clockMin(), out=vans.length, F=fleetSize();
@@ -1697,13 +1801,13 @@ function renderDelPanel(){
   h+='<div class="sub"><span>Waiting at the depot · '+del.jobs.length+'</span></div>';
   if(!del.jobs.length)h+='<div class="empty">No deliveries waiting. Shipped orders show up here until a van is free.</div>';
   del.jobs.forEach((j,i)=>{const m=Math.round(j.due-now),c=m<0?'bad':m<10?'warn':'ok';
-    h+='<div class="row'+(m<0?' late':'')+'"><div class="badge">'+(i+1)+'</div><div class="t"><b class="mono">'+j.id+'</b><small>'+esc(j.shop.name)+' · '+j.dist+' blocks · about '+Math.round(delFee(j))+' cr</small></div><div class="r"><span class="pill '+c+'">'+(m>=0?'due in '+m+' min':'late '+(-m)+' min')+'</span></div></div>';});
+    h+='<div class="row click'+(m<0?' late':'')+'" data-trko="'+j.id+'"><div class="badge">'+(i+1)+'</div><div class="t"><b class="mono">'+j.id+'</b><small>'+esc(j.shop.name)+' · '+j.dist+' blocks · about '+Math.round(delFee(j))+' cr</small></div><div class="r"><span class="pill '+c+'">'+(m>=0?'due in '+m+' min':'late '+(-m)+' min')+'</span></div></div>';});
   h+='<div class="sub"><span>On the road · '+out+'</span></div>';
   if(!out)h+='<div class="empty">All vans are at the depot.</div>';
   vans.forEach(v=>{const j=v.jobs[0],m=j?Math.round(j.due-now):null;
     h+='<div class="row click'+(selected===v?' hl':'')+'" data-van="'+v.id+'"><div class="badge tk">V</div><div class="t"><b class="mono">'+v.id+'</b><small>'+esc(v.state)+(v.jobs.length>1?' · '+v.jobs.length+' drops':'')+'</small></div><div class="r">'+(j?'<span class="pill '+(m<0?'bad':m<10?'warn':'info')+'">'+(m>=0?m+' min left':'late')+'</span>':'<span class="pill">Back soon</span>')+'</div></div>';});
   if(del.recent.length){h+='<div class="sub"><span>Recent drops</span></div>';
-    del.recent.forEach(r=>{h+='<div class="row"><div class="badge '+(r.res==='late'?'down':'')+'">'+(r.res==='early'?'★':r.res==='late'?'!':'✓')+'</div><div class="t"><b class="mono">'+r.id+'</b><small>'+esc(r.shop)+' · '+r.res+' · '+fmtT(r.t)+'</small></div><div class="r"><span class="pill gold">+'+r.cr+' cr</span></div></div>';});}
+    del.recent.slice(0,6).forEach(r=>{h+='<div class="row click" data-trko="'+r.id+'"><div class="badge '+(r.res==='late'?'down':'')+'">'+(r.res==='early'?'★':r.res==='late'?'!':'✓')+'</div><div class="t"><b class="mono">'+r.id+'</b><small>'+esc(r.shop)+' · '+r.res+' · '+fmtT(r.t)+'</small></div><div class="r"><span class="pill gold">+'+r.cr+' cr</span></div></div>';});}
   ['Staff','Tools'].forEach(g=>{
     h+='<div class="sub"><span>'+g+'</span><span class="pill gold">'+fmtN(save.credits)+' cr</span></div>';
     DEL_UP.filter(u=>u.group===g).forEach(u=>{const l=dlv(u.key),max=u.costs.length,c=u.costs[l];
@@ -1829,7 +1933,7 @@ function runSteps(o,dt){
       const ty=s.rev?Math.atan2(dz,-dx):Math.atan2(-dz,dx);
       const diff=angDiff(ty,o.yaw);
       o.yaw+=clamp(diff,-o.turn*budget,o.turn*budget);
-      if((o.kind==='tk'||o.kind==='van')&&!s.rev&&!(o.kind==='tk'&&lx(o)<15.5)&&(o.kind==='van'&&o.z>-18.6&&Math.abs(lx(o)-12)<2.7?vanAhead(o,budget):vehBlocked(o,budget))){budget=0;break;}
+      if((o.kind==='tk'||o.kind==='van')&&!s.rev&&!(o.kind==='tk'&&!o.xfer&&lx(o)<15.5)&&(o.kind==='van'&&o.z>-18.6&&Math.abs(lx(o)-12)<2.7?vanAhead(o,budget):vehBlocked(o,budget))){budget=0;break;}
       if(Math.abs(diff)<o.gate){
         const f=Math.cos(Math.min(Math.abs(diff),1.4));
         const sp=(s.rev?o.rspd:o.spd)*(s.slow||1)*f;
@@ -1916,7 +2020,7 @@ function tryOutbound(f){
   const lastAisle=AISLE(ROWS[ROWS.length-1]);
   const P=planner(f);
   P.lift(0.1).go(s.x,AISLE(s.z)).turn(FACE_NEG_Z).lift(s.y-0.02).mv(s.x,s.z+FORK_REACH,false,.65).wait(.15)
-   .act(()=>{const p=s.pallet;s.pallet=null;s.claimed=false;f.g.userData.carriage.attach(p);p.position.set(0.55,0.03,0);p.rotation.set(0,0,0);f.carry=p;task.picked=true;dirty=true;checkLow(order.sku);})
+   .act(()=>{const p=s.pallet;s.pallet=null;s.claimed=false;f.g.userData.carriage.attach(p);p.position.set(0.55,0.03,0);p.rotation.set(0,0,0);f.carry=p;task.picked=true;order.pickedAt=clockMin();dirty=true;checkLow(order.sku);})
    .lift(s.y+0.3).mv(s.x,AISLE(s.z),true,.6).lift(0.3).go(st.x,lastAisle).turn(FACE_POS_Z).mv(st.x,STAGE_Z-FORK_REACH,false,.6).lift(0.02)
    .act(()=>{const p=f.carry;world.attach(p);p.position.set(st.x,0.02,STAGE_Z);p.rotation.set(0,Math.PI/2,0);st.pallet=p;st.claimed=false;st.t=0;st.order=order;order.stagedAt=clockMin();f.carry=null;f.moved++;f.task=null;onStaged(order,st);dirty=true;})
    .mv(st.x,lastAisle,true,.6).lift(0.1);
@@ -1987,7 +2091,7 @@ function spawnTruck(sh,bay){
   const g=makeTruck(sh.car,!!sh.expedite); world.add(g);
   const now=clockMin();
   const t={kind:'tk',id:sh.id,ship:sh.ship,car:sh.car,cargo:sh.cargo,expedite:sh.expedite,g,bay:null,state:'queued',assigned:0,unloaded:0,busyBy:null,
-    x:21.6,z:92,loc:true,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,detPaid:0,blockT:0,ghost:0};
+    x:21.6,z:160,loc:true,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,detPaid:0,blockT:0,ghost:0};
   const c=now-irand(260,420); t.times={confirmed:c,picked:c+irand(50,90),loaded:c+irand(110,150),gate:now,arrived:null,done:null};
   g.userData.sel=t; trucks.push(t);
   if(bay){ t.atGate=true; t.bay=bay; bay.truck=t; t.x=6.0;t.z=bay.z;t.yaw=0;t.state='unloading';t.times.arrived=now;t.times.gate=now;bay.open=1; }
@@ -2000,10 +2104,11 @@ function assignBay(t,bay){
   t.steps=P.steps;
 }
 function dispatchQueue(){
-  let q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.times.gate-b.times.gate);
-  for(const t of q){const bay=bays.find(b=>!b.truck);if(!bay)break;assignBay(t,bay);}
-  q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.times.gate-b.times.gate);
-  q.forEach((t,i)=>{const tz=[16,40,68,80][i]||80+12*(i-3);const s=t.steps[0];
+  let q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z);
+  const laneBusy=trucks.some(t=>t.state==='departing'&&t.z>-16);
+  if(!laneBusy)for(const t of q){if(t.z>30)break;const bay=bays.find(b=>!b.truck);if(!bay)break;assignBay(t,bay);break;}
+  q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z);
+  q.forEach((t,i)=>{let tz=[16,40,68,80][i]||80+12*(i-3);if(tz>t.z+0.1)tz=t.z;const s=t.steps[0];
     if(!(s&&Math.abs(s.z-tz)<.1)&&Math.abs(t.z-tz)>.1) t.steps=[{t:'move',x:21.6,z:tz}];
     if(!t.atGate&&t.z<47){t.atGate=true;t.times.gate=clockMin();}
     const wait=t.atGate?clockMin()-t.times.gate:0;
@@ -2016,19 +2121,19 @@ function departTruck(t){
   if(game.phase==='shift'){game.st.trucks++; const b=dur<=45?25:dur<=70?10:0; if(b){if(b===25)game.st.fast++;game.ledger.turn+=b;addScore(b,'turn',t.x,4.6,t.z);} }
   log(t.id+' turned around in '+fmtDur(dur)+', leaving Bay '+(bay.i+1),'ok');
   const P=planner(t);
-  P.wait(1.2).mv(15,bay.z).mv(21.6,bay.z-4.5).mv(21.6,bay.z-7).act(()=>{bay.truck=null;dirty=true;}).mv(21.6,-80).act(()=>{world.remove(t.g);trucks.splice(trucks.indexOf(t),1);if(selected===t)select(null);dirty=true;});
+  P.wait(1.2).mv(15,bay.z).mv(21.6,bay.z-4.5).mv(21.6,bay.z-7).act(()=>{bay.truck=null;dirty=true;}).mv(21.6,-165).act(()=>{world.remove(t.g);trucks.splice(trucks.indexOf(t),1);if(selected===t)select(null);dirty=true;});
   t.steps=P.steps;
 }
 function updateTruck(t,dt){
   runSteps(t,dt);
-  if(t.state==='unloading'&&t.unloaded>=t.cargo.length&&!t.busyBy&&!t.steps.length) departTruck(t);
+  if(t.state==='unloading'&&t.unloaded>=t.cargo.length&&!t.busyBy&&!t.steps.length&&!trucks.some(x=>x.state==='docking'||(x.state==='departing'&&x.z>-16))) departTruck(t);
   place(t);
 }
 function scheduleTruck(mins,late,focus){
   const sh=newShipment(late,focus); sh.eta=clockMin()+mins; sim.enroute.push(sh); sim.enroute.sort((a,b)=>a.eta-b.eta);
   dirty=true; return sh;
 }
-function rushInbound(sku){return sim.enroute.some(s=>s.expedite===sku)||trucks.some(t=>t.expedite===sku&&t.state!=='departing');}
+function rushInbound(sku){return xfers.some(t=>t.sku===sku&&t.to===game.siteIdx)||sim.enroute.some(s=>s.expedite===sku)||trucks.some(t=>t.expedite===sku&&t.state!=='departing');}
 function expedite(sku){
   if(rushInbound(sku)){log('A rush delivery of '+SKUS[sku].name+' is already on the way','');return false;}
   const sh=scheduleTruck(4,false,sku); log('Expedited '+SKUS[sku].name+' · '+sh.id+' due in 4 min','info'); return true;
@@ -2271,7 +2376,7 @@ function spawnLiteTruck(L,dir,bay){
   const n=dir==='out'?irand(4,7):irand(3,6), now=clockMin();
   const t={kind:'tk',lite:L,ox:L.ox,id:'TRK-'+(++liteSeq),ship:'#SHP-'+(80000+liteSeq*7%9999),car,dir,n,done:0,g,bay:null,state:'queued',
     dest:dir==='out'?DESTS[(liteSeq*3)%DESTS.length]:L.s.code+' '+L.s.name,from:dir==='in'?car.from:L.s.code+' '+L.s.name,
-    x:21.6+L.ox,z:92,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,blockT:0,ghost:0,cargo:[],unloaded:0,
+    x:21.6+L.ox,z:160,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,blockT:0,ghost:0,cargo:[],unloaded:0,
     times:{gate:now,arrived:null,done:null,confirmed:now-irand(260,420)}};
   t.times.picked=t.times.confirmed+irand(50,90); t.times.loaded=t.times.confirmed+irand(110,150);
   g.userData.sel=t; L.trucks.push(t); liteTrucks.push(t);
@@ -2290,7 +2395,7 @@ function liteDepart(L,t){
   L.done++; if(t.times.done-t.times.gate<=70)L.onTime++; else L.late++;
   L.fill=clamp(L.fill+(t.dir==='in'?0.035:-0.04),0.2,0.95);
   const P=planner(t);
-  P.wait(1.2).mv(15+ox,b.z).mv(21.6+ox,b.z-4.5).mv(21.6+ox,b.z-7).act(()=>{b.truck=null;setStack(L);}).mv(21.6+ox,-80).act(()=>{t.gone=true;});
+  P.wait(1.2).mv(15+ox,b.z).mv(21.6+ox,b.z-4.5).mv(21.6+ox,b.z-7).act(()=>{b.truck=null;setStack(L);}).mv(21.6+ox,-165).act(()=>{t.gone=true;});
   t.steps=P.steps;
 }
 function liteForklift(L,f,dt){
@@ -2320,13 +2425,14 @@ function updateLite(L,dt){
     if(q<3) spawnLiteTruck(L,L.R()<0.5?'in':'out',null);
     const r=L.s.truckRate; L.next=rand(r[0],r[1])*0.55;
   }
-  for(const t of L.trucks.filter(t=>t.state==='queued').sort((a,b)=>a.times.gate-b.times.gate)){const b=L.bays.find(b=>!b.truck);if(!b)break;liteDock(L,t,b);}
-  L.trucks.filter(t=>t.state==='queued').sort((a,b)=>a.times.gate-b.times.gate).forEach((t,i)=>{const tz=[16,40,68][i]||80;const s=t.steps[0];
+  const xferOut=xfers.some(t=>t.from===L.idx&&t.z>-19), laneBusy=xferOut||L.trucks.some(t=>t.state==='departing'&&t.z>-16);
+  if(!laneBusy)for(const t of L.trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z)){if(t.z>30)break;const b=L.bays.find(b=>!b.truck);if(!b)break;liteDock(L,t,b);break;}
+  L.trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z).forEach((t,i)=>{let tz=[16,40,68,80][i]||80+12*(i-3);if(tz>t.z+0.1)tz=t.z;const s=t.steps[0];
     if(!(s&&Math.abs(s.z-tz)<.1)&&Math.abs(t.z-tz)>.1)t.steps=[{t:'move',x:21.6+L.ox,z:tz}];
     if(!t.atGate&&t.z<47){t.atGate=true;t.times.gate=clockMin();}});
   for(let i=L.trucks.length-1;i>=0;i--){
     const t=L.trucks[i]; runSteps(t,dt);
-    if((t.state==='unloading'||t.state==='loading')&&t.done>=t.n&&!t.busy&&!t.steps.length) liteDepart(L,t);
+    if((t.state==='unloading'||t.state==='loading')&&t.done>=t.n&&!t.busy&&!t.steps.length&&!L.trucks.some(x=>x.state==='docking'||(x.state==='departing'&&x.z>-16))&&!xferOut) liteDepart(L,t);
     placeL(t);
     if(t.gone){env.remove(t.g);L.trucks.splice(i,1);const k=liteTrucks.indexOf(t);if(k>=0)liteTrucks.splice(k,1);if(selected===t)select(null);}
   }
@@ -2696,7 +2802,7 @@ const SHIPPERS=['Sunvale Grocers','Harbor & Co.','Halcyon Retail','Oakridge Mark
 const UNIT_KG={LED:2.4,CHR:14,BOX:0.3,GLV:0.1,BRK:0.6};
 const SKU_CAT={LED:'Lighting',CHR:'Furniture',BOX:'Packaging',GLV:'PPE',BRK:'Hardware'};
 const hpick=(arr,s)=>arr[hashStr(s)%arr.length];
-function plateOf(s){const h=hashStr('p'+s),A='ABCDEFGHJKLMNPRSTUVWXYZ';return A[h%23]+A[(h>>5)%23]+A[(h>>10)%23]+'-'+(1000+h%9000);}
+function plateOf(s){const h=hashStr('p'+s),A='ABCDEFGHJKLMNPRSTUVWXYZ';return A[h%23]+A[(h>>>5)%23]+A[(h>>>10)%23]+'-'+(1000+h%9000);}
 const irow=(l,v)=>'<div class="irow"><span>'+l+'</span><b>'+v+'</b></div>';
 function moved(o){const m=o._lx!=null&&Math.hypot(o.x-o._lx,o.z-o._lz)>0.02;o._lx=o.x;o._lz=o.z;return m;}
 function prism(w,d,r){const a=w/2,b=d/2;const P=[-a,0,b, a,0,b, a,r,0, -a,0,b, a,r,0, -a,r,0,  a,0,-b, -a,0,-b, -a,r,0, a,0,-b, -a,r,0, a,r,0,  a,0,b, a,0,-b, a,r,0,  -a,0,-b, -a,0,b, -a,r,0];
@@ -2711,7 +2817,7 @@ function makePin(lift){
   g.userData.head=[head,tip,dot]; return g;
 }
 const brk=new THREE.Group(); brk.visible=false; scene.add(brk);
-const BRK_DIM={van:[3.4,2.1,1.6,-0.3],tk:[11,4.2,2.9,0],fl:[2.8,2.7,1.5,0.2],lfl:[2.8,2.7,1.5,0.2],lbay:[1.2,4.8,4.2,0],site:[21.6,7.6,27.6,0],bay:[1.2,4.8,4.2,0],chg:[1.5,1.4,1.6,0],pal:[1.4,1.5,1.4,0]};
+const BRK_DIM={dest:[7.2,4.6,7.2,0],van:[3.4,2.1,1.6,-0.3],tk:[11,4.2,2.9,0],fl:[2.8,2.7,1.5,0.2],lfl:[2.8,2.7,1.5,0.2],lbay:[1.2,4.8,4.2,0],site:[21.6,7.6,27.6,0],bay:[1.2,4.8,4.2,0],chg:[1.5,1.4,1.6,0],pal:[1.4,1.5,1.4,0]};
 function bracketGeo(w,h,d){const pts=[],e=Math.min(w,h,d)*0.28+0.18;
   for(const x of [-w/2,w/2])for(const y of [0,h])for(const z of [-d/2,d/2]){const sx=x<0?1:-1,sy=y===0?1:-1,sz=z<0?1:-1;pts.push(x,y,z,x+sx*e,y,z,x,y,z,x,y+sy*e,z,x,y,z,x,y,z+sz*e);}
   const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3)); return g;}
@@ -2744,6 +2850,7 @@ function selPos(s){
   if(!s)return null;
   if(s.kind==='tk')return {x:wx(s),y:0,z:s.z,yaw:s.yaw,h:4.6};
   if(s.kind==='van')return {x:s.x,y:0,z:s.z,yaw:s.yaw,h:2.6};
+  if(s.kind==='dest')return {x:tcx(s.t.i),y:0,z:tcz(s.t.j),yaw:faceRot(s.t.face)+Math.PI/2,h:5.6};
   if(s.kind==='fl'||s.kind==='lfl')return {x:wx(s),y:0,z:s.z,yaw:s.yaw,h:2.9};
   if(s.kind==='bay')return {x:0.4+OX,y:0,z:s.bay.z,yaw:0,h:5.3};
   if(s.kind==='lbay')return {x:0.4+s.bay.lite.ox,y:0,z:s.bay.z,yaw:0,h:5.3};
@@ -2766,6 +2873,7 @@ function selLabel(s){
   if(s.kind==='bay'||s.kind==='lbay')return 'Bay '+(s.bay.i+1)+'<small>'+(s.bay.truck?esc(truckStatus(s.bay.truck)[0]):'Free')+'</small>';
   if(s.kind==='lfl')return esc(s.id)+'<small>'+esc(s.task)+'</small>';
   if(s.kind==='van')return esc(s.id)+'<small>'+esc(s.state)+'</small>';
+  if(s.kind==='dest'){const t=s.t;return esc(t.type==='cshop'?t.shop.name:t.type==='chouse'?t.addr:t.name)+'<small>'+(t.type==='chouse'?'Home':'Shop')+'</small>';}
   if(s.kind==='site')return esc(SITES[s.idx].code)+'<small>'+esc(SITES[s.idx].name)+'</small>';
   if(s.kind==='chg')return 'C'+(s.i+1)+'<small>'+(chgActive(s)?'Charging':'Free')+'</small>';
   if(s.kind==='pal')return esc(s.g.userData.meta.id)+'<small>'+esc(SKUS[s.g.userData.sku].name)+'</small>';
@@ -2788,6 +2896,8 @@ function liteCard(Lt,sel){
     '<div class="mini"><label>Trucks turned</label><b>'+st.done+'</b></div><div class="mini"><label>On-time departures</label><b>'+st.onTime+' <span>%</span></b></div></div>';
   h+='<div class="isub"><span>Yard</span><span>'+st.working+'/'+Lt.fls.length+' forklifts working</span></div>';
   Lt.trucks.filter(t=>t.state!=='departing').slice(0,4).forEach(t=>{const [a,c]=liteTruckStatus(t);h+='<div class="invrow" data-lpick="'+t.id+'"><span class="mono" style="font-weight:700">'+t.id+'</span><span>'+esc(t.car.name)+' · '+(t.dir==='out'?'to '+esc(t.dest):'inbound')+'</span><span class="pill '+c+'">'+esc(a)+'</span><span></span></div>';});
+  const tin=xfers.filter(t=>t.to===Lt.idx).length, tout=xfers.filter(t=>t.from===Lt.idx).length;
+  if(tin||tout)h+='<div class="isub"><span>Network</span><span>'+tout+' transfer'+(tout===1?'':'s')+' out · '+tin+' coming in</span></div>';
   h+='<p class="inote">'+esc(s.blurb)+'</p>';
   h+='<button class="act solid wide" data-ins="run" data-idx="'+Lt.idx+'"'+(shift||!un?' disabled':'')+'>'+(!un?'Locked · earn 2 stars at '+esc(SITES[Lt.idx-1].name):shift?'Finish your shift to run this site':'Run this site')+'</button>';
   return h;
@@ -2814,6 +2924,19 @@ function renderInspector(){
     h+='<div class="isub"><span>Forklift fleet</span><span>'+working.length+'/'+forklifts.length+' working</span></div>';
     if(f0) h+='<div class="invrow" data-goto="fl"><span class="mono" style="font-weight:700">'+f0.id+'</span><span>'+esc(f0.task?f0.task.text:'Idle')+'</span>'+ibar(f0.battery,f0.battery<25?'bad':'ok','')+'<span class="mono">'+Math.round(f0.battery)+'%</span></div>';
   }else if(s.kind==='site'){ h=liteCard(lites.get(s.idx),true);
+  }else if(s.kind==='dest'){
+    const t=s.t, home=t.type==='chouse', name=t.type==='cshop'?t.shop.name:home?t.addr:t.name, addr=home?'Home · '+t.addr:(t.addr||'Your shop'), here=sliceOfI(t.i)===site.k;
+    const ds=destStats(t.key), open=openOrdersFor(t.key), lastJob=del.recent.find(r=>r.job&&r.job.shop.key===t.key);
+    h+=insHead((home?'HOME':'SHOP')+' · CUSTOMER',name,addr,destIcon(home),false);
+    h+=istat(open.length?open.length+' order'+(open.length>1?'s':'')+' on the way':'No open orders',open.length?'info':'',here?(ds.last?'Last delivery at '+fmtT(ds.last):'No deliveries yet today'):'Served by '+(SITES.find(x=>x.k===sliceOfI(t.i))||site).name);
+    h+='<div class="irows">'+irow('Delivered',ds.recv+' order'+(ds.recv===1?'':'s'))+irow('On time',ds.recv?Math.round(ds.onTime/ds.recv*100)+'%':'—')+irow('Paid you',ds.cr+' cr')+irow('Customer type',home?'Household':'Retail shop')+'</div>';
+    if(open.length){h+='<div class="isub"><span>Open orders</span><span>tap to track</span></div>';open.slice(0,5).forEach(x=>{h+='<div class="invrow" data-trko="'+x.id+'"><span class="mono" style="font-weight:700">'+x.id+'</span><span>'+esc(x.s)+'</span><span></span><span></span></div>';});}
+    else if(lastJob)h+='<button class="act wide" data-trko="'+lastJob.id+'">Track last delivery '+lastJob.id+'</button>';
+  }else if(s.kind==='tk'&&s.xfer){
+    const A=SITES[s.from],B=SITES[s.to],left=xferLeft(s),prog=Math.max(2,100-left/Math.max(1,s.total)*100),mv=moved(s);
+    h+=insHead('WARETRACK · TRANSFER',s.id,hpick(DRIVERS,s.id)+' · '+plateOf(s.id),ICON.truck,true);
+    h+=istat('In transit','info',A.code+' '+A.name+' → '+B.code+' '+B.name)+ibar(prog,'',Math.round(prog)+'%');
+    h+='<div class="irows">'+irow('From',A.code+' · '+esc(A.name))+irow('To',B.code+' · '+esc(B.name))+irow('Cargo',s.n+' pallets'+(s.sku?' · mostly '+esc(SKUS[s.sku].name):' · mixed stock'))+irow('Left at',fmtT(s.times.start))+irow('ETA',fmtT(xferEta(s)))+irow('Speed',(mv?22:0)+' km/h')+'</div>';
   }else if(s.kind==='van'){
     const j=s.jobs[0],m=j?Math.round(j.due-clockMin()):null;
     h+=insHead('DELIVERY VAN · '+site.code,s.id,s.driver+' · WareTrack Express',ICON.truck,true);
@@ -2964,6 +3087,7 @@ function pickAt(x,y){
   const LT=[...lites.values()];
   let hit=ray.intersectObjects([...trucks.map(t=>t.g),...forklifts.map(f=>f.g),...liteTrucks.map(t=>t.g),...vans.map(v=>v.g),...LT.flatMap(Lt=>Lt.fls.map(f=>f.g))],true).find(h=>!h.object.isSprite);
   if(!hit){const extra=[...slots.map(s=>s.pallet),...staging.map(s=>s.pallet)].filter(Boolean).concat(bays.map(b=>b.g),chargers.map(c=>c.g),LT.flatMap(Lt=>Lt.bays.map(b=>b.door.parent)));hit=ray.intersectObjects(extra,true).find(h=>!h.object.isSprite);}
+  if(!hit){const D=[];town.objs.forEach(g=>{if(g.userData.sel)D.push(g);});hit=ray.intersectObjects(D,true).find(h=>!h.object.isSprite);}
   if(!hit&&LT.length)hit=ray.intersectObjects(LT.map(Lt=>Lt.G),true).find(h=>!h.object.isSprite);
   if(!hit)return null;
   let o=hit.object; while(o&&!o.userData.sel)o=o.parent; return o?o.userData.sel:null;
@@ -2993,6 +3117,7 @@ $('#pHead').addEventListener('click',()=>{if(innerWidth>760||game.building)retur
 pBody.addEventListener('click',e=>{
   const tl=e.target.closest('[data-tool]'); if(tl&&game.town){game.townTool=tl.dataset.tool;renderPanel();return;}
   const db=e.target.closest('[data-dbuy]'); if(db){e.stopPropagation();buyDel(db.dataset.dbuy);return;}
+  const tro=e.target.closest('[data-trko]'); if(tro&&!e.target.closest('[data-act]')){game.trk='out';game.trkOrder=tro.dataset.trko;renderTrack();renderPanel();return;}
   const dv=e.target.closest('[data-van]'); if(dv){const v=vans.find(x=>x.id===dv.dataset.van);if(v){select(v);focusOn(v);}return;}
   const bb=e.target.closest('[data-buy-build]'); if(bb){e.stopPropagation();buyBuild(bb.dataset.buyBuild);return;}
   const br=e.target.closest('[data-bkey]'); if(br&&game.building){buildSel=br.dataset.bkey;const g=ghosts.find(x=>x.userData.build===buildSel);if(g)view.targetT.set(g.position.x+OX,0,g.position.z);renderPanel();return;}
@@ -3000,12 +3125,14 @@ pBody.addEventListener('click',e=>{
   if(a){e.stopPropagation();const [act,arg]=a.dataset.act.split(':');
     if(act==='prio')prioritize(arg);
     else if(act==='exp'){if(expedite(arg))spend(35);}
+    else if(act==='xfer'){if(requestTransfer(arg))spend(15);}
     else if(act==='temp'){if(hireTemp(60))spend(60);}
     dirty=true;renderPanel();return;}
   const r=e.target.closest('[data-pick]');if(!r)return;const o=[...trucks,...forklifts].find(x=>x.id===r.dataset.pick);if(o){select(o);focusOn(o);}
 });
 
 function truckStatus(t){
+  if(t.xfer)return['In transit','info'];
   if(t.lite)return liteTruckStatus(t);
   if(t.state==='queued'){if(!t.atGate)return['Driving in','info'];const w=clockMin()-t.times.gate;return['At gate '+fmtDur(w),w>15?'bad':'warn'];}
   if(t.state==='docking')return['Docking','warn'];
@@ -3049,14 +3176,14 @@ function renderPanel(){
     h+='<div class="sub"><span>Pick queue · '+sim.orders.length+'</span></div>';
     if(!sim.orders.length) h+='<div class="empty">Queue is clear. New orders drop in every few minutes.</div>';
     sim.orders.forEach((o,i)=>{const s=SKUS[o.sku];const ok=st[o.sku].free>0;
-      h+='<div class="row'+(o.late?' late':'')+'"><div class="badge '+(o.rush?'rush':'')+'">'+(o.rush?'R':i+1)+'</div><div class="t"><b class="mono">'+o.id+(o.rush?' <span class="pill rush">RUSH</span>':'')+'</b><small>'+esc(s.name)+(o.shop?' for '+esc(o.shop.name):'')+' · '+dueText(o)+(ok?'':' · no stock')+'</small></div><div class="r">'+(i>0?'<button class="act" data-act="prio:'+o.id+'">Move to front</button>':'<span class="pill info">Next</span>')+'</div></div>';});
+      h+='<div class="row click'+(o.late?' late':'')+(game.trkOrder===o.id?' hl':'')+'" data-trko="'+o.id+'"><div class="badge '+(o.rush?'rush':'')+'">'+(o.rush?'R':i+1)+'</div><div class="t"><b class="mono">'+o.id+(o.rush?' <span class="pill rush">RUSH</span>':'')+'</b><small>'+esc(s.name)+(o.shop?' for '+esc(o.shop.name):'')+' · '+dueText(o)+(ok?'':' · no stock')+'</small></div><div class="r">'+(i>0?'<button class="act" data-act="prio:'+o.id+'">Move to front</button>':'<span class="pill info">Next</span>')+'</div></div>';});
     if(inprog.length){h+='<div class="sub"><span>In progress · '+inprog.length+'</span></div>';
-      inprog.forEach(({o,s})=>{h+='<div class="row'+(o.late?' late':'')+'"><div class="badge '+(o.rush?'rush':'')+'">'+(o.rush?'R':'›')+'</div><div class="t"><b class="mono">'+o.id+'</b><small>'+esc(s)+' · '+dueText(o)+'</small></div><div class="r"><span class="pill ok">'+esc(SKUS[o.sku].code)+'</span></div></div>';});}
+      inprog.forEach(({o,s})=>{h+='<div class="row click'+(o.late?' late':'')+(game.trkOrder===o.id?' hl':'')+'" data-trko="'+o.id+'"><div class="badge '+(o.rush?'rush':'')+'">'+(o.rush?'R':'›')+'</div><div class="t"><b class="mono">'+o.id+'</b><small>'+esc(s)+' · '+dueText(o)+'</small></div><div class="r"><span class="pill ok">'+esc(SKUS[o.sku].code)+'</span></div></div>';});}
   }else if(tab==='inv'){
     h+='<div class="sub"><span>Racks · '+occ+' of '+slots.length+' slots</span></div>';
     SKU_KEYS.forEach(k=>{const s=SKUS[k],v=st[k];const lv=v.pallets===0?['Out','bad']:v.pallets<3?['Low','warn']:['In stock','ok'];
       h+='<div class="row'+(hl===k?' hl':'')+'"><div class="sw" style="background:'+s.color+'"></div><div class="t"><b>'+esc(s.name)+'</b><small class="mono">'+s.code+' · '+v.pallets+' plt · '+fmtN(v.units)+' units</small></div><div class="r"><span class="pill '+lv[1]+'">'+lv[0]+'</span>'+
-        (v.pallets<4?(rushInbound(k)?'<span class="pill info">Rush inbound</span>':'<button class="act" data-act="exp:'+k+'">Expedite'+cost(35)+'</button>'):'')+'</div></div>';});
+        (v.pallets<4?(rushInbound(k)?'<span class="pill info">Rush inbound</span>':'<button class="act" data-act="xfer:'+k+'" title="A WareTrack truck brings it from another of your warehouses">Transfer'+cost(15)+'</button> <button class="act" data-act="exp:'+k+'">Expedite'+cost(35)+'</button>'):'')+'</div></div>';});
   }else if(tab==='dock'){
     bays.forEach(b=>{const t=b.truck;
       if(!t){h+='<div class="row"><div class="badge">B'+(b.i+1)+'</div><div class="t"><b>Bay '+(b.i+1)+'</b><small>Door closed · ready</small></div><div class="r"><span class="pill ok">Free</span></div></div>';return;}
@@ -3155,11 +3282,39 @@ function renderShift(){
 $('#shift').addEventListener('click',()=>{if(innerWidth>760)return;if(game.phase==='free')openMenu('play');else $('#shift').classList.toggle('open');});
 function trackTarget(){
   if(selected&&(selected.kind==='tk'||selected.kind==='fl'))return selected;
+  const tx=xfers.find(t=>t.to===game.siteIdx&&t.requested); if(tx)return tx;
   const u=trucks.filter(t=>t.state==='unloading'||t.state==='docking');
   return u.sort((a,b)=>(b.times.arrived||9e9)-(a.times.arrived||9e9))[0]||trucks.find(t=>t.state==='queued')||trucks[0]||null;
 }
+function trkToggle(el,mode){mode=mode||game.trk;const th=el.querySelector('.th');if(th&&th.insertAdjacentHTML)th.insertAdjacentHTML('beforeend','<span class="trkmode"><button data-trk="in" class="'+(mode!=='out'?'on':'')+'">Inbound</button><button data-trk="out" class="'+(mode==='out'?'on':'')+'">Outbound</button></span>');}
+function renderOutTrack(el,ot){
+  const o=ot.o||{}, j=ot.j, d=(j&&j.shop)||o.shop||{name:'—'}, home=!!d.home;
+  const lab=['Order placed','Picked','Staged','Shipped','Out for delivery','Delivered'];
+  const times=[o.created,o.pickedAt,o.stagedAt,j&&j.created,j&&j.sent,j&&j.deliveredAt]; let lis='';
+  lab.forEach((l,i)=>{const cls=i<ot.stage?'done':i===ot.stage?'now':'';const tm=times[i]!=null&&i<=ot.stage?fmtT(times[i]):'';lis+='<li class="'+cls+'"><div class="dot"></div><span>'+l+'</span><time>'+tm+'</time></li>';});
+  const due=j?j.due:null;
+  el.innerHTML='<div class="track-main"><div class="th"><span class="ic">'+destIcon(home)+'</span>Shipment tracking<span class="mono">'+esc(o.id||(j&&j.id)||'')+(ot.v?' · '+ot.v.id:'')+'</span></div><ol class="steps">'+lis+'</ol></div>'+
+    '<div class="track-side"><b>'+esc(d.name)+'</b><span>'+(home?'Home delivery':'Shop delivery')+(d.addr&&!home?' · '+esc(d.addr):'')+' · from '+site.code+'</span><span class="pill '+ot.cls+'" style="align-self:flex-start">'+esc(ot.where)+'</span><span>'+(j&&j.deliveredAt?'Delivered '+fmtT(j.deliveredAt):due?'Promised by '+fmtT(due):o.due?'Ship by '+fmtT(o.due):'')+'</span><button class="focus" data-focus>Center on map →</button></div>';
+  trkToggle(el,'out');
+  const fb=el.querySelector('[data-focus]'); if(fb) fb.onclick=()=>{if(ot.v){select(ot.v);focusOn(ot.v);}else if(d.x!=null)view.targetT.set(d.x,0,d.z);};
+}
 function renderTrack(){
-  const o=trackTarget(), el=$('#track');
+  const el=$('#track'), sl=selected;
+  let ot=null;
+  if(sl&&sl.kind==='van')ot=orderTrack(sl.jobs[0]&&sl.jobs[0].id)||defaultOutbound();
+  else if(sl&&sl.kind==='dest'){const op=openOrdersFor(sl.t.key);const lj=del.recent.find(r=>r.job&&r.job.shop.key===sl.t.key);ot=orderTrack(op[0]?op[0].id:lj&&lj.id);}
+  else if(game.trk==='out'&&!(sl&&(sl.kind==='tk'||sl.kind==='fl'))){ot=orderTrack(game.trkOrder)||defaultOutbound();}
+  if(ot){renderOutTrack(el,ot);return;}
+  if(game.trk==='out'&&!(sl&&(sl.kind==='tk'||sl.kind==='fl'))){el.innerHTML='<div class="track-main"><div class="th"><span class="ic">'+ICON.shop+'</span>Shipment tracking</div><p style="color:var(--ink-3);margin:10px 0 0">No outbound orders yet. Orders to shops and homes show up here as soon as they drop.</p></div>';trkToggle(el,'out');return;}
+  renderTrackIn(el);
+  trkToggle(el,'in');
+}
+function renderTrackIn(el){
+  const o=trackTarget();
+  if(o&&o.xfer){const t=o,A=SITES[t.from],B=SITES[t.to],lab=['Requested','Loaded at '+A.code,'On the road','At '+B.code+' gate','Unloading','Received'];let lis='';
+    lab.forEach((l,i)=>{const cls=i<2?'done':i===2?'now':'';lis+='<li class="'+cls+'"><div class="dot"></div><span>'+l+'</span><time>'+(i<2?fmtT(t.times.start):'')+'</time></li>';});
+    el.innerHTML='<div class="track-main"><div class="th"><span class="ic">'+ICON.truck+'</span>Transfer tracking<span class="mono">'+t.id+'</span></div><ol class="steps">'+lis+'</ol></div><div class="track-side"><b>'+t.ship+'</b><span>From '+esc(A.name)+' to '+esc(B.name)+'</span><span class="pill info" style="align-self:flex-start">In transit</span><span>ETA '+fmtT(xferEta(t))+' · '+t.n+' pallets</span><button class="focus" data-focus>Center on map →</button></div>';
+    el.querySelector('[data-focus]').onclick=()=>focusOn(o); return;}
   if(o&&o.lite){const t=o,Ls=t.lite.s,[s,c]=liteTruckStatus(t),T=t.times;
     const stg=t.state==='queued'?(t.atGate?2:1):t.state==='docking'?3:t.state==='departing'?5:4;
     const lab=['Order confirmed','Picked','At gate','Docked',(t.dir==='out'?'Loading ':'Unloading ')+t.done+'/'+t.n,t.dir==='out'?'Departed':'Received'];
@@ -3356,7 +3511,9 @@ $('#siteDD').addEventListener('click',e=>{const n=e.target.closest('[data-net]')
   if(game.phase==='shift')toast('info','Viewing '+SITES[i].name,'Your shift at '+site.name+' keeps running. Switch sites between shifts.',ICON.lock);
   else if(!unlocked(i))toast('info',SITES[i].name+' is locked','Earn 2 stars at '+SITES[i-1].name+' to run it. You can still watch it work.',ICON.lock);});
 $('#bellDD').addEventListener('click',e=>{if(e.target.closest('[data-clear]')){notices.length=0;renderBellDD();}});
+$('#track').addEventListener('click',e=>{const b=e.target.closest('[data-trk]');if(!b)return;e.stopPropagation();game.trk=b.dataset.trk;game.trkOrder=null;if(selected&&['tk','fl','van','dest'].includes(selected.kind))select(null);renderTrack();});
 $('#insp').addEventListener('click',e=>{const b=e.target.closest('[data-ins]');if(b){const a=b.dataset.ins;if(a==='close')select(null);else if(a==='follow'){game.follow=game.follow===selected?null:selected;}else if(a==='focus')focusOn(selected);else if(a==='run'){flyToSite(+b.dataset.idx,true);return;}renderInspector();return;}
+  const tro=e.target.closest('[data-trko]');if(tro){game.trk='out';game.trkOrder=tro.dataset.trko;renderTrack();return;}
   const lp=e.target.closest('[data-lpick]');if(lp){const t=liteTrucks.find(x=>x.id===lp.dataset.lpick);if(t){select(t);focusOn(t);}return;}
   const g=e.target.closest('[data-goto]');if(g)setTab(g.dataset.goto);});
 $('#lvlChip').onclick=()=>openMenu('me');
@@ -3423,7 +3580,7 @@ function tick(now){
     }
     dispatchQueue();
     trucks.slice().forEach(t=>updateTruck(t,dt));
-    lites.forEach(Lt=>updateLite(Lt,dt));
+    lites.forEach(Lt=>{updateLite(Lt,dt);liteXferTick(Lt,dt);}); updateXfers(dt);
     forklifts.forEach(f=>updateForklift(f,dt));
     for(let i=forklifts.length-1;i>=0;i--){const f=forklifts[i];if(f.remove){world.remove(f.g);forklifts.splice(i,1);if(selected===f)select(null);}}
     staging.forEach(s=>{if(!s.pallet)return;s.t+=dt;
