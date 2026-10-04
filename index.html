@@ -1058,6 +1058,8 @@ Object.assign(sun.shadow.camera,{left:-42,right:42,top:42,bottom:-42,near:1,far:
 sun.shadow.bias=-0.0006; sun.shadow.normalBias=0.02;
 scene.add(sun); scene.add(sun.target);
 scene.add(new THREE.AmbientLight('#dfe7f5',0.18));
+const SUN_NOON=new THREE.Color('#fffaf0'),SUN_DAWN=new THREE.Color('#ffb46a'),BG_NOON=new THREE.Color('#e6e9f5'),BG_DAWN=new THREE.Color('#ece0d2'),_sunC=new THREE.Color(),_bgC=new THREE.Color();
+function dayPhase(){return game.phase==='shift'?clamp((clockMin()-480)/480,0,1):0.5;}
 const world=new THREE.Group(); scene.add(world);
 
 /* ---------------- helpers ---------------- */
@@ -1766,7 +1768,7 @@ function vanAhead(o,dt){
 }
 function updateVans(dt){
   if(dt>0)dispatchVans();
-  for(let i=vans.length-1;i>=0;i--){const v=vans[i];runSteps(v,dt);place(v);if(v.done){env.remove(v.g);vans.splice(i,1);if(selected===v)select(null);}}
+  for(let i=vans.length-1;i>=0;i--){const v=vans[i];runSteps(v,dt);place(v);v.g.visible=onMap(v.x,v.z);if(v.done){env.remove(v.g);vans.splice(i,1);if(selected===v)select(null);}}
   if(dt>0){const now=clockMin();del.jobs.forEach(j=>{if(!j.warned&&now>j.due){j.warned=true;log(j.id+' is waiting at the depot past its promised time','bad');}});}
 }
 function clearVans(){vans.forEach(v=>env.remove(v.g));vans.length=0;del.jobs.length=0;del.today=0;del.recent.length=0;}
@@ -3269,6 +3271,9 @@ function placeCam(){
   cam.lookAt(t); cam.zoom=view.zoom; cam.updateProjectionMatrix();
   scene.fog.near=90+60/view.zoom; scene.fog.far=90+190/view.zoom;
   sun.position.set(t.x-14,34,t.z+22); sun.target.position.copy(t);
+  const warm=Math.pow(Math.abs(dayPhase()-0.5)*2,1.4);
+  sun.color.copy(_sunC.copy(SUN_NOON).lerp(SUN_DAWN,warm*0.55)); sun.intensity=0.62-0.16*warm;
+  scene.background.copy(_bgC.copy(BG_NOON).lerp(BG_DAWN,warm*0.4)); scene.fog.color.copy(scene.background);
   if(walls.back){walls.back.visible=walls.backTrim.visible=Math.cos(view.az)>-0.2;walls.left.visible=walls.leftTrim.visible=Math.sin(view.az)>-0.2;}
 }
 const el=renderer.domElement, ptrs=new Map();
