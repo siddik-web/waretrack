@@ -20,13 +20,13 @@ python3 -m http.server 8000
 
 - **Warehouse simulation:** trucks queue at the gate, back into docks and unload. Forklifts route through aisles, lift to rack levels, charge their batteries, and pick orders to outbound staging.
 - **Shifts and scoring:** 8-hour shifts (about 8 minutes at 1× speed) with three goals, stars, order combos and a points ledger.
-- **Three warehouses:** Northgate DC, Harbor Point and Ridgeview, each unlocked with 2 stars at the previous one.
+- **Five warehouses in one live world:** Northgate DC, Riverside Hub, Eastport Cold Chain, Southfield Cross-Dock and Westgate Robotics Hub sit side by side on one road network. You run one site in full detail; the other four keep working on their own, with trucks queuing, docking, unloading or loading outbound freight, and yard forklifts moving pallets. Each site has its own building style (gable roof, cold store with silos, sawtooth cross-dock, solar-roofed robotics hub). Unlock each one with 2 stars at the previous site.
 - **Problems with choices:** breakdowns, spills, rush orders, late trucks, order surges and low stock.
 - **Progression:** XP and 8 ranks, 24 achievements, a daily challenge with streaks, upgrades, cosmetics, and a build mode for each warehouse.
 - **Town planner:** buy plots, lay roads, and put up houses, shops, offices, depots and parks. Buildings linked to the warehouse by road earn credits, and shops you build become delivery customers. You can also buy the empty Unit 7 to run a second warehouse.
 - **Traffic rules:** right-hand driving, lane-following, traffic lights with amber and all-red phases, safe following distance and left-turn yielding. The game's trucks and vans obey them too.
 - **Inspector and selection:** tap a truck, forklift, dock bay, charger or pallet to see its details. Selected items get blue corner brackets, a label, and a route line with a destination pin. The follow camera tracks moving vehicles.
-- **Site switcher and notifications:** jump between warehouses from the top bar or zoom out to a network overview; the bell lists problems, achievements and promotions.
+- **Site switcher and notifications:** the camera flies between warehouses from the top bar (between shifts, the site you fly to becomes the one you run), or zoom out to a network overview with map pins for every site. Tap any truck, forklift, dock or building at another site to inspect it; the bell lists problems, achievements and promotions.
 - **Training shift, sound and juice:** a guided first shift, synthesized sound effects and music, floating points and confetti.
 
 ## Controls
