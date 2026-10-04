@@ -49,3 +49,7 @@ Progress (stars, credits, upgrades, builds, town, achievements) is stored in the
 ## Deploy
 
 It's a static site, so any static host works (Vercel, Netlify, GitHub Pages). With Vercel, import the repo with no framework preset and no build command.
+
+## Game rules spreadsheet
+
+`WareTrack_game_rules.xlsx` lists every warehouse, scoring rule, problem card, action, upgrade and the traffic rules, plus a shift calculator for estimating score, stars and credits.
