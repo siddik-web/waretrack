@@ -255,7 +255,7 @@ body.building .track,body.building .leftcol,body.building .kpis{display:none}
 .cam hr{border:0;border-top:1px solid var(--line);margin:2px 4px}
 
 /* floating tag, score pops, toasts, coach, confetti */
-.tag3d{position:fixed;left:0;top:0;pointer-events:none;background:var(--ink);color:#fff;font-family:var(--f-mono);font-size:11px;font-weight:700;padding:4px 8px;border-radius:7px;white-space:nowrap;box-shadow:var(--shadow);z-index:3}
+.tag3d{position:fixed;left:0;top:0;pointer-events:none;background:var(--cobalt);color:#fff;font-family:var(--f-mono);font-size:11px;font-weight:700;padding:4px 8px;border-radius:7px;white-space:nowrap;box-shadow:var(--shadow);z-index:3}
 .tag3d::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;background:inherit;transform:translateX(-50%) rotate(45deg)}
 .tag3d small{font-family:var(--f-body);font-weight:500;opacity:.75;margin-left:6px}
 #fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
@@ -420,6 +420,74 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
 .callout.flame{background:#ffe9dc;color:var(--flame)}
 .callout.mute{background:var(--mute-soft);color:var(--ink-2)}
 
+
+/* inspector card (top right), site/notification dropdowns, profile chip */
+.insp{position:absolute;top:calc(env(safe-area-inset-top,0px) + 74px);right:16px;width:340px;max-height:calc(100% - 74px - min(330px,40vh) - 42px - env(safe-area-inset-bottom,0px));overflow:auto;padding:12px 14px}
+.ih{display:flex;gap:10px;align-items:flex-start}
+.iic{width:40px;height:40px;border-radius:11px;background:var(--cobalt-soft);color:var(--cobalt);display:grid;place-items:center;flex:none}
+.iic svg{width:20px;height:20px}
+.it{flex:1;min-width:0}
+.it .eyebrow{font-size:9.5px}
+.it h2{margin:2px 0 0;font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it p{margin:1px 0 0;color:var(--ink-3);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ibtns{display:flex;gap:4px;flex:none}
+.ib{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);border:1px solid var(--line);background:var(--glass-solid)}
+.ib svg{width:14px;height:14px}
+.ib:hover{color:var(--ink)}
+.ib.on{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
+.istat{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:var(--ink-2);min-width:0}
+.istat span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ibar{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10.5px;color:var(--ink-3);white-space:nowrap}
+.ibar .meter{margin:0;flex:1}
+.irows{margin-top:6px}
+.irow{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
+.irow:last-child{border-bottom:0}
+.irow span{color:var(--ink-3);white-space:nowrap}
+.irow b{font-weight:600;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link{color:var(--cobalt)}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.igrid .mini b span{color:var(--ink-3);font-size:10.5px;font-weight:500}
+.isub{display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:12px 0 2px}
+.invrow{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line);font-size:12px;cursor:pointer;border-radius:6px}
+.invrow:hover{background:var(--mute-soft)}
+.invrow .ibar{margin:0;width:60px}
+.dd{position:fixed;z-index:6;width:320px;max-height:70vh;overflow:auto;padding:6px}
+.ddi{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:8px;border-radius:10px}
+.ddi:hover:not(:disabled){background:var(--mute-soft)}
+.ddi.cur{background:var(--cobalt-soft)}
+.ddi:disabled{opacity:.55}
+.ddi svg{width:14px;height:14px;color:var(--ink-3)}
+.ddi .code{font-family:var(--f-mono);font-size:10px;font-weight:700;color:#fff;border-radius:7px;padding:5px 6px;background:var(--cobalt)}
+.ddi .code.all{background:var(--ink)}
+.ddi b{display:block;font-size:12.5px}
+.ddi small{display:block;color:var(--ink-3);font-size:11px}
+.ddi .meter{margin-top:5px}
+.ddnote{font-size:11px;color:var(--ink-3);padding:6px 8px 4px}
+.ddh{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 8px}
+.ddh b{font-size:13px}
+.ddn{display:grid;grid-template-columns:40px 1fr;gap:8px;padding:8px;border-top:1px solid var(--line);font-size:12px}
+.ddn time{font-family:var(--f-mono);color:var(--ink-3);font-size:11px}
+.ddn b{display:block;font-size:12px}
+.ddn small{display:block;color:var(--ink-2);font-size:11px}
+.bell{position:relative}
+.bdg{position:absolute;top:2px;right:2px;min-width:15px;height:15px;border-radius:8px;background:var(--bad);color:#fff;font-size:9.5px;font-weight:800;display:grid;place-items:center;padding:0 3px;line-height:1}
+.site .chev{width:12px;height:12px;color:var(--ink-3);margin-left:2px}
+.lvl{gap:8px;padding:4px 10px 4px 4px}
+.lvl .n{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#ffd76a,#f2c230);font-size:13px}
+.lvl .who{text-align:left;display:flex;flex-direction:column;gap:1px}
+.lvl .who b{font-size:12px;line-height:1.1}
+.lvl .who small{font-size:10.5px;color:var(--ink-3)}
+.lvl .xp{width:100%;margin-top:2px}
+@media (min-width:761px){
+  .panel{top:auto;height:min(330px,40vh)}
+  .panel.building{top:calc(env(safe-area-inset-top,0px) + 74px);height:auto}
+}
+.panel .eyebrow,.panel .p-title,.panel .chips{display:none}
+.panel .p-head{padding-top:4px}
+.panel .tabs{margin-top:0}
+@media (max-width:1500px){ .search{display:none} }
+@media (max-width:1380px){ .ibtn span,.call span{display:none} }
+@media (max-width:1240px){ .lvl .who{display:none} .lvl{padding:4px} }
 @media (max-width:1280px){ .search{display:none} }
 @media (max-width:1160px){ .kpi:nth-child(4){display:none} .site{display:none} .lvl .xp{display:none} }
 @media (max-width:980px){
@@ -473,6 +541,10 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
   .steps li::before{top:8px}
   .fl-grid{margin-top:8px}
   .hint{bottom:calc(var(--sheet,110px) + 130px)}
+  .insp{display:none}
+  .insp.sel{display:block;top:calc(env(safe-area-inset-top,0px) + 116px);left:16px;right:16px;width:auto;max-height:40vh}
+  body.inspecting .leftcol{display:none}
+  .bell{display:none}
   .coach{top:auto;bottom:calc(var(--sheet,110px) + 12px)}
   body.coach-top .coach{top:calc(env(safe-area-inset-top,0px) + 112px);bottom:auto}
   .buildbar{top:calc(env(safe-area-inset-top,0px) + 58px);left:16px;right:16px;transform:none;white-space:normal}
@@ -513,14 +585,13 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
       WareTrack
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
     </button>
-    <button class="lvl" id="lvlChip" aria-label="Profile"><span class="n" id="lvlN">1</span><span class="xp"><i id="lvlXp"></i></span></button>
     <label class="search" for="q">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Search trucks, forklifts, SKUs…" autocomplete="off">
       <kbd>/</kbd>
     </label>
     <div class="spacer"></div>
-    <button class="site" id="siteChip"><span class="code" id="siteCode">WH-02</span><div><b id="siteName">Northgate DC</b><small id="siteSub">—</small></div></button>
+    <button class="site" id="siteChip" aria-haspopup="true"><span class="code" id="siteCode">WH-02</span><div><b id="siteName">Northgate DC</b><small id="siteSub">—</small></div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
     <div class="clock" id="clockPill"><span class="dot"></span><span class="lbl" id="clockLbl">Live</span><b id="clock">08:00</b><span class="left" id="clockLeft"></span><i class="prog" id="clockProg"></i></div>
     <div class="combo" id="comboChip" hidden><span id="comboX">×1.25</span><small>combo</small><span class="pips" id="comboPips"></span></div>
     <div class="score free" id="scoreChip"><label>Score</label><b id="score">Free play</b></div>
@@ -531,7 +602,9 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
     </div>
     <button class="ibtn" id="townBtn" aria-pressed="false" title="Town planner (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>Town</span></button>
     <button class="ibtn" id="buildBtn" aria-pressed="false" title="Build mode (B)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6 4 4M3 21l9-9M12.5 4.5 16 1l7 7-3.5 3.5z"/><path d="m11 13 3-3"/></svg><span>Build</span></button>
+    <button class="ibtn bell" id="bellBtn" aria-label="Notifications" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bdg" id="bellN" hidden>0</span></button>
     <button class="ibtn" id="soundBtn" aria-label="Sound on" title="Sound"><svg id="soundIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg></button>
+    <button class="lvl" id="lvlChip" aria-label="Profile"><span class="n" id="lvlN">1</span><span class="who"><b id="lvlRank">Trainee</b><small id="lvlSub">Level 1</small><span class="xp"><i id="lvlXp"></i></span></span></button>
     <button class="call" id="callTruck" title="Book an extra inbound truck">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>Call truck</span>
     </button>
@@ -549,6 +622,8 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
     <section class="incident glass" id="incident" hidden></section>
   </div>
 
+  <div class="dd glass" id="siteDD" hidden></div>
+  <div class="dd glass" id="bellDD" hidden></div>
   <div class="buildbar glass" id="townbar" hidden><b>Town planner</b><span>Pick a tool, then tap plots on the map</span><button class="act" id="townUndo">Undo</button><button class="act solid" id="townDone">Done</button></div>
   <div class="buildbar glass" id="buildbar" hidden><b>Build mode</b><span>Tap a glowing plot or pick from the list</span><button class="act solid" id="buildDone">Done</button></div>
 
@@ -561,6 +636,7 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
     <button id="home" aria-label="Reset view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg></button>
   </div>
 
+  <section class="insp glass" id="insp" aria-live="polite"></section>
   <aside class="panel glass" id="panel">
     <div class="p-head" id="pHead">
       <div class="handle"></div>
@@ -569,9 +645,10 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
       <div class="chips" id="chips"></div>
       <div class="tabs" role="tablist">
         <button role="tab" id="t-ord" data-tab="ord" aria-selected="true">Orders <span class="count" id="cOrd">0</span></button>
-        <button role="tab" id="t-inv" data-tab="inv" aria-selected="false">Stock</button>
         <button role="tab" id="t-dock" data-tab="dock" aria-selected="false">Docks <span class="count" id="cDock">0</span></button>
-        <button role="tab" id="t-fleet" data-tab="fleet" aria-selected="false">Fleet</button>
+        <button role="tab" id="t-fl" data-tab="fl" aria-selected="false">Forklifts <span class="count" id="cFl">0</span></button>
+        <button role="tab" id="t-tk" data-tab="tk" aria-selected="false">Trucks <span class="count" id="cTk">0</span></button>
+        <button role="tab" id="t-inv" data-tab="inv" aria-selected="false">Stock</button>
         <button role="tab" id="t-log" data-tab="log" aria-selected="false">Log</button>
       </div>
     </div>
@@ -632,6 +709,9 @@ const ICON={
   home:I('<path d="M3 11 12 4l9 7v9H3z"/><path d="M9 20v-6h6v6"/>'),
   shop:I('<path d="M4 9h16l-1-5H5zM5 9v11h14V9M9 20v-6h6v6"/>'),
   office:I('<path d="M5 21V3h14v18M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>'),
+  target:I('<circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="1.5"/>'),
+  expand:I('<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>'),
+  x:I('<path d="M6 6l12 12M18 6 6 18"/>'),
   sound:I('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>'),
   mute:I('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 5 5M22 9l-5 5"/>'),
 };
@@ -651,6 +731,7 @@ const CARRIERS=[
   {name:'Nordline',tag:'Northbound & beyond',stripe:'#25a69a',from:'Albany, NY'},
   {name:'Bluepeak',tag:'Freight from the peak',stripe:'#2c4bb3',from:'Scranton, PA'},
   {name:'Cargoviva',tag:'Live cargo, on time',stripe:'#e0664f',from:'Baltimore, MD'},
+  {name:'WareTrack',tag:'Freight that feels like a game',stripe:'#2f5be0',cab:'#2f5be0',from:'Edison, NJ'},
   {name:'Halvard',tag:'Heavy haul since 1998',stripe:'#8a5cd6',from:'Hartford, CT'},
 ];
 const SITES=[
@@ -847,6 +928,7 @@ document.addEventListener('click',e=>{if(e.target.closest('button'))Snd.play('cl
 
 /* ---------------- toasts & confetti ---------------- */
 function toast(kind,title,body,icon){
+  notify(kind,title,body);
   const el=document.createElement('div'); el.className='toast '+kind;
   el.innerHTML='<span class="ti">'+(icon||ICON.trophy)+'</span><div><b>'+esc(title)+'</b>'+(body?'<small>'+esc(body)+'</small>':'')+'</div>';
   const box=$('#toasts'); box.appendChild(el); while(box.children.length>3)box.firstChild.remove();
@@ -893,8 +975,8 @@ renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-scene.background=new THREE.Color('#e4eaf2');
-scene.fog=new THREE.Fog('#e4eaf2',150,270);
+scene.background=new THREE.Color('#e6e9f5');
+scene.fog=new THREE.Fog('#e6e9f5',150,270);
 scene.add(new THREE.HemisphereLight('#ffffff','#b4c2d6',0.78));
 const sun=new THREE.DirectionalLight('#fffaf0',0.62);
 sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
@@ -948,20 +1030,37 @@ function sprite(tex,s){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t
 
 /* ---------------- environment ---------------- */
 const walls={};
+const shell={mats:[],g:null,op:0};
+function shellMat(o){const m=new THREE.MeshStandardMaterial(Object.assign({roughness:.8,transparent:true,opacity:shell.op},o));shell.mats.push(m);return m;}
 function buildSite(){
   box(20,0.1,26,site.floor,-10,0.05,0,world,false);
-  box(24,0.06,26,'#e6ebf2',12,0.03,0,world,false);
-  box(24,0.18,0.3,'#c9d3e0',12,0.09,-13.15,world,false);
-  box(24,0.18,0.3,'#c9d3e0',12,0.09,13.15,world,false);
+  box(24,0.06,26,'#eef1f8',12,0.03,0,world,false);
+  box(24,0.18,0.3,'#dde2f0',12,0.09,-13.15,world,false);
+  box(24,0.18,0.3,'#dde2f0',12,0.09,13.15,world,false);
   floorText('GATE',21.5,15.4,2.6,1.0,{color:'#9aa8bc',size:80});
   stripe(17.2,14.4,23.2,14.4,0.16,'#ffffff',0.075);
 
-  walls.back=box(20.6,4.6,0.3,'#d5dfeb',-10,2.3,-13.15);
+  walls.back=box(20.6,4.8,0.3,'#e9edf7',-10,2.4,-13.15);
   walls.backTrim=box(20.6,0.25,0.34,site.accent,-10,4.6,-13.15);
-  walls.left=box(0.3,4.6,26.6,'#cdd8e6',-20.15,2.3,0);
+  walls.left=box(0.3,4.8,26.6,'#e3e8f4',-20.15,2.4,0);
   walls.leftTrim=box(0.34,0.25,26.6,site.accent,-20.15,4.6,0);
   const edges=[-13.15,...BAY_Z.flatMap(z=>[z-1.75,z+1.75]),13.15];
   for(let i=0;i<edges.length;i+=2){const a=edges[i],b=edges[i+1]; if(b-a>0.05) box(0.35,0.9,b-a,'#cdd7e4',0,0.45,(a+b)/2);}
+
+  // closed warehouse shell: front/dock walls and a blue gable roof; fades out when you zoom in
+  shell.mats=[]; shell.g=new THREE.Group(); world.add(shell.g); const S=shell.g;
+  const corr=canvasTex(256,64,(c,W,H)=>{c.fillStyle='#f3f5fb';c.fillRect(0,0,W,H);c.fillStyle='#e1e6f2';for(let x=0;x<W;x+=16)c.fillRect(x,0,3,H);});
+  corr.wrapS=corr.wrapT=THREE.RepeatWrapping; corr.repeat&&corr.repeat.set(10,1);
+  const wallM=shellMat({map:corr,color:'#ffffff'}), trimM=shellMat({color:site.accent}), roofM=shellMat({color:'#2f5be0'});
+  box(20.6,4.8,0.3,wallM,-10,2.4,13.15,S); box(20.7,0.3,0.36,trimM,-10,4.75,13.15,S);
+  for(let i=0;i<edges.length;i+=2){const a=edges[i],b=edges[i+1]; if(b-a>0.05) box(0.3,3.9,b-a,wallM,0,2.85,(a+b)/2,S);}
+  BAY_Z.forEach(z=>box(0.3,0.42,3.6,wallM,0,4.62,z,S));
+  box(0.36,0.3,26.7,trimM,0,4.75,0,S);
+  const rf=new THREE.Mesh(prism(21.2,27.2,2.6),roofM); rf.position.set(-10,4.85,0); rf.castShadow=true; S.add(rf);
+  const logo=canvasTex(1024,256,(c,W,H)=>{c.fillStyle='#ffffff';c.beginPath();const cx=150,cy=128,r=78;for(let k=0;k<6;k++){const a=Math.PI/3*k-Math.PI/2;c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}c.closePath();c.fill();c.fillStyle='#2f5be0';c.beginPath();c.arc(cx,cy,30,0,Math.PI*2);c.fill();c.fillStyle='#ffffff';c.font='800 120px "Bricolage Grotesque", Figtree, sans-serif';c.textBaseline='middle';c.fillText('WareTrack',270,134);});
+  const lg=new THREE.Mesh(new THREE.PlaneGeometry(10,2.5),shellMat({map:logo,color:'#ffffff'})); lg.material.transparent=true;
+  const ang=Math.atan2(2.6,13.6); lg.rotation.x=-(Math.PI/2-ang); lg.position.set(-10,4.85+1.3+0.06,6.8+0.02); S.add(lg);
+  [[-15,-6],[-6,-6]].forEach(([x,z])=>{box(1.8,0.8,1.3,shellMat({color:'#d9dfec'}),x,6.9,z,S);});
 
   stripe(-6.25,-12.6,-6.25,12.6,0.12,'#f2c230');
   stripe(-2.85,-12.6,-2.85,12.6,0.12,'#f2c230');
@@ -977,10 +1076,15 @@ function buildSite(){
     for(let i=0;i<6;i++)for(let j=0;j<2;j++){const p=makePallet(pick(['BOX','BRK','LED']));p.position.set(-18.2+i*1.6,0.02,8.6+j*1.6);world.add(p);}
     floorText('BULK FLOOR',-13.6,11.6,5,0.7,{color:'#9aa8bc',size:70});
   }
+  chargers.length=0;
   HOMES.forEach((h,i)=>{
-    const fast=L.fc.includes(i);
-    box(1.25,0.012,1.3,fast?'#bfe9df':'#d6f0e3',h.x,0.064,h.z,world,false);
-    if(fast){const pz=h.z<0?h.z-0.55:h.z+0.55; box(0.36,0.9,0.18,'#2fb39a',h.x,0.45,pz); box(0.2,0.12,0.2,'#c8fff1',h.x,0.95,pz,world,false);}
+    const fast=L.fc.includes(i), back=h.z<0?-1:1;
+    box(1.25,0.012,1.3,fast?'#9fe8cf':'#c4f1d8',h.x,0.064,h.z,world,false);
+    const g=new THREE.Group(); g.position.set(h.x,0,h.z+back*0.64); world.add(g);
+    box(0.64,1.05,0.3,fast?'#e3fbf3':'#f6f7fb',0,0.53,0,g); box(0.44,0.26,0.04,fast?'#2fb39a':'#22d36f',0,0.78,-back*0.16,g,false);
+    plane(txtTex('C'+(i+1),'#ffffff','#2f5be0',128,64,46),0.42,0.21,g,0,0.38,-back*0.158,back>0?Math.PI:0);
+    const c={kind:'chg',i,g,x:h.x,z:h.z,fast,sessions:2+hashStr(site.code+i)%5,kwh:8+(hashStr('k'+site.code+i)%300)/10};
+    g.userData.sel=c; chargers.push(c);
   });
   floorText('CHARGING',-2.4,-10.75,3.2,0.6,{color:'#23a26a',size:72});
   floorText('CHARGING',-2.4,10.75,3.2,0.6,{color:'#23a26a',size:72});
@@ -1042,7 +1146,7 @@ const tcx=i=>20+TS*i, tcz=j=>-22+TS*j;
 const DIRS=[[0,-1],[1,0],[0,1],[-1,0]]; // N E S W  (N = -z)
 const opp=d=>(d+2)%4;
 const rightOf=d=>[-DIRS[d][1],DIRS[d][0]];
-const LANE=1.6, ASPH='#5c636f';
+const LANE=1.6, ASPH='#c7cee8';
 const tkey=(i,j)=>i+','+j;
 const env=new THREE.Group(); scene.add(env);
 const townStatic=new THREE.Group(); env.add(townStatic);
@@ -1101,17 +1205,17 @@ function faceRot(d){return Math.atan2(DIRS[d][0],DIRS[d][1]);}
 
 function drawRoad(g,t){
   const m=roadMask(t), n=m.filter(Boolean).length, priv=t.type==='private';
-  box(8,0.1,8,'#d6dbe3',0,0.05,0,g,false);
-  box(6.2,0.03,6.2,'#c3cad4',0,0.1,0,g,false);
+  box(8,0.1,8,'#eef0f8',0,0.05,0,g,false);
+  box(6.2,0.03,6.2,'#dde2f1',0,0.1,0,g,false);
   box(6,0.05,6,ASPH,0,0.12,0,g,false);
   for(let d=0;d<4;d++) if(m[d]){const hz=d%2===1; box(hz?1.05:6,0.05,hz?6:1.05,ASPH,DIRS[d][0]*3.48,0.12,DIRS[d][1]*3.48,g,false);}
   const Y='#f2c230',W='#f4f6fa',ln=(x,z,w,d,c)=>box(w,0.012,d,c,x,0.152,z,g,false);
   const NS=m[0]&&m[2]&&!m[1]&&!m[3], EW=m[1]&&m[3]&&!m[0]&&!m[2];
   if(NS||EW){
     const L=(a,b,w,d,c)=>NS?ln(a,b,w,d,c):ln(b,a,d,w,c);
-    if(priv){for(let z=-3;z<4;z+=2)L(0,z,.12,1,W);}else{L(-.13,0,.1,8,Y);L(.13,0,.1,8,Y);}
+    if(priv){for(let z=-3;z<4;z+=2)L(0,z,.12,1,W);}else{for(let z=-3.4;z<4;z+=2)L(0,z,.14,1.1,W);}
     L(-2.82,0,.1,8,priv?Y:W); L(2.82,0,.1,8,priv?Y:W);
-    if(hashStr(t.key)%5===0) {const mh=cyl(.35,.35,.02,'#4a515c',NS?1.4:0,.155,NS?0:1.4,g,12);mh.castShadow=false;}
+    if(hashStr(t.key)%5===0) {const mh=cyl(.35,.35,.02,'#aab3cf',NS?1.4:0,.155,NS?0:1.4,g,12);mh.castShadow=false;}
     if(priv&&(t.j===3||t.j===9)) plane(txtTex('TRUCKS ONLY',null,'#f2c230',512,96,64),5,1,g,-.9,0.16,0,NS?Math.PI/2:0,true);
   }else if(n>=3){
     for(let d=0;d<4;d++){ if(!m[d])continue; const v=d%2===0;
@@ -1119,7 +1223,7 @@ function drawRoad(g,t){
       const nb=nbT(t,d); if(nb&&linkT(nb)){const r=rightOf(opp(d)); const cx=DIRS[d][0]*4.35+r[0]*1.5, cz=DIRS[d][1]*4.35+r[1]*1.5; box(v?3:.35,0.012,v?.35:3,W,cx,0.158,cz,g,false);}
     }
   }else{
-    for(let d=0;d<4;d++){ if(!m[d])continue; const v=d%2===0; if(!priv){ if(v){ln(-.13,DIRS[d][1]*2,.1,4,Y);ln(.13,DIRS[d][1]*2,.1,4,Y);} else {ln(DIRS[d][0]*2,-.13,4,.1,Y);ln(DIRS[d][0]*2,.13,4,.1,Y);} } }
+    for(let d=0;d<4;d++){ if(!m[d])continue; const v=d%2===0; if(!priv){ for(let k=0.5;k<4;k+=2){ if(v) ln(0,DIRS[d][1]*(k+0.55),.14,1.1,W); else ln(DIRS[d][0]*(k+0.55),0,1.1,.14,W);} } }
     if(n===1){const tt=new THREE.Mesh(new THREE.CylinderGeometry(3.4,3.4,0.05,24),mat(ASPH));tt.position.set(0,0.121,0);g.add(tt);}
   }
 }
@@ -1156,7 +1260,7 @@ function makeDepot(g,t){
   plane(txtTex('WareTrack Depot','#2f5be0','#fff',640,110,54),4.4,0.8,h,0.6,3.45,2.21);
   box(3.4,0.05,1.4,'#c9d2df',-1.4,0.03,3.1,h,false);
 }
-function makeParkTile(g){box(7.6,0.04,7.6,'#bfe0b4',0,0.03,0,g,false); box(7.6,0.03,1,'#e9dfc8',0,0.05,0,g,false); box(1,0.03,7.6,'#e9dfc8',0,0.05,0,g,false);
+function makeParkTile(g){box(7.6,0.04,7.6,'#d3efdc',0,0.03,0,g,false); box(7.6,0.03,1,'#f3f4fa',0,0.05,0,g,false); box(1,0.03,7.6,'#f3f4fa',0,0.05,0,g,false);
   const b=new THREE.Group(); b.position.set(2,0,1.3); g.add(b); box(1.6,.08,.5,'#b98455',0,.48,0,b);box(1.6,.4,.08,'#b98455',0,.75,.22,b);
   cyl(.5,.6,.4,'#e3e8ef',-2,.2,-2,g,14);}
 function warnBadge(g){const s=sprite(warnTex,1.1);s.position.set(0,6.2,0);g.add(s);}
@@ -1171,18 +1275,18 @@ function renderTile(t){
   else if(t.type==='office') makeOffice(g,t);
   else if(t.type==='depot') makeDepot(g,t);
   else if(t.type==='park') makeParkTile(g);
-  else if(t.type==='trees') box(7.6,0.04,7.6,'#c7dfbf',0,0.03,0,g,false);
-  else if(t.type==='grass') box(7.7,0.03,7.7,'#cfe5c6',0,0.022,0,g,false);
+  else if(t.type==='trees') box(7.6,0.04,7.6,'#d8eedd',0,0.03,0,g,false);
+  else if(t.type==='grass') box(7.7,0.03,7.7,'#e0e5f4',0,0.022,0,g,false);
   if(BTYPES[t.type]&&BTYPES[t.type].inc&&t.owner==='player'&&!connected(t)) warnBadge(g);
   env.add(g); town.objs.set(t.key,g);
 }
 function makeNeighbor(name,cx,cz,trim,state){
   const g=new THREE.Group(); g.position.set(cx,0,cz); townStatic.add(g);
   const w=14,d=13,bx=-5;
-  box(w,6,d,'#e2e8f0',bx,3,0,g); box(w+.3,0.4,d+.3,trim,bx,6.2,0,g);
+  box(w,6,d,'#eef1f8',bx,3,0,g); box(w+.3,0.3,d+.3,trim,bx,6.1,0,g);
+  {const rf=new THREE.Mesh(prism(w+0.4,d+0.4,2.2),mat(trim==='#8a98ad'?'#9aa8bc':'#2f5be0'));rf.position.set(bx,6.2,0);rf.castShadow=true;g.add(rf);}
   for(let i=0;i<3;i++){ box(0.12,3.4,2.6,'#cdd6e3',bx+w/2+0.06,1.7,-4+i*4,g); box(0.3,0.5,3,trim,bx+w/2+0.15,3.7,-4+i*4,g); }
   plane(txtTex(name,'#ffffff',trim,768,110,60),11,1.6,g,bx,4.4,d/2+0.02);
-  for(let i=0;i<3;i++) box(1.8,0.9,1.3,'#c9d2df',bx-4+i*4,6.85,-3,g);
   box(9.6,0.05,15,'#cfd6e0',bx+w/2+4.9,0.03,0,g,false);
   if(state==='lease') plane(txtTex('FOR LEASE · 450 cr','#e0564b','#fff',640,128,60),5,1,g,bx+w/2+0.03,4.7,0,Math.PI/2);
   if(state!=='lease'){ [0,1].forEach(i=>{const tr=makeTruck(CARRIERS[(i+(cx>0?2:0))%4]); tr.position.set(bx+w/2+5.4,0,-4+i*8); tr.scale.setScalar(.8); g.add(tr);}); }
@@ -1199,8 +1303,8 @@ function makeGas(cx,cz){
 }
 function buildStatic(){
   while(townStatic.children.length) townStatic.remove(townStatic.children[0]);
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(480,480),mat('#d3e3cd')); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; townStatic.add(ground);
-  box(50,0.04,31,'#e1e6ee',2,0.02,0,townStatic,false);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(480,480),mat('#e8ebf6')); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; townStatic.add(ground);
+  box(50,0.04,31,'#edf0f8',2,0.02,0,townStatic,false);
   // yard fence with the north/south van gate at x≈12
   [-13.55,13.55].forEach(z=>{[[0.6,9.4],[14.6,16.6]].forEach(([a,b])=>{box(b-a,0.05,0.05,'#9aa8bc',(a+b)/2,0.55,z,townStatic,false);box(b-a,0.05,0.05,'#9aa8bc',(a+b)/2,0.95,z,townStatic,false);for(let x=a;x<=b+0.01;x+=1.9)box(0.07,1.05,0.07,'#8a98ad',x,0.52,z,townStatic);});
     box(0.25,1.6,0.25,'#3a5fd8',9.5,0.8,z,townStatic); box(0.25,1.6,0.25,'#3a5fd8',14.5,0.8,z,townStatic);});
@@ -1210,13 +1314,23 @@ function buildStatic(){
   [[GI0,0],[GI0,6],[GI0,10],[GI1,0],[GI1,6],[GI1,10]].forEach(([i,j])=>{const x=tcx(i)+(i<0?-24:24);box(40,0.07,6,ASPH,x,0.03,tcz(j),townStatic,false);box(40,0.06,8,'#d6dbe3',x,0.02,tcz(j),townStatic,false);});
   [-8,0,4].forEach(i=>{box(6,0.07,40,ASPH,tcx(i),0.03,tcz(GJ0)-24,townStatic,false);box(8,0.06,40,'#d6dbe3',tcx(i),0.02,tcz(GJ0)-24,townStatic,false);});
   [-8,4].forEach(i=>{box(6,0.07,40,ASPH,tcx(i),0.03,tcz(GJ1)+24,townStatic,false);box(8,0.06,40,'#d6dbe3',tcx(i),0.02,tcz(GJ1)+24,townStatic,false);});
+  // boom barriers at the truck entrance and the van gate
+  const barrier=(px,pz,len,dir,kind)=>{const g=new THREE.Group();g.position.set(px,0,pz);townStatic.add(g);
+    box(0.35,1.1,0.35,'#eef1f8',0,0.55,0,g); box(0.42,0.22,0.42,'#e0564b',0,1.16,0,g);
+    const arm=new THREE.Group(); arm.position.set(0,1.02,0); g.add(arm);
+    for(let k=0;k<Math.round(len/0.6);k++) box(0.6,0.12,0.12,k%2?'#ffffff':'#e0564b',dir*(0.35+k*0.6),0,0,arm,false);
+    barriers.push({arm,pz,dir,kind,open:0});};
+  barriers.length=0; barrier(23.9,20.8,5.4,-1,'tk'); barrier(14.6,-14.2,4.8,-1,'van');
+  // shipping containers on the warehouse lawn
+  const ctr=(x,z,col,rib,ry)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry||0;townStatic.add(g);box(6,2.5,2.4,col,0,1.25,0,g);for(let k=-2.7;k<=2.71;k+=0.45)box(0.07,2.3,2.46,rib,k,1.25,0,g,false);plane(txtTex('OCEANIC LINE',null,'#ffffff',512,96,60),3.4,0.55,g,0,1.55,1.24);};
+  ctr(-16.5,18.4,'#2fb3a5','#27998d',0); ctr(-8.5,18.2,'#3a5fd8','#3150bd',0.06);
   makeGas(40,34);
   makeNeighbor('Union Freight',-28,-42,'#e0664f');
   makeNeighbor('Kestrel Cold Storage',36,-42,'#25a69a');
   makeNeighbor('Meridian Parcel',36,46,'#8a5cd6');
   buildUnit7();
   // city park (tiles 1..3 × 1..4)
-  box(23.6,0.03,31.6,'#c5ddbd',36,0.025,-2,townStatic,false);
+  box(23.6,0.03,31.6,'#d3efdc',36,0.025,-2,townStatic,false);
   const pond=new THREE.Mesh(new THREE.CircleGeometry(1,40),new THREE.MeshStandardMaterial({color:'#9cc7ec',roughness:.2,metalness:.05}));
   pond.rotation.x=-Math.PI/2; pond.scale.set(5,3.6,1); pond.position.set(37,0.05,-2); townStatic.add(pond);
   cyl(.6,.8,.5,'#e3e8ef',37,.25,-2,townStatic,16); cyl(.12,.12,1,'#e3e8ef',37,.8,-2,townStatic);
@@ -1239,12 +1353,12 @@ function buildUnit7(){
 }
 function plantTrees(list){
   const n=list.length; if(!n)return null;
-  const trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.12,.17,1,6),mat('#8a6a4a'),n);
-  const crown=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.9,flatShading:true}),n);
-  const d=new THREE.Object3D(), C=['#7fbf7a','#6aae6f','#8cc98a','#5fa368','#9ccf8e','#b5cf7a','#e6a86a'];
+  const trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.09,.12,1,6),mat('#9c8a78'),n);
+  const crown=new THREE.InstancedMesh(new THREE.SphereGeometry(1,14,12),new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.75}),n);
+  const d=new THREE.Object3D(), C=['#4cc777','#5bd085','#41b86b','#6fd894','#3fae66','#7ad99b','#57c47f'];
   list.forEach((t,i)=>{
-    const s=t.s; d.rotation.set(0,0,0); d.position.set(t.x,s*0.6,t.z); d.scale.set(s,s*1.2,s); d.updateMatrix(); trunk.setMatrixAt(i,d.matrix);
-    d.position.set(t.x,s*1.9,t.z); d.rotation.set(0,t.r,0); d.scale.set(s*.95,s*1.1,s*.95); d.updateMatrix(); crown.setMatrixAt(i,d.matrix);
+    const s=t.s; d.rotation.set(0,0,0); d.position.set(t.x,s*0.75,t.z); d.scale.set(s*0.7,s*1.5,s*0.7); d.updateMatrix(); trunk.setMatrixAt(i,d.matrix);
+    d.position.set(t.x,s*2.15,t.z); d.rotation.set(0,t.r,0); d.scale.set(s*.82,s*.95,s*.82); d.updateMatrix(); crown.setMatrixAt(i,d.matrix);
     crown.setColorAt(i,new THREE.Color(C[t.c]));
   });
   trunk.castShadow=true; crown.castShadow=true; crown.receiveShadow=true; env.add(trunk); env.add(crown);
@@ -1476,18 +1590,19 @@ function buildBays(){
     const light=new THREE.Mesh(bgeo(.12,.22,.22),lightMat); light.position.set(0.2,3.1,-2.05); g.add(light);
     const door=box(0.14,3.6,3.18,'#e9eef6',0,1.9,0,g);
     for(let k=0;k<6;k++) box(0.16,0.03,3.2,'#cdd6e3',0,-1.5+k*0.6,0,door,false);
-    bays.push({i,z,truck:null,g,lightMat,door,open:0});
+    const bo={i,z,truck:null,g,lightMat,door,open:0,count:0}; g.userData.sel={kind:'bay',bay:bo}; bays.push(bo);
   });
 }
 
 /* ---------------- models ---------------- */
+let palSeq=1000;
 function makePallet(sku){
   const s=SKUS[sku], g=new THREE.Group();
   box(1.1,0.14,1.1,'#c99a60',0,0.07,0,g);
   box(1.0,s.h,1.0,s.color,0,0.14+s.h/2,0,g);
   box(0.22,0.012,1.01,'#f1dfb8',0,0.146+s.h,0,g,false);
   box(0.012,0.22,0.32,'#ffffff',0.506,0.14+s.h*0.6,0,g,false);
-  g.userData.sku=sku; return g;
+  g.userData.sku=sku; g.userData.meta={id:'PAL-'+(++palSeq),lot:'L25'+pad(palSeq%97)+'-'+(100+palSeq%900),recv:clockMin()-Math.floor(Math.random()*240)}; g.userData.sel={kind:'pal',g}; return g;
 }
 const labelTexCache={};
 function labelTex(car){
@@ -1510,7 +1625,7 @@ function makeTruck(car,expedite){
   const p2=new THREE.Mesh(pg,lm); p2.position.set(-1.2,2.55,-1.256); p2.rotation.y=Math.PI; g.add(p2);
   box(0.06,2.5,2.3,'#e3e8f0',-5.21,2.4,0,g);
   box(10.2,0.35,1.5,'#3b4658',-0.1,0.78,0,g);
-  box(2.2,2.25,2.42,'#ffffff',4.15,1.95,0,g);
+  box(2.2,2.25,2.42,car.cab||'#ffffff',4.15,1.95,0,g);
   box(1.6,0.55,2.34,car.stripe,3.85,3.33,0,g);
   box(2.22,0.3,2.44,car.stripe,4.15,1.25,0,g);
   box(0.08,0.85,2.14,'#2a3950',5.24,2.45,0,g);
@@ -1554,7 +1669,7 @@ function makeForklift(temp){
 const slots=[], staging=[];
 function buildSlots(){
   ROWS.forEach((z,r)=>{for(let i=0;i<8;i++)for(let lv=0;lv<ROW_LV[r];lv++)slots.push({r,i,lv,x:SLOT_X(i),z,y:LEVEL_Y[lv],pallet:null,claimed:false,id:'ABCD'[r]+'-'+pad(i+1)+'-'+(lv+1)});});
-  for(let i=0;i<8;i++)staging.push({x:SLOT_X(i),pallet:null,claimed:false,t:0,order:null});
+  for(let i=0;i<8;i++){const st={x:SLOT_X(i),pallet:null,claimed:false,t:0,order:null}; st.pin=makePin(1.25); st.pin.position.set(st.x,0,STAGE_Z); st.pin.visible=false; world.add(st.pin); staging.push(st);}
 }
 const blocked=r=>(sim.blocked[r]||0)>sim.sec;
 function stockBySku(){const o={};SKU_KEYS.forEach(k=>o[k]={pallets:0,units:0,free:0});slots.forEach(s=>{if(s.pallet){const k=s.pallet.userData.sku;o[k].pallets++;o[k].units+=SKUS[k].units;if(!s.claimed)o[k].free++;}});return o;}
@@ -1693,9 +1808,9 @@ function updateForklift(f,dt){
   else{
     const atHome=Math.abs(f.x-f.home.x)<.05&&Math.abs(f.z-f.home.z)<.05;
     if(f.temp&&sim.sec>f.until){ f.remove=true; log(f.id+' temp driver clocked out',''); }
-    else if(f.charging&&f.battery<92){ f.battery=Math.min(100,f.battery+dt*rate); f.task={type:'Charging',text:'Charging at the wall'+(f.fast?' (fast charger)':'')}; }
+    else if(f.charging&&f.battery<92){ const ch=chargers[HOMES.indexOf(f.home)]; if(ch){if(!f.chgOn){f.chgOn=true;ch.sessions++;} ch.kwh+=dt*rate*0.048;} f.battery=Math.min(100,f.battery+dt*rate); f.task={type:'Charging',text:'Charging at the wall'+(f.fast?' (fast charger)':'')}; }
     else{
-      f.charging=false;
+      f.charging=false; f.chgOn=false;
       if(f.battery<22){ goHome(f,true); log(f.id+' battery low, heading to charger','warn'); }
       else{
         const occ=occupied()/slots.length;
@@ -1744,7 +1859,7 @@ function spawnTruck(sh,bay){
 function assignBay(t,bay){
   t.bay=bay; bay.truck=t; t.state='docking';
   const P=planner(t);
-  P.mv(21.6,bay.z+3.2).mv(20.2,bay.z).mv(6.0,bay.z,true,.8).act(()=>{t.state='unloading';t.times.arrived=clockMin();log(t.id+' '+t.car.name+' docked at Bay '+(bay.i+1),'info');});
+  P.mv(21.6,bay.z+3.2).mv(20.2,bay.z).mv(6.0,bay.z,true,.8).act(()=>{t.state='unloading';bay.count++;t.times.arrived=clockMin();log(t.id+' '+t.car.name+' docked at Bay '+(bay.i+1),'info');});
   t.steps=P.steps;
 }
 function dispatchQueue(){
@@ -1849,7 +1964,7 @@ function raise(inc){
   inc.ttl=inc.ttl||22; inc.t=0;
   if(game.incident) game.queue.push(inc); else showIncident(inc);
 }
-function showIncident(inc){game.incident=inc;Snd.play('alert');renderIncident();}
+function showIncident(inc){game.incident=inc;notify('warn',inc.title,inc.body);Snd.play('alert');renderIncident();}
 function chooseIncident(i){
   const inc=game.incident; if(!inc)return;
   const o=inc.options[i]; if(!o)return;
@@ -2260,6 +2375,172 @@ function updateTownHover(){
   tg.innerHTML=esc(I.title)+(I.kind==='sale'||I.kind==='own'?'<small>'+esc(game.townTool==='buy'?'Buy':TOOLS.find(x=>x[0]===game.townTool)[1])+'</small>':'');
 }
 
+/* ---------------- inspector, selection visuals, pins, route ---------------- */
+const DRIVERS=['Ada Larsen','Noah Tanaka','Sam Chen','Alex Haddad','Zoe Reyes','Inez Moreau','Ravi Patel','Mia Okafor','Leo Novak','Sara Kim','Omar Farouk','Lena Vogel'];
+const FL_MODELS=['Toyota 8FBE18','Jungheinrich EFG 216','Linde E20','Hyster J2.0XN'];
+const SHIPPERS=['Sunvale Grocers','Harbor & Co.','Halcyon Retail','Oakridge Market','Bayline Supply'];
+const UNIT_KG={LED:2.4,CHR:14,BOX:0.3,GLV:0.1,BRK:0.6};
+const SKU_CAT={LED:'Lighting',CHR:'Furniture',BOX:'Packaging',GLV:'PPE',BRK:'Hardware'};
+const hpick=(arr,s)=>arr[hashStr(s)%arr.length];
+function plateOf(s){const h=hashStr('p'+s),A='ABCDEFGHJKLMNPRSTUVWXYZ';return A[h%23]+A[(h>>5)%23]+A[(h>>10)%23]+'-'+(1000+h%9000);}
+const irow=(l,v)=>'<div class="irow"><span>'+l+'</span><b>'+v+'</b></div>';
+function moved(o){const m=o._lx!=null&&Math.hypot(o.x-o._lx,o.z-o._lz)>0.02;o._lx=o.x;o._lz=o.z;return m;}
+function prism(w,d,r){const a=w/2,b=d/2;const P=[-a,0,b, a,0,b, a,r,0, -a,0,b, a,r,0, -a,r,0,  a,0,-b, -a,0,-b, -a,r,0, a,0,-b, -a,r,0, a,r,0,  a,0,b, a,0,-b, a,r,0,  -a,0,-b, -a,0,b, -a,r,0];
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.computeVertexNormals(); return g;}
+function makePin(lift){
+  lift=lift||0; const g=new THREE.Group();
+  const head=new THREE.Mesh(GEOS.pinHead||(GEOS.pinHead=new THREE.SphereGeometry(.34,18,14)),mat('#2f5be0')); head.position.y=1.0+lift;
+  const tip=new THREE.Mesh(GEOS.pinTip||(GEOS.pinTip=new THREE.ConeGeometry(.3,.64,18)),mat('#2f5be0')); tip.rotation.x=Math.PI; tip.position.y=.64+lift;
+  const dot=new THREE.Mesh(GEOS.pinDot||(GEOS.pinDot=new THREE.SphereGeometry(.13,10,8)),mat('#ffffff')); dot.position.set(0,1.03+lift,.25);
+  [head,tip,dot].forEach(m=>{m.userData.y0=m.position.y;m.castShadow=true;g.add(m);});
+  const sh=new THREE.Mesh(GEOS.pinSh||(GEOS.pinSh=new THREE.CircleGeometry(.36,18)),new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.22,depthWrite:false})); sh.rotation.x=-Math.PI/2; sh.position.y=.09; g.add(sh);
+  g.userData.head=[head,tip,dot]; return g;
+}
+const brk=new THREE.Group(); brk.visible=false; scene.add(brk);
+const BRK_DIM={tk:[11,4.2,2.9,0],fl:[2.8,2.7,1.5,0.2],bay:[1.2,4.8,4.2,0],chg:[1.5,1.4,1.6,0],pal:[1.4,1.5,1.4,0]};
+function bracketGeo(w,h,d){const pts=[],e=Math.min(w,h,d)*0.28+0.18;
+  for(const x of [-w/2,w/2])for(const y of [0,h])for(const z of [-d/2,d/2]){const sx=x<0?1:-1,sy=y===0?1:-1,sz=z<0?1:-1;pts.push(x,y,z,x+sx*e,y,z,x,y,z,x,y+sy*e,z,x,y,z,x,y,z+sz*e);}
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3)); return g;}
+function setBrackets(s){
+  while(brk.children.length)brk.remove(brk.children[0]);
+  if(!s){brk.visible=false;return;}
+  const D=BRK_DIM[s.kind]||[2,2,2,0];
+  const ls=new THREE.LineSegments(bracketGeo(D[0],D[1],D[2]),new THREE.LineBasicMaterial({color:'#2f5be0'})); ls.position.x=D[3]; brk.add(ls);
+  const fill=new THREE.Mesh(bgeo(D[0],D[1],D[2]),new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.07,depthWrite:false})); fill.position.set(D[3],D[1]/2,0); brk.add(fill);
+  const glow=new THREE.Mesh(new THREE.PlaneGeometry(D[0]+1.4,D[2]+1.4),new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.14,depthWrite:false})); glow.rotation.x=-Math.PI/2; glow.position.set(D[3],0.09,0); brk.add(glow);
+  brk.visible=true;
+}
+const route=new THREE.Group(); scene.add(route); let routeT=0;
+const routeMat=new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.85,depthWrite:false});
+const dashMat=new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.45,depthWrite:false});
+function rebuildRoute(){
+  while(route.children.length)route.remove(route.children[0]);
+  const s=selected; if(!s||!(s.kind==='tk'||s.kind==='fl'))return;
+  const pts=[[s.x,s.z]]; for(const st of s.steps){if(st.t==='move')pts.push([st.x,st.z]); if(pts.length>9)break;}
+  if(pts.length<2)return;
+  let solid=0;
+  for(let i=0;i<pts.length-1;i++){
+    const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz); if(len<0.05)continue;
+    if(solid<10){const m=new THREE.Mesh(bgeo(1,0.02,0.42),routeMat); m.scale.x=len; m.position.set((a[0]+b[0])/2,0.2,(a[1]+b[1])/2); m.rotation.y=Math.atan2(-dz,dx); route.add(m); solid+=len;}
+    else for(let u=0.2;u<len;u+=1.1){const m=new THREE.Mesh(bgeo(0.42,0.02,0.42),dashMat); m.position.set(a[0]+dx/len*u,0.2,a[1]+dz/len*u); route.add(m);}
+  }
+  const e=pts[pts.length-1]; const pin=makePin(0); pin.position.set(e[0],0,e[1]); route.add(pin);
+}
+function selPos(s){
+  if(!s)return null;
+  if(s.kind==='tk')return {x:s.x,y:0,z:s.z,yaw:s.yaw,h:4.6};
+  if(s.kind==='fl')return {x:s.x,y:0,z:s.z,yaw:s.yaw,h:2.9};
+  if(s.kind==='bay')return {x:0.4,y:0,z:s.bay.z,yaw:0,h:5.3};
+  if(s.kind==='chg')return {x:s.x,y:0,z:s.z,yaw:0,h:1.9};
+  if(s.kind==='pal'){const v=s.g.getWorldPosition(new THREE.Vector3());return {x:v.x,y:v.y,z:v.z,yaw:0,h:1.7};}
+  return null;
+}
+function chgUser(c){return forklifts.find(f=>f.home===HOMES[c.i]);}
+function chgActive(c){const f=chgUser(c);return !!(f&&!f.steps.length&&f.task&&f.task.type==='Charging');}
+function palWhere(g){
+  const s=slots.find(x=>x.pallet===g); if(s)return {st:'Stored',cls:'ok',loc:site.code+' · rack '+s.id};
+  const st=staging.find(x=>x.pallet===g); if(st)return {st:'Staged',cls:'info',loc:site.code+' · outbound staging'+(st.order?' · '+st.order.id:'')};
+  const f=forklifts.find(x=>x.carry===g); if(f)return {st:'Moving',cls:'warn',loc:'On the forks of '+f.id};
+  return {st:'Bulk',cls:'',loc:site.code+' · bulk floor'};
+}
+function selLabel(s){
+  if(s.kind==='tk')return esc(s.id)+'<small>'+esc(truckStatus(s)[0])+'</small>';
+  if(s.kind==='fl')return esc(s.id)+'<small>'+esc(s.broken?'Broken down':s.task?s.task.type:'Idle')+'</small>';
+  if(s.kind==='bay')return 'Bay '+(s.bay.i+1)+'<small>'+(s.bay.truck?esc(truckStatus(s.bay.truck)[0]):'Free')+'</small>';
+  if(s.kind==='chg')return 'C'+(s.i+1)+'<small>'+(chgActive(s)?'Charging':'Free')+'</small>';
+  if(s.kind==='pal')return esc(s.g.userData.meta.id)+'<small>'+esc(SKUS[s.g.userData.sku].name)+'</small>';
+  return '';
+}
+function insHead(eyebrow,title,sub,icon,follow){
+  return '<div class="ih"><span class="iic">'+icon+'</span><div class="it"><div class="eyebrow">'+esc(eyebrow)+'</div><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p></div><div class="ibtns">'+
+    (follow?'<button class="ib'+(game.follow&&game.follow===selected?' on':'')+'" data-ins="follow" title="Follow with the camera" aria-label="Follow with the camera">'+ICON.target+'</button>':'')+
+    '<button class="ib" data-ins="focus" title="Center on map" aria-label="Center on map">'+ICON.expand+'</button><button class="ib" data-ins="close" title="Close" aria-label="Close">'+ICON.x+'</button></div></div>';
+}
+const istat=(label,cls,sub)=>'<div class="istat"><span class="pill '+cls+'">'+esc(label)+'</span><span>'+esc(sub||'')+'</span></div>';
+const ibar=(pct,cls,right)=>'<div class="ibar"><div class="meter '+(cls||'')+'"><i style="width:'+Math.max(0,Math.min(100,pct))+'%"></i></div>'+(right?'<span>'+right+'</span>':'')+'</div>';
+function renderInspector(){
+  const el=$('#insp');
+  if(game.building||game.town){el.hidden=true;document.body.classList.remove('inspecting');return;}
+  el.hidden=false; const s=selected;
+  el.classList.toggle('sel',!!s); document.body.classList.toggle('inspecting',!!s);
+  let h='';
+  if(!s){
+    const st=stockBySku(), occ=occupied(), docked=bays.filter(b=>b.truck&&b.truck.state==='unloading').length;
+    const arriving=trucks.filter(t=>t.state==='docking'||t.state==='queued').length, staged=staging.filter(x=>x.pallet).length, busy=bays.filter(b=>b.truck).length;
+    const incident=spills.length||forklifts.some(f=>f.broken);
+    h+='<div class="ih"><span class="iic">'+ICON.dock+'</span><div class="it"><div class="eyebrow">Distribution center · '+site.code+'</div><h2>'+esc(site.name)+'</h2><p>'+esc(site.addr)+'</p></div></div>';
+    h+='<div class="chips">'+(incident?'<span class="pill warn">Incident on floor</span>':'<span class="pill ok">Operational</span>')+'<span class="pill">'+docked+' docked</span><span class="pill">'+arriving+' arriving</span><span class="pill">'+staged+' staged</span></div>';
+    h+='<div class="igrid"><div class="mini"><label>Stock on hand</label><b>'+occ+' <span>/ '+slots.length+'</span></b>'+ibar(occ/slots.length*100,'')+'</div><div class="mini"><label>Truck bays</label><b>'+busy+' <span>/ '+bays.length+' busy</span></b>'+ibar(busy/bays.length*100,'ok')+'</div>'+
+      '<div class="mini"><label>Outbound today</label><b>'+sim.shipped+' <span>orders</span></b></div><div class="mini"><label>Put-aways today</label><b>'+sim.putaways+' <span>pallets</span></b></div></div>';
+    h+='<div class="isub"><span>Inventory</span><span>units</span></div>';
+    SKU_KEYS.slice().sort((a,b)=>st[b].units-st[a].units).slice(0,4).forEach(k=>{const v=st[k],lv=v.pallets===0?['Out','bad']:v.pallets<3?['Low Stock','warn']:['In Stock','ok'];
+      h+='<div class="invrow" data-goto="inv"><span class="sw" style="background:'+SKUS[k].color+';width:18px;height:18px"></span><span>'+esc(SKUS[k].name)+'</span><b class="mono">'+fmtN(v.units)+'</b><span class="pill '+lv[1]+'">'+lv[0]+'</span></div>';});
+    const working=forklifts.filter(f=>f.steps.length&&!f.charging&&!f.broken), f0=working[0]||forklifts[0];
+    h+='<div class="isub"><span>Forklift fleet</span><span>'+working.length+'/'+forklifts.length+' working</span></div>';
+    if(f0) h+='<div class="invrow" data-goto="fl"><span class="mono" style="font-weight:700">'+f0.id+'</span><span>'+esc(f0.task?f0.task.text:'Idle')+'</span>'+ibar(f0.battery,f0.battery<25?'bad':'ok','')+'<span class="mono">'+Math.round(f0.battery)+'%</span></div>';
+  }else if(s.kind==='tk'){
+    const [stt,c]=truckStatus(s), left=s.cargo.length-s.unloaded, mv=moved(s);
+    const prog=s.state==='unloading'?s.unloaded/s.cargo.length*100:s.state==='docking'?20:s.state==='departing'?100:s.atGate?8:3;
+    const sub=s.state==='queued'?(s.atGate?'Waiting at the gate':'Driving in · '+Math.max(0,Math.round(s.z-16))+' m to the gate'):s.state==='docking'?'Reversing into Bay '+(s.bay.i+1)+' · '+site.code:s.state==='unloading'?site.code+' · Bay '+(s.bay.i+1)+' · '+s.unloaded+'/'+s.cargo.length+' pallets':'Leaving '+site.code;
+    const eta=s.state==='unloading'?'Done in about '+Math.max(1,left*2)+' min':s.state==='departing'?'Departed':s.state==='docking'?fmtT(clockMin()+1)+' (1 min)':fmtT(clockMin()+Math.max(1,Math.round((s.z-16)/6)+2));
+    const spd=mv?(s.steps[0]&&s.steps[0].rev?5:22):0;
+    h+=insHead(s.car.name.toUpperCase()+' · CARRIER',s.id,hpick(DRIVERS,s.id)+' · '+plateOf(s.id),ICON.truck,true);
+    h+=istat(stt,c,sub)+ibar(prog,'',s.state==='unloading'?left+' left':'');
+    h+='<div class="irows">'+irow('Shipment','<span class="link">'+esc(s.ship)+'</span>')+irow('Shipper',esc(hpick(SHIPPERS,s.id)))+irow('Destination',site.code+' '+esc(site.name))+irow('ETA',eta)+irow('Speed',spd+' km/h')+irow('Bay',s.bay?'<span class="link">Bay '+(s.bay.i+1)+'</span> · '+site.code:'Gate queue')+irow('Cargo',s.unloaded+'/'+s.cargo.length+' pallets · '+(s.cargo.length*0.38).toFixed(1)+' t')+'</div>';
+  }else if(s.kind==='fl'){
+    const mv=moved(s), b=Math.round(s.battery), ty=s.broken?'Broken down':s.task?s.task.type:'Idle';
+    const lab=s.broken?'Broken down':ty==='Put-away'?'Unloading truck':ty==='Pick'?'Picking order':ty;
+    const cls=s.broken?'bad':ty==='Charging'?'warn':ty==='Idle'?'':'ok';
+    const ci=HOMES.indexOf(s.home);
+    h+=insHead('FORKLIFT · '+site.code,s.id,(s.temp?'Temp driver':hpick(DRIVERS,s.id))+' · '+hpick(FL_MODELS,s.id),ICON.fl,true);
+    h+=istat(lab,cls,s.broken?'Back in '+fmtDur(s.broken-sim.sec):(s.task?s.task.text:'Waiting for work'))+ibar(b,b<25?'bad':b<45?'warn':'ok','Battery '+b+'%');
+    h+='<div class="irows">'+irow('Carrying',s.carry?esc(s.carry.userData.meta.id+' · '+SKUS[s.carry.userData.sku].name):'Empty')+irow('Moves today',s.moved)+irow('Speed',(mv?(s.steps[0]&&s.steps[0].slow?4.5:8.2):0)+' km/h')+irow('Fork height',(s.forkY*1000|0)+' mm')+irow('Charger','<span class="link">C'+(ci+1)+'</span>'+(s.fast?' · fast':''))+irow('Site',esc(site.name))+'</div>';
+  }else if(s.kind==='bay'){
+    const b=s.bay,t=b.truck,[stt,c]=t?(t.state==='docking'?['Arriving','warn']:t.state==='unloading'?['Unloading','info']:['Departing','']):['Free','ok'];
+    h+=insHead('DOCK BAY · '+site.code,'Bay '+(b.i+1),'Dock door with leveller',ICON.dock,false);
+    h+=istat(stt,c,t?(t.state==='docking'?t.id+' is reversing in':t.state==='unloading'?t.id+' · '+t.unloaded+'/'+t.cargo.length+' pallets off':t.id+' pulling out'):'Door closed, ready for the next truck');
+    h+='<div class="irows">'+irow('Truck',t?'<span class="link">'+t.id+'</span> · '+esc(t.car.name):'—')+irow('Rear doors',Math.round(b.open*100)+'% open')+irow('Trucks today',b.count||0)+irow('Site',esc(site.name))+'</div>';
+  }else if(s.kind==='chg'){
+    const f=chgUser(s), on=chgActive(s);
+    h+=insHead('CHARGER · '+site.code,'C'+(s.i+1),(s.fast?'80 V fast charger':'48 V lithium-ion forklift charger'),ICON.plug,false);
+    h+=istat(on?'Charging':'Free',on?'warn':'ok',f?(on?f.id+' at '+Math.round(f.battery)+'%':f.id+' is out · '+(f.task?f.task.text:'Idle')):'No forklift assigned');
+    h+='<div class="irows">'+irow('Forklift',f?'<span class="link">'+f.id+'</span> · battery '+Math.round(f.battery)+'%':'—')+irow('Sessions today',s.sessions)+irow('Energy today',s.kwh.toFixed(1)+' kWh')+irow('Charge rate',((save.up.chg?5:2.5)*(s.fast?2:1)).toFixed(1)+'% a minute')+irow('Site',esc(site.name))+'</div>';
+  }else if(s.kind==='pal'){
+    const g=s.g,k=g.userData.sku,m=g.userData.meta,w=palWhere(g),u=SKUS[k].units;
+    h+=insHead('PALLET · '+SKU_CAT[k],SKUS[k].name,m.id+' · '+SKUS[k].code,ICON.box,false);
+    h+=istat(w.st,w.cls,w.loc);
+    h+='<div class="irows">'+irow('Quantity',fmtN(u)+' units')+irow('Gross weight',fmtN(u*UNIT_KG[k]+25)+' kg')+irow('Location',esc(w.loc))+irow('Lot',m.lot)+irow('Received',fmtT(m.recv))+irow('Site',esc(site.name))+'</div>';
+  }
+  el.innerHTML=h;
+}
+
+/* ---------------- top bar menus: sites, notifications ---------------- */
+const notices=[]; let unread=0;
+function notify(kind,title,body){notices.unshift({kind,title,body,t:clockMin()});if(notices.length>30)notices.pop();unread++;const b=$('#bellN');if(b){b.hidden=false;b.textContent=unread>9?'9+':String(unread);}}
+function closeDDs(){['#siteDD','#bellDD'].forEach(s=>{const d=$(s);if(d)d.hidden=true;});}
+function placeDD(dd,anchor){const r=anchor.getBoundingClientRect();dd.hidden=false;
+  if(innerWidth<=760){dd.style.left='16px';dd.style.right='16px';dd.style.width='auto';}else{dd.style.right='auto';dd.style.width='';dd.style.left=Math.max(16,Math.min(r.left,innerWidth-(dd.offsetWidth||320)-16))+'px';}
+  dd.style.top=(r.bottom+8)+'px';}
+function renderSiteDD(){
+  const docked=bays.filter(b=>b.truck&&b.truck.state==='unloading').length, fill=occupied()/Math.max(1,slots.length);
+  let h='<button class="ddi" data-net="1"><span class="code all">ALL</span><div><b>Network overview</b><small>Zoom out to the whole town</small></div></button>';
+  SITES.forEach((s,i)=>{const cur=i===game.siteIdx,un=unlocked(i),best=save.best[s.code];
+    h+='<button class="ddi'+(cur?' cur':'')+'" data-site="'+i+'"'+(un?'':' disabled')+'><span class="code" style="background:'+s.accent+'">'+s.code+'</span><div><b>'+esc(s.name)+'</b><small>'+
+      (cur?Math.round(fill*100)+'% full · '+docked+'/'+bays.length+' docked':un?(best?'Best '+fmtN(best.score)+' · '+best.stars+' of 3 stars':'Not played yet'):'Locked · 2 stars at '+esc(SITES[i-1].name))+'</small>'+
+      (cur?'<div class="meter"><i style="width:'+fill*100+'%"></i></div>':'')+'</div>'+(cur?'<span class="pill info">Here</span>':un?'':ICON.lock)+'</button>';});
+  if(save.town.unit7) h+='<div class="ddnote">WareTrack Depot 2 runs on its own and earns '+LEASE.inc+' credits an hour.</div>';
+  $('#siteDD').innerHTML=h;
+}
+function renderBellDD(){
+  $('#bellDD').innerHTML='<div class="ddh"><b>Notifications</b>'+(notices.length?'<button class="act" data-clear="1">Clear</button>':'')+'</div>'+
+    (notices.length?notices.slice(0,14).map(n=>'<div class="ddn '+n.kind+'"><time>'+fmtT(n.t)+'</time><div><b>'+esc(n.title)+'</b>'+(n.body?'<small>'+esc(n.body)+'</small>':'')+'</div></div>').join(''):'<div class="empty">Nothing new. Problems on the floor, achievements and promotions show up here.</div>');
+}
+function flyToSite(i){
+  exitTown(); exitBuild(true); select(null); closeModal();
+  view.zoomT=0.4;
+  setTimeout(()=>{freePlay(i);view.zoom=0.4;view.target.copy(view.targetT);},520);
+}
+
 /* ---------------- camera ---------------- */
 const cam=new THREE.OrthographicCamera(-1,1,1,-1,-200,400);
 const EL=0.6155;
@@ -2295,7 +2576,7 @@ el.addEventListener('pointermove',e=>{
   if(pinch&&ptrs.size===2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);view.zoomT=clamp(pinch.z*d/pinch.d,.4,3.2);return;}
   if(drag){
     const dx=e.clientX-drag.x,dy=e.clientY-drag.y; drag.x=e.clientX;drag.y=e.clientY;
-    if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>6){drag.moved=true;el.classList.add('dragging');hideHint();if(tut)tut.flags.drag=true;}
+    if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>6){drag.moved=true;game.follow=null;el.classList.add('dragging');hideHint();if(tut)tut.flags.drag=true;}
     if(drag.moved){
       const upp=(cam.top-cam.bottom)/view.zoom/innerHeight;
       const rx=Math.cos(view.az),rz=-Math.sin(view.az), fx=-Math.sin(view.az),fz=-Math.cos(view.az);
@@ -2321,7 +2602,9 @@ const ray=new THREE.Raycaster(), ndc=new THREE.Vector2();
 function setRay(x,y){ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); ray.setFromCamera(ndc,cam);}
 function pickAt(x,y){
   setRay(x,y);
-  const hit=ray.intersectObjects([...trucks.map(t=>t.g),...forklifts.map(f=>f.g)],true).find(h=>!h.object.isSprite); if(!hit)return null;
+  let hit=ray.intersectObjects([...trucks.map(t=>t.g),...forklifts.map(f=>f.g)],true).find(h=>!h.object.isSprite);
+  if(!hit){const extra=[...slots.map(s=>s.pallet),...staging.map(s=>s.pallet)].filter(Boolean).concat(bays.map(b=>b.g),chargers.map(c=>c.g));hit=ray.intersectObjects(extra,true).find(h=>!h.object.isSprite);}
+  if(!hit)return null;
   let o=hit.object; while(o&&!o.userData.sel)o=o.parent; return o?o.userData.sel:null;
 }
 function pickGhost(x,y){
@@ -2332,11 +2615,11 @@ let hoverT=0;
 function hoverAt(x,y){const n=performance.now();if(n-hoverT<60)return;hoverT=n;el.classList.toggle('hover',game.building?!!pickGhost(x,y):!!pickAt(x,y));}
 
 /* ---------------- selection ---------------- */
-let selected=null;
+let selected=null; const chargers=[], barriers=[];
 const ring=new THREE.Mesh(new THREE.RingGeometry(1,1.18,48),new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.55,depthWrite:false}));
 ring.rotation.x=-Math.PI/2; ring.visible=false; scene.add(ring);
-function select(o){selected=o;ring.visible=!!o;$('#tag3d').hidden=!o;dirty=true;}
-function focusOn(o){if(o)view.targetT.set(o.x,0,o.z);}
+function select(o){if(o!==selected)game.follow=null;selected=o;$('#tag3d').hidden=!o;setBrackets(o);rebuildRoute();dirty=true;renderInspector();}
+function focusOn(o){const p=selPos(o);if(p)view.targetT.set(p.x,0,p.z);}
 
 /* ---------------- HUD ---------------- */
 let tab='ord',dirty=true,hl=null;
@@ -2394,7 +2677,7 @@ function renderPanel(){
     (queued?'<span class="pill '+(queued>1?'bad':'warn')+'">'+queued+' at gate</span>':'')+
     '<span class="pill">'+staging.filter(s=>s.pallet).length+' staged</span>';
   const co=$('#cOrd'); co.textContent=sim.orders.length; co.className='count'+(lateN?' hot':'');
-  $('#cDock').textContent=docked+'/'+bays.length;
+  $('#cDock').textContent=docked+'/'+bays.length; $('#cFl').textContent=forklifts.filter(f=>f.steps.length&&!f.charging&&!f.broken).length+'/'+forklifts.length; $('#cTk').textContent=trucks.filter(t=>t.state!=='departing').length;
   const cost=c=>game.phase==='shift'?' · −'+c:'';
   let h='';
   if(tab==='ord'){
@@ -2421,12 +2704,13 @@ function renderPanel(){
     h+='<div class="sub"><span>En route</span></div>';
     if(!sim.enroute.length) h+='<div class="empty">Nothing booked. Use Call truck to add an arrival.</div>';
     sim.enroute.forEach(s=>{const m=Math.max(0,Math.round(s.eta-clockMin()));h+='<div class="row"><div class="badge tk">IN</div><div class="t"><b class="mono">'+s.id+'</b><small>'+esc(s.car.name)+' · '+s.cargo.length+' pallets'+(s.expedite?' · rush '+esc(SKUS[s.expedite].code):'')+'</small></div><div class="r"><span class="pill '+(s.late?'warn':'')+'">'+(m>0?'ETA '+m+' min':'Arriving')+'</span></div></div>';});
-  }else if(tab==='fleet'){
+  }else if(tab==='fl'){
     const working=forklifts.filter(f=>f.steps.length&&!f.charging&&!f.broken).length;
     h+='<div class="sub"><span>Forklifts · '+working+'/'+forklifts.length+' working</span><button class="act" data-act="temp">Hire temp'+cost(60)+'</button></div>';
     forklifts.forEach(f=>{const b=Math.round(f.battery);const c=b<25?'bad':b<45?'warn':'';
       const txt=f.broken?'Broken down · back in '+fmtDur(f.broken-sim.sec):(f.task?f.task.text:'Idle')+(f.temp?' · leaves in '+fmtDur(f.until-sim.sec):'');
       h+='<div class="row click'+(selected===f?' hl':'')+'" data-pick="'+f.id+'"><div class="badge '+(f.broken?'down':f.temp?'tmp':'fl')+'">'+(f.temp?'T':f.id.slice(4))+'</div><div class="t"><b class="mono">'+f.id+'</b><small>'+esc(txt)+'</small></div><div class="r"><span class="mono">'+b+'%</span><div class="bar-s '+c+'"><i style="width:'+b+'%"></i></div></div></div>';});
+  }else if(tab==='tk'){
     h+='<div class="sub"><span>Trucks on site · '+trucks.filter(t=>t.state!=='departing').length+'</span></div>';
     trucks.forEach(t=>{const [s,c]=truckStatus(t);h+='<div class="row click'+(selected===t?' hl':'')+'" data-pick="'+t.id+'"><div class="badge tk">'+t.car.name[0]+'</div><div class="t"><b class="mono">'+t.id+'</b><small>'+esc(t.car.name)+(t.bay?' · Bay '+(t.bay.i+1):' · gate')+'</small></div><div class="r"><span class="pill '+c+'">'+s+'</span></div></div>';});
   }else{
@@ -2460,7 +2744,7 @@ function renderKpis(){
   cc.hidden=!(game.phase==='shift'&&game.combo>=1);
   if(!cc.hidden){$('#comboX').textContent='×'+m2.toFixed(2).replace(/0$/,'').replace(/\.0$/,'');const into=m2>=2?3:game.combo%3;$('#comboPips').innerHTML=[0,1,2].map(i=>'<i class="'+(i<into?'on':'')+'"></i>').join('');}
   const lv=levelOf(save.xp); $('#lvlN').textContent=lv; $('#lvlXp').style.width=Math.min(100,(save.xp-xpFor(lv))/(xpFor(lv+1)-xpFor(lv))*100)+'%';
-  $('#lvlChip').title='Level '+lv+' · '+rankOf(lv);
+  $('#lvlChip').title='Level '+lv+' · '+rankOf(lv); $('#lvlRank').textContent=rankOf(lv); $('#lvlSub').textContent='Level '+lv+' · '+fmtN(save.xp)+' XP';
   updateSheetVar();
 }
 function renderShift(){
@@ -2492,7 +2776,7 @@ function renderShift(){
 }
 $('#shift').addEventListener('click',()=>{if(innerWidth>760)return;if(game.phase==='free')openMenu('play');else $('#shift').classList.toggle('open');});
 function trackTarget(){
-  if(selected)return selected;
+  if(selected&&(selected.kind==='tk'||selected.kind==='fl'))return selected;
   const u=trucks.filter(t=>t.state==='unloading'||t.state==='docking');
   return u.sort((a,b)=>(b.times.arrived||9e9)-(a.times.arrived||9e9))[0]||trucks.find(t=>t.state==='queued')||trucks[0]||null;
 }
@@ -2675,7 +2959,15 @@ function renderModal(){
   });
 }
 $('#brand').onclick=()=>openMenu(game.phase==='shift'?game.menuTab:'play');
-$('#siteChip').onclick=()=>openMenu('play');
+$('#siteChip').onclick=e=>{e.stopPropagation();const d=$('#siteDD');if(!d.hidden){d.hidden=true;return;}closeDDs();renderSiteDD();placeDD(d,$('#siteChip'));};
+$('#bellBtn').onclick=e=>{e.stopPropagation();const d=$('#bellDD');if(!d.hidden){d.hidden=true;return;}closeDDs();renderBellDD();placeDD(d,$('#bellBtn'));unread=0;$('#bellN').hidden=true;};
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.dd')&&!e.target.closest('#siteChip')&&!e.target.closest('#bellBtn'))closeDDs();},true);
+$('#siteDD').addEventListener('click',e=>{const n=e.target.closest('[data-net]');if(n){closeDDs();exitTown();select(null);view.targetT.set(-2,0,4);view.zoomT=0.36;return;}
+  const b=e.target.closest('[data-site]');if(!b||b.disabled)return;const i=+b.dataset.site;closeDDs();if(i===game.siteIdx){view.zoomT=innerWidth<=760?1.15:1;defaultView();return;}
+  if(game.phase==='shift'){toast('info','Finish the shift first','You can switch sites between shifts',ICON.lock);return;} flyToSite(i);});
+$('#bellDD').addEventListener('click',e=>{if(e.target.closest('[data-clear]')){notices.length=0;renderBellDD();}});
+$('#insp').addEventListener('click',e=>{const b=e.target.closest('[data-ins]');if(b){const a=b.dataset.ins;if(a==='close')select(null);else if(a==='follow'){game.follow=game.follow===selected?null:selected;}else if(a==='focus')focusOn(selected);renderInspector();return;}
+  const g=e.target.closest('[data-goto]');if(g)setTab(g.dataset.goto);});
 $('#lvlChip').onclick=()=>openMenu('me');
 
 /* controls */
@@ -2770,23 +3062,25 @@ function tick(now){
   const e=1-Math.pow(0.0015,rdt||0.016);
   view.target.lerp(view.targetT,e); view.az+=(view.azT-view.az)*e; view.zoom+=(view.zoomT-view.zoom)*e;
   placeCam();
-  let ringObj=selected;
-  if(!ringObj&&tut&&TUT[tut.i]&&TUT[tut.i].hint3d){ringObj=trucks.find(t=>t.state==='unloading')||trucks[0];}
+  let ringObj=null;
+  if(!selected&&tut&&TUT[tut.i]&&TUT[tut.i].hint3d){ringObj=trucks.find(t=>t.state==='unloading')||trucks[0];}
   ring.visible=!!ringObj;
-  if(ringObj){
-    const isT=ringObj.kind==='tk';
-    ring.position.set(ringObj.x,0.08,ringObj.z);
-    const pulse=1+(selected?0.05:0.12)*Math.sin(perf*5);
-    if(isT){ring.scale.set(6.4*pulse,2.2*pulse,1);ring.rotation.z=ringObj.yaw;}
-    else{const sc=1.9*pulse;ring.scale.set(sc,sc,1);ring.rotation.z=0;}
-  }
+  if(ringObj){ring.position.set(ringObj.x,0.08,ringObj.z);const pulse=1+0.12*Math.sin(perf*5);ring.scale.set(6.4*pulse,2.2*pulse,1);ring.rotation.z=ringObj.yaw;}
+  if(selected&&selected.kind==='pal'&&!selected.g.parent)select(null);
   if(selected){
-    const isT=selected.kind==='tk';
-    tmpV.set(selected.x,isT?4.6:2.9,selected.z).project(cam);
-    const tg=$('#tag3d');
+    const p=selPos(selected);
+    brk.position.set(p.x,p.y,p.z); brk.rotation.y=p.yaw;
+    if(game.follow===selected) view.targetT.set(p.x,0,p.z);
+    routeT+=rdt; if(routeT>0.3){routeT=0;rebuildRoute();}
+    tmpV.set(p.x,p.y+p.h,p.z).project(cam);
+    const tg=$('#tag3d'); tg.hidden=false;
     tg.style.transform='translate('+((tmpV.x+1)/2*innerWidth)+'px,'+((1-tmpV.y)/2*innerHeight-8)+'px) translate(-50%,-100%)';
-    tg.innerHTML=esc(selected.id)+'<small>'+esc(isT?truckStatus(selected)[0]:(selected.broken?'Broken down':selected.task?selected.task.type:'Idle'))+'</small>';
+    tg.innerHTML=selLabel(selected);
   }
+  route.children.forEach(c=>{if(c.userData.head)c.userData.head.forEach(m=>m.position.y=m.userData.y0+Math.sin(perf*3)*.12);});
+  staging.forEach(st=>{if(!st.pin)return;st.pin.visible=!!st.pallet;if(st.pallet)st.pin.userData.head.forEach(m=>m.position.y=m.userData.y0+Math.sin(perf*3+st.x)*.1);});
+  barriers.forEach(b=>{const near=b.kind==='tk'?trucks.some(t=>Math.hypot(t.x-21.6,t.z-b.pz)<9.5):vans.some(v=>Math.hypot(v.x-12,v.z-b.pz)<5.5);b.open+=clamp((near?1:0)-b.open,-rdt*1.6,rdt*1.6);b.arm.rotation.z=b.dir*b.open*1.35;});
+  if(shell.g){const tgt=(view.zoom<0.8||game.town)?1:0;shell.op+=(tgt-shell.op)*Math.min(1,rdt*4);const o=shell.op;shell.mats.forEach(m=>{m.opacity=o;m.depthWrite=o>0.98;});shell.g.visible=o>0.03;}
   for(let i=pops.length-1;i>=0;i--){const p=pops[i];p.t+=rdt;
     if(p.t>1.5){p.el.remove();pops.splice(i,1);continue;}
     tmpV.copy(p.p).project(cam);
@@ -2798,7 +3092,7 @@ function tick(now){
   renderer.render(scene,cam);
   $('#clock').textContent=fmtT(clockMin());
   hudT+=rdt;
-  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();}
+  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();}
   requestAnimationFrame(tick);
 }
 

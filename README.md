@@ -25,6 +25,8 @@ python3 -m http.server 8000
 - **Progression:** XP and 8 ranks, 24 achievements, a daily challenge with streaks, upgrades, cosmetics, and a build mode for each warehouse.
 - **Town planner:** buy plots, lay roads, and put up houses, shops, offices, depots and parks. Buildings linked to the warehouse by road earn credits, and shops you build become delivery customers. You can also buy the empty Unit 7 to run a second warehouse.
 - **Traffic rules:** right-hand driving, lane-following, traffic lights with amber and all-red phases, safe following distance and left-turn yielding. The game's trucks and vans obey them too.
+- **Inspector and selection:** tap a truck, forklift, dock bay, charger or pallet to see its details. Selected items get blue corner brackets, a label, and a route line with a destination pin. The follow camera tracks moving vehicles.
+- **Site switcher and notifications:** jump between warehouses from the top bar or zoom out to a network overview; the bell lists problems, achievements and promotions.
 - **Training shift, sound and juice:** a guided first shift, synthesized sound effects and music, floating points and confetti.
 
 ## Controls
