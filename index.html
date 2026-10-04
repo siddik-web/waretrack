@@ -1441,6 +1441,15 @@ function renderTile(t){
   else if(t.type==='park') makeParkTile(g);
   else if(t.type==='trees') box(7.6,0.04,7.6,'#d8eedd',0,0.03,0,g,false);
   else if(t.type==='grass') box(7.7,0.03,7.7,'#e0e5f4',0,0.022,0,g,false);
+  else if(t.type==='constr'){
+    box(7.4,0.04,7.4,'#e4c98a',0,0.022,0,g,false);
+    [[-3.3,-3.3],[3.3,-3.3],[-3.3,3.3],[3.3,3.3]].forEach(([x,z])=>box(0.12,1.1,0.12,'#f0a623',x,0.55,z,g));
+    const cc=save.constr.find(x=>x.kind==='town'&&x.key===t.key);
+    const r=box(2,1,2,'#f0a623',0,0,0,g,false);
+    const p0=cc?constrProgress(cc):0;
+    r.scale.y=Math.max(0.02,3*p0); r.position.y=r.scale.y/2;
+    if(cc)constrScaffolds.set(cc.id,{riser:r,full:3,kind:'town'});
+  }
   if(BTYPES[t.type]&&BTYPES[t.type].inc&&t.owner==='player'&&!connected(t)) warnBadge(g);
   if(t.type==='cshop'||t.type==='chouse'||(t.type==='shop'&&t.owner==='player'))g.userData.sel={kind:'dest',t};
   env.add(g); town.objs.set(t.key,g);
@@ -3025,6 +3034,7 @@ function applyTool(t){
     cost=landPrice(t); if(save.credits<cost)return fail('You need '+(cost-save.credits)+' more credits');
     t.owner='player'; T.owned.push(t.key); unlock('landlord');
   }else if(tool==='bulldoze'){
+    if(t.type==='constr')return fail('Still under construction — undo instead');
     if(t.owner!=='player'||!BTYPES[t.type])return fail('Nothing of yours to clear here');
     cost=-Math.round(BTYPES[t.type].cost*0.4); roadCh=t.type==='road'; t.type='grass'; delete T.b[t.key];
   }else{
@@ -3035,9 +3045,15 @@ function applyTool(t){
     let face=null; for(const d of [2,0,1,3]) if(isRoadT(nbT(t,d))){face=d;break;}
     if(!['road','trees','park'].includes(tool)&&face==null)return fail('Needs a road on one side');
     cost=B.cost; if(save.credits<cost)return fail('You need '+(cost-save.credits)+' more credits');
-    t.type=tool; t.face=face==null?2:face; t.wild=false; roadCh=tool==='road';
-    if(tool==='shop'){const p=PSHOPS[T.names%PSHOPS.length];t.name=p[0]+(T.names>=PSHOPS.length?' '+(Math.floor(T.names/PSHOPS.length)+1):'');t.color=p[1];T.names++;}
-    T.b[t.key]={type:t.type,face:t.face,name:t.name,color:t.color};
+    t.face=face==null?2:face; t.wild=false; roadCh=tool==='road';
+    if(tool==='road'){
+      t.type=tool; T.b[t.key]={type:t.type,face:t.face,name:t.name,color:t.color};
+    }else{
+      let name=t.name,color=t.color;
+      if(tool==='shop'){const p=PSHOPS[T.names%PSHOPS.length];name=p[0]+(T.names>=PSHOPS.length?' '+(Math.floor(T.names/PSHOPS.length)+1):'');color=p[1];T.names++;}
+      t.type='constr'; t.name=name; t.color=color;
+      queueConstr({kind:'town',key:t.key,pos:[tcx(t.i),0,tcz(t.j)],cost,label:name||B.name,meta:{type:tool,face:t.face,name,color}});
+    }
   }
   save.credits-=cost; townUndo={key:t.key,prev,cost,roadCh,owned:tool==='buy'};
   writeSave(); townChanged([t.key],roadCh);
@@ -3048,6 +3064,7 @@ function applyTool(t){
 function undoTown(){
   const u=townUndo; if(!u){toast('info','Nothing to undo','',ICON.up);return;}
   const t=town.tiles.get(u.key), T=save.town;
+  const ci=save.constr.findIndex(c=>c.kind==='town'&&c.key===u.key); if(ci>=0)save.constr.splice(ci,1);
   Object.assign(t,u.prev); if(u.owned)T.owned=T.owned.filter(k=>k!==u.key);
   if(BTYPES[t.type]&&t.owner==='player')T.b[t.key]={type:t.type,face:t.face,name:t.name,color:t.color}; else delete T.b[t.key];
   save.credits+=u.cost; writeSave(); townChanged([t.key],u.roadCh||t.type==='road'); townUndo=null;
