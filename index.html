@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="WareTrack: a 3D warehouse strategy game you play in the browser.">
 <title>WareTrack Logistics</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f5be0'/%3E%3Cpath d='M32 12 50 22v20L32 52 14 42V22z' fill='%23fff'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%232f5be0'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -32,6 +33,34 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+.acts{padding:10px 12px}
+.acts-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}.acts-h b{font-size:13px;font-family:var(--f-display)}
+.seg{margin-left:auto;display:inline-flex;background:var(--mute-soft);border-radius:8px;padding:2px;gap:2px}
+.seg button{font-size:10.5px;padding:3px 7px;border-radius:6px;font-weight:700;color:var(--ink-3);white-space:nowrap}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,30,60,.12)}
+.acts-empty{font-size:11.5px;color:var(--ink-3);line-height:1.4}
+.act-card{position:relative;display:flex;gap:8px;padding:8px 8px 10px;border-radius:10px;background:var(--mute-soft);margin-top:6px;overflow:hidden;animation:slidein .25s ease-out}
+.act-card.bad{background:var(--bad-soft)}.act-card.warn{background:var(--warn-soft)}.act-card.info{background:var(--cobalt-soft)}
+.ac-ic{flex:none;width:26px;height:26px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--cobalt)}.ac-ic svg{width:15px;height:15px}
+.ac-t{flex:1;min-width:0}.ac-t b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ac-t small{display:block;font-size:11px;color:var(--ink-2);line-height:1.35}
+.ac-b{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}.ac-b .act{padding:3px 9px;font-size:11px}
+.ac-bar{position:absolute;left:0;bottom:0;height:3px;background:var(--cobalt);transition:width .4s linear}
+.act-card.bad .ac-bar{background:var(--bad)}.act-card.warn .ac-bar{background:var(--warn)}
+.acts-more{font-size:11px;color:var(--ink-3);margin-top:6px;text-align:center}
+.leftcol{max-height:calc(100vh - 330px);overflow-y:auto;scrollbar-width:none}
+@media (max-width:760px){.leftcol{max-height:calc(100vh - 260px)}.act-card{padding:6px 6px 8px}.ac-t small{font-size:10.5px}}
+.missions{padding:10px 12px}
+.ms-h{display:flex;align-items:center;gap:8px;margin-bottom:4px}.ms-h b{font-size:13px;font-family:var(--f-display)}
+.ms-chest{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--ink-3);font-weight:700}.ms-chest svg{width:12px;height:12px}
+.ms{padding:6px 0;border-top:1px solid var(--line)}.ms:first-of-type{border-top:0}
+.ms-t{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}.ms-t span{flex:1}.ms-t small{color:var(--ink-3)}
+.ms-t .act{padding:3px 9px;font-size:11px}
+.ms .meter{margin-top:4px}.ms-r{font-size:10.5px;color:var(--ink-3);margin-top:3px}
+.ms.done .ms-t span{color:var(--safety-ink)}
+@keyframes mspulse{0%,100%{box-shadow:0 0 0 0 rgba(242,194,48,.0)}50%{box-shadow:0 0 0 4px rgba(242,194,48,.35)}}
+.ms.done .act{animation:mspulse 1.4s ease-in-out infinite}
+.welcome{flex-direction:column;align-items:flex-start;gap:2px}.welcome b{font-size:14px}
+@media (max-width:760px){.missions{padding:7px 10px}.ms-r{display:none}.ms{padding:4px 0}.ms-t{font-size:11px}}
 .trkmode{margin-left:auto;display:inline-flex;background:var(--mute-soft);border-radius:8px;padding:2px;gap:2px}
 .trkmode button{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:700;color:var(--ink-3)}
 .trkmode button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(20,30,60,.12)}
@@ -427,6 +456,7 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
 .ledger b{font-family:var(--f-mono)}
 .ledger .neg{color:var(--bad)}
 .callout{margin-top:12px;border-radius:10px;padding:10px 12px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.callout svg{width:16px;height:16px;flex:none}
 .callout.ok{background:var(--ok-soft);color:var(--ok)}
 .callout.gold{background:var(--safety-soft);color:var(--safety-ink)}
 .callout.flame{background:#ffe9dc;color:var(--flame)}
@@ -630,7 +660,9 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
 
   <div class="leftcol">
     <section class="shift glass" id="shift"></section>
+    <section class="missions glass" id="missions"></section>
     <section class="incident glass" id="incident" hidden></section>
+    <section class="acts glass" id="acts"></section>
   </div>
 
   <div class="dd glass" id="siteDD" hidden></div>
@@ -814,7 +846,9 @@ const ACH=[
   {id:'tycoon',name:'Two warehouses',desc:'Buy Unit 7 and run a second warehouse'},
   {id:'stylist',name:'Fresh paint',desc:'Buy your first item from the Shop'},
   {id:'courier',name:'Courier',desc:'Make 10 on-time deliveries in one shift'},
-  {id:'fleet',name:'Fleet owner',desc:'Hire drivers for a fleet of 6 vans'},
+  {id:'fleet',name:'Fleet owner',desc:'Hire drivers for a fleet of 7 vans'},
+  {id:'go10',name:'Go-getter',desc:'Complete 10 missions'},
+  {id:'handson',name:'Hands on deck',desc:'Earn 2+ stars in Hands-on mode'},
 ];
 const SHIFT_LEN=480; // site minutes; 1 real second at 1x = 1 site minute
 const MAINX=-4.5;
@@ -843,8 +877,9 @@ function loadSave(){
   out.best=out.best||{}; out.builds=out.builds||{}; out.ach=out.ach||{}; out.cos=Object.assign(defaults().cos,s.cos||{}); out.town=Object.assign(defaults().town,s.town||{});
   return out;
 }
-let save=loadSave();
-function writeSave(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
+let save=loadSave(); const LAST_SEEN=save.lastSeen||0;
+setTimeout(()=>{game.hands=!!save.settings.hands;},0);
+function writeSave(){save.lastSeen=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 function unlocked(i){if(i===0||save.best[SITES[i].code])return true;const prev=save.best[SITES[i-1].code];return !!(prev&&prev.stars>=2);}
 function siteBuilds(code){return save.builds[code]||(save.builds[code]={bays:0,row:false,l3:[],fc:[],brk:false,decor:[]});}
 const xpFor=l=>250*(l-1)*l;
@@ -864,7 +899,7 @@ function dailySpec(key){
 /* ---------------- state ---------------- */
 const sim={speed:1};
 const game={phase:'free',mode:'normal',mods:new Set(),daily:null,siteIdx:0,menuSel:0,menuTab:'play',score:0,st:null,ledger:null,
-  incident:null,queue:[],nextEvent:50,lowCd:{},surgeUntil:0,lastReport:null,combo:0,bestCombo:0,building:false,newAch:[],town:false,townTool:'buy'};
+  incident:null,queue:[],hands:false,nextEvent:50,lowCd:{},surgeUntil:0,lastReport:null,combo:0,bestCombo:0,building:false,newAch:[],town:false,townTool:'buy'};
 function resetSim(){
   Object.assign(sim,{sec:0,startMin:8*60,putaways:0,shipped:0,startStock:0,
     orders:[],orderSeq:5520+irand(0,60),truckSeq:2101+irand(0,80),shipSeq:78440,log:[],nextOrder:3,nextTruck:16,enroute:[],blocked:{}});
@@ -921,26 +956,44 @@ const Snd={ctx:null,master:null,sfx:null,mus:null,next:0,step:0,lastPut:0,noise:
   },
   music(){
     if(!this.ctx||!save.settings.music||this.ctx.state!=='running')return;
-    const c=this.ctx, spb=60/84/2;
+    const c=this.ctx;
     if(this.next<c.currentTime) this.next=c.currentTime+.05;
-    while(this.next<c.currentTime+.3){this.beat(this.step,this.next);this.next+=spb;this.step++;}
+    while(this.next<c.currentTime+.25){
+      if(this.step%16===0){const want=musicMode(); if(want!==this.mode&&(this.step%64===0||!this.mode||want==='rush'))this.mode=want;}
+      const S=SONGS[this.mode||'chill']; this.beat(this.step,this.next,S); this.next+=60/S.bpm/4; this.step++;
+    }
   },
-  beat(s,t){
-    const CH=[[57,60,64,67],[53,57,60,64],[55,59,62,67],[52,55,59,64]];
-    const bar=Math.floor(s/16)%4, i=s%16, m=n=>440*Math.pow(2,(n-69)/12), c=this.ctx;
-    if(i===0) CH[bar].forEach((n,k)=>{
-      const o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();
-      o.type='triangle'; o.frequency.value=m(n-12); o.detune.value=(k%2?6:-6);
-      f.type='lowpass'; f.frequency.value=900;
-      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(.05,t+.8); g.gain.linearRampToValueAtTime(.0001,t+5.6);
-      o.connect(f); f.connect(g); g.connect(this.mus); o.start(t); o.stop(t+5.8);
-    });
-    if(i%8===0) this.tone(110,.28,'sine',.18,t,42,this.mus);
-    if(i%4===2){const nb=c.createBufferSource(),g=c.createGain(),f=c.createBiquadFilter();nb.buffer=this.noise;f.type='highpass';f.frequency.value=7000;
-      g.gain.setValueAtTime(.025,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);nb.connect(f);f.connect(g);g.connect(this.mus);nb.start(t);nb.stop(t+.06);}
-    if(i%2===1&&Math.random()<.32){const n=CH[bar][Math.floor(Math.random()*4)]+12+(Math.random()<.3?12:0);this.tone(m(n),.5,'sine',.035,t,null,this.mus);}
+  beat(s,t,S){
+    const c=this.ctx, m=n=>440*Math.pow(2,(n-69)/12), bar=Math.floor(s/16)%S.ch.length, i=s%16, ch=S.ch[bar], root=ch[0];
+    const voice=(f,dur,type,vol,cut,att,det)=>{const o=c.createOscillator(),g=c.createGain(),fl=c.createBiquadFilter();o.type=type;o.frequency.value=f;if(det)o.detune.value=det;
+      fl.type='lowpass';fl.frequency.value=cut||2000;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+(att||.008));g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      o.connect(fl);fl.connect(g);g.connect(this.mus);o.start(t);o.stop(t+dur+.05);};
+    const noise=(hp,dur,vol,bp)=>{const nb=c.createBufferSource(),g=c.createGain(),f=c.createBiquadFilter();nb.buffer=this.noise;f.type=bp?'bandpass':'highpass';f.frequency.value=hp;
+      g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);nb.connect(f);f.connect(g);g.connect(this.mus);nb.start(t);nb.stop(t+dur+.02);};
+    const kick=v=>{const o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(42,t+.14);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+.3);o.connect(g);g.connect(this.mus);o.start(t);o.stop(t+.32);};
+    const spb=60/S.bpm;
+    if(i===0) ch.forEach((n,k)=>{voice(m(n),spb*4.2,'sawtooth',S.pad,S.padCut,spb*1.2,k%2?7:-7);voice(m(n),spb*4.2,'triangle',S.pad*.8,1400,spb,0);});
+    const bn=S.bass[i]; if(bn!=null) voice(m(root-24+bn),spb*.45,'triangle',.11,700,.005);
+    if(S.arp&&i%S.arp===0){const seq=S.arpSeq, n=ch[seq[(i/S.arp)%seq.length]%ch.length]+12*(1+Math.floor(seq[(i/S.arp)%seq.length]/ch.length));voice(m(n),spb*.35,'square',S.arpVol,S.arpCut,.004);}
+    if(S.kick.includes(i)) kick(S.kickVol);
+    if(S.snare.includes(i)){noise(1800,.16,S.snVol,true);voice(190,.08,'triangle',S.snVol*.8,900,.002);}
+    if(S.hat&&i%S.hat===0) noise(8000,i%4===2?.07:.035,S.hatVol*(i%4===2?1.4:1));
+    if(S.lead&&i%2===0&&Math.random()<S.lead){const pent=[0,3,5,7,10,12,15],n=root+12+pent[Math.floor(Math.random()*pent.length)];voice(m(n),spb*.6,'sine',.05,3000,.01);}
   }
 };
+const SONGS={
+  chill:{bpm:86,ch:[[60,64,67,71],[57,60,64,67],[53,57,60,64],[55,59,62,65]],pad:.022,padCut:900,bass:[0,null,null,null,null,null,7,null,0,null,null,null,12,null,null,null],
+    arp:4,arpSeq:[0,2,1,3],arpVol:.018,arpCut:1600,kick:[0,10],kickVol:.10,snare:[],snVol:.02,hat:4,hatVol:.008,lead:.12},
+  shift:{bpm:104,ch:[[57,60,64,67],[53,57,60,64],[60,64,67,71],[55,59,62,67]],pad:.016,padCut:1100,bass:[0,null,0,null,12,null,0,null,0,null,7,null,12,null,7,null],
+    arp:2,arpSeq:[0,1,2,3,4,2,1,3],arpVol:.02,arpCut:2200,kick:[0,6,8],kickVol:.16,snare:[4,12],snVol:.04,hat:2,hatVol:.012,lead:.1},
+  rush:{bpm:122,ch:[[50,53,57,60],[46,50,53,57],[53,57,60,64],[48,52,55,60]],pad:.014,padCut:1500,bass:[0,0,12,0,0,12,0,7,0,0,12,0,10,0,7,12],
+    arp:1,arpSeq:[0,1,2,3,2,1],arpVol:.016,arpCut:2800,kick:[0,4,8,12],kickVol:.18,snare:[4,12],snVol:.05,hat:1,hatVol:.009,lead:.18},
+};
+function musicMode(){
+  if(game.phase!=='shift')return 'chill';
+  const late=sim.orders.some(o=>o.late)||reqs.some(r=>r.ttl-r.t<5)||!!game.incident;
+  return (SHIFT_LEN-sim.sec<60||late)?'rush':'shift';
+}
 function unlockAudio(){Snd.init();}
 addEventListener('pointerdown',unlockAudio,{passive:true});
 addEventListener('keydown',unlockAudio);
@@ -1158,7 +1211,8 @@ function makeVan(){
 
 /* ---------------- town: plot grid, roads, signals, buildings, traffic ---------------- */
 const onMap=(x,z)=>x>=20+8*GI0-66&&x<=20+8*GI1+66&&z>=-22+8*GJ0-66&&z<=-22+8*GJ1+66;
-const TS=8, GI0=-37, GI1=33, GJ0=-6, GJ1=11, SLICES=[-2,-1,0,1,2], SLICE_W=96;
+const ROWS_R=[-7,0,6,10,15], SPAWN_Z=205, EXIT_Z=-212;
+const TS=8, GI0=-37, GI1=33, GJ0=-12, GJ1=17, SLICES=[-2,-1,0,1,2], SLICE_W=96;
 let OX=0;
 const wx=o=>o.x+(o.loc?OX:0);
 const tcx=i=>20+TS*i, tcz=j=>-22+TS*j;
@@ -1208,12 +1262,12 @@ function genTown(){
   town.tiles.clear(); const R=mulberry32(4242);
   for(let i=GI0;i<=GI1;i++)for(let j=GJ0;j<=GJ1;j++) setT(i,j,{wild:R()<.4});
   const road=(i,j)=>setT(i,j,{type:'road',owner:'city'});
-  for(let i=GI0;i<=GI1;i++){road(i,0);road(i,6);road(i,10);}
+  for(let i=GI0;i<=GI1;i++)ROWS_R.forEach(j=>road(i,j));
   const big=(i0,i1,j0,j1,type,extra)=>{for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++)setT(i,j,Object.assign({type,owner:'city'},extra||{}));};
   SLICES.forEach(k=>{
     const o=12*k;
     for(let i=-5;i<=-1;i++)for(let j=1;j<=5;j++) setT(o+i,j,{type:'hq',owner:'player',slice:k});
-    for(let j=GJ0;j<=GJ1;j++){road(o-8,j);road(o+4,j); if(j<=0||j===6||j===10)road(o,j); else setT(o,j,{type:'private',owner:'player',slice:k});}
+    for(let j=GJ0;j<=GJ1;j++){road(o-8,j);road(o+4,j); if(j<=0||ROWS_R.includes(j))road(o,j); else setT(o,j,{type:'private',owner:'player',slice:k});}
     shopsFor(k).forEach(sh=>setT(o+sh.i,sh.j,{type:'cshop',owner:'city',shop:sh,face:sh.face}));
     big(o+2,o+3,7,7,k%2?'cpark':'cbig'); big(o-7,o-5,-3,-2,'cbig'); big(o+1,o+3,-3,-2,'cbig'); big(o+1,o+3,8,9,'cbig'); big(o+1,o+3,1,4,'cpark'); big(o-6,o-6,2,4,'cbig'); big(o-2,o-2,-1,-1,'cbig');
     if(k===0) big(-7,-5,8,9,'lease',{owner:null}); else big(o-7,o-5,8,9,'cbig');
@@ -1223,6 +1277,10 @@ function genTown(){
     for(const j of [-1,7,9,8,-4,11])for(let i=o-6;i<=o+3;i++){const t=getT(i,j); if(!t||t.type!=='grass'||t.owner||taken.has(t.key))continue;
       let face=-1; for(const d of [2,0,1,3]){const n=nbT(t,d); if(n&&n.type==='road'&&n.owner==='city'){face=d;break;}} if(face>=0)cand.push([t,face,R2()]);}
     cand.sort((a,b)=>(Math.abs(a[0].i-o)+Math.abs(a[0].j)*0.6+a[2]*3)-(Math.abs(b[0].i-o)+Math.abs(b[0].j)*0.6+b[2]*3)).slice(0,10).forEach(([t,face],n)=>Object.assign(t,{type:'chouse',owner:'city',face,wild:false,addr:(2+((n*17+k*29+60)%96))+' '+STREETS[(n*5+k*3+12)%STREETS.length]}));
+    const far=[]; for(const j of [-8,-6,-12,-11,11,14,16,17])for(let i=o-7;i<=o+3;i++){const t=getT(i,j); if(!t||t.type!=='grass'||t.owner||taken.has(t.key))continue;
+      let face=-1; for(const d of [2,0,1,3]){const n=nbT(t,d); if(n&&n.type==='road'&&n.owner==='city'){face=d;break;}} if(face>=0)far.push([t,face,R2()]);}
+    far.sort((a,b)=>a[2]-b[2]).slice(0,18).forEach(([t,face],n)=>Object.assign(t,{type:'chouse',owner:'city',face,wild:false,far:true,addr:(100+((n*31+k*17)%180))+' '+STREETS[(n*7+k*5+3)%STREETS.length]}));
+    [[o-3,-10],[o-2,-10],[o-3,13],[o-2,13]].forEach(([i,j])=>{const t=getT(i,j); if(t&&t.type==='grass'&&!t.owner&&!taken.has(t.key))Object.assign(t,{type:'cpark',owner:'city',wild:false});});
     let m=0; town.tiles.forEach(t=>{if(t.type==='cshop'&&sliceOfI(t.i)===k)t.addr=(10+((m++)*23+k*11+40)%180)+' '+MSTREETS[(m+k+5)%MSTREETS.length];});
   });
   T.owned.forEach(k=>{const t=town.tiles.get(k);if(t&&t.type==='grass')t.owner='player';});
@@ -1362,7 +1420,7 @@ function buildStatic(){
     const m=new THREE.Mesh(new THREE.PlaneGeometry(14,64),fadeM); m.rotation.x=-Math.PI/2; m.rotation.z=v?(sg>0?0:Math.PI):(sg>0?-Math.PI/2:Math.PI/2);
     if(v)m.position.set(x,0.13,far-sg*30); else m.position.set(far-sg*30,0.13,z); m.renderOrder=2; townStatic.add(m);};
   const stub=(x,z,w,d)=>{if(Math.max(w,d)>=90)fade(x,z,w,d);box(w,0.07,d,ASPH,x,0.04,z,townStatic,false);box(w+(w<d?2:0),0.06,d+(d<w?2:0),CURB,x,0.03,z,townStatic,false);const v=d>w;for(let u=-Math.max(w,d)/2+1;u<Math.max(w,d)/2;u+=2)box(v?.24:1.3,0.02,v?1.3:.24,'#ffffff',v?x:x+u,0.085,v?z+u:z,townStatic,false);};
-  [0,6,10].forEach(j=>{stub(tcx(GI0)-54,tcz(j),100,6);stub(tcx(GI1)+54,tcz(j),100,6);});
+  ROWS_R.forEach(j=>{stub(tcx(GI0)-54,tcz(j),100,6);stub(tcx(GI1)+54,tcz(j),100,6);});
   SLICES.forEach(k=>{
     const ox=k*SLICE_W, o=12*k, sname=(SITES.find(x=>x.k===k)||{}).name||'';
     box(50,0.04,31,'#edf0f8',2+ox,0.02,0,townStatic,false);
@@ -1506,7 +1564,7 @@ function landPrice(t){
 }
 function customers(){
   const out=[];
-  town.tiles.forEach(t=>{ if((t.type!=='cshop'&&t.type!=='chouse')||sliceOfI(t.i)!==site.k)return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={key:t.key,name:t.type==='cshop'?t.shop.name:t.addr,addr:t.addr,home:t.type==='chouse',road:r,x:tcx(t.i),z:tcz(t.j)})); });
+  town.tiles.forEach(t=>{ if((t.type!=='cshop'&&t.type!=='chouse')||sliceOfI(t.i)!==site.k||(t.far&&dlv('drv')<1))return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={key:t.key,name:t.type==='cshop'?t.shop.name:t.addr,addr:t.addr,home:t.type==='chouse',road:r,x:tcx(t.i),z:tcz(t.j)})); });
   town.tiles.forEach(t=>{ if(t.type==='shop'&&t.owner==='player'&&Math.abs(sliceOfI(t.i)-site.k)<=1){ const n=nbT(t,t.face); if(n&&town.reach.has(n.key)) out.push({key:t.key,name:t.name,addr:'Your shop',home:false,road:n.key,x:tcx(t.i),z:tcz(t.j)}); }});
   return out;
 }
@@ -1514,7 +1572,7 @@ function initTown(){
   if(town.built)return; town.built=true;
   genTown(); recomputeReach(); buildStatic();
   town.tiles.forEach(renderTile); rebuildRoads(); rebuildFoliage(); recomputeEcon();
-  const nCars=Math.min(44,Math.floor(town.roads.length/6));
+  const nCars=Math.min(72,Math.floor(town.roads.length/6));
   const cc=['#e0664f','#f4f6fa','#5b80e8','#4a5466','#e6c088','#8a5cd6','#25a69a','#f08aa8','#c9d2df','#3f9a62'];
   for(let k=0;k<nCars;k++){const g=makeCar(cc[k%cc.length]);env.add(g);const c={kind:'car',g,x:0,z:0,yaw:0,v:0,vmax:4.6+Math.random()*1.6,pts:[],blockT:0,ghost:0};cars.push(c);placeCarRandom(c);}
 }
@@ -1652,14 +1710,17 @@ function queueDelivery(o){
   del.jobs.push({id:o.id,order:o,shop:o.shop,dist:n,created:now,due,rush:!!o.rush});
   dirty=true;
 }
-function delFee(j){return (2+0.25*j.dist)*(1+0.15*dlv('gps'))*(0.8+0.1*delSave().rating);}
+function delFee(j){return (2+0.25*Math.min(14,j.dist))*(1+0.15*dlv('gps'))*(0.8+0.1*delSave().rating);}
 function deliverJob(v,j){
   const D=delSave(), now=clockMin(), left=j.due-now;
   let fee=delFee(j), res;
   if(left>=10){fee*=1.25;res='early';} else if(left>=0)res='on time'; else {fee*=0.5;res='late';}
+  if(res!=='late'){D.streak=(D.streak||0)+1;fee*=streakMult();}else D.streak=0;
   if(dlv('scan'))fee+=1;
   const cr=Math.max(1,Math.round(fee));
   const target=res==='early'?5:res==='on time'?4.3:2.5; D.rating=Math.round((D.rating+(target-D.rating)*0.15)*100)/100;
+  mission('deliver',1); mission('delcr',cr); if(res==='early')mission('early',1); if(j.shop.home)mission('home',1); mission('streak',D.streak||0,true);
+  if(D.streak&&D.streak%5===0)setTimeout(()=>popup('Streak '+D.streak+' · tips ×'+streakMult().toFixed(2),j.shop.x,7,j.shop.z,'gold'),400);
   save.credits+=cr; D.earned+=cr; D.done++; if(res!=='late')D.onTime++; del.today+=cr; v.earned+=cr;
   if(game.phase==='shift'&&game.st){game.st.del=(game.st.del||0)+cr; if(res!=='late'){game.st.delOn=(game.st.delOn||0)+1; if(game.st.delOn>=10)unlock('courier');}}
   j.deliveredAt=now; j.res=res; {const ds=destStats(j.shop.key);ds.recv++;ds.cr+=cr;ds.last=now;if(res==='late')ds.late++;else ds.onTime++;}
@@ -1672,7 +1733,8 @@ function depotClear(){const x=12+OX,z=-12.4;return !vans.some(v=>Math.hypot(v.x-
 function dispatchVans(){
   if(!del.jobs.length||vans.length>=fleetSize()||!depotClear())return;
   if(dlv('disp'))del.jobs.sort((a,b)=>a.due-b.due);
-  const take=del.jobs.splice(0,dlv('big')?2:1); take.forEach(j=>j.sent=clockMin());
+  const pool=game.hands?del.jobs.filter(j=>j.go):del.jobs; if(!pool.length)return;
+  const take=pool.slice(0,dlv('big')?2:1); take.forEach(j=>del.jobs.splice(del.jobs.indexOf(j),1)); take.forEach(j=>j.sent=clockMin());
   if(!spawnVan(take)){del.jobs.unshift(...take);}
 }
 function spawnVan(jobs){
@@ -1747,6 +1809,7 @@ function arriveXfer(t){
     const nt=spawnTruck({id:t.id,ship:t.ship,car:t.car,cargo,late:false,expedite:t.sku},null);
     nt.x=t.x-OX; nt.z=t.z; nt.yaw=t.yaw; nt.xferFrom=A; place(nt);
     log(t.id+' transfer from '+A.name+' reached the gate with '+cargo.length+' pallets','info');
+    mission('xfer',1);
     if(t.requested)notify('ok','Transfer arrived',t.id+' from '+A.name+' is at the gate');
     if(selected===t)select(nt);
   }else{
@@ -1803,11 +1866,152 @@ function defaultOutbound(){
 }
 const destIcon=home=>home?ICON.home:ICON.shop;
 
+/* ---------------- missions, delivery streaks, welcome-back earnings ---------------- */
+const MISSIONS={
+  put:{label:n=>'Put away '+n+' pallets',t:[12,22],r:30},
+  ship:{label:n=>'Stage '+n+' orders on time',t:[6,11],r:35},
+  deliver:{label:n=>'Make '+n+' deliveries',t:[5,9],r:35},
+  home:{label:n=>'Deliver '+n+' parcels to homes',t:[3,5],r:40},
+  early:{label:n=>'Make '+n+' early deliveries',t:[3,6],r:40},
+  delcr:{label:n=>'Earn '+n+' cr from deliveries',t:[35,70],r:40},
+  fast:{label:n=>'Turn '+n+' trucks around in under 45 min',t:[2,4],r:45},
+  streak:{label:n=>'Reach a '+n+'-drop on-time streak',t:[4,8],r:45,max:true},
+  combo:{label:n=>'Hit a '+n+'-order combo',t:[4,7],r:45,max:true},
+  xfer:{label:n=>'Receive '+(n>1?n+' transfer trucks':'a transfer truck'),t:[1,2],r:40},
+  stars:{label:()=>'Finish a shift with 2 or more stars',t:[1,1],r:60},
+};
+function msSave(){if(!save.ms)save.ms={active:[],done:0};const M=save.ms;while(M.active.length<3)M.active.push(newMission(M.active.map(m=>m.type)));return M;}
+function newMission(avoid){
+  const keys=Object.keys(MISSIONS).filter(k=>!avoid.includes(k)), k=keys[Math.floor(Math.random()*keys.length)], T=MISSIONS[k];
+  const lv=levelOf(save.xp), sc=Math.min(1.8,1+0.12*(lv-1));
+  const target=T.t[0]===T.t[1]?T.t[0]:Math.round(irand(T.t[0],T.t[1])*(T.max?1:sc));
+  return {type:k,target,prog:0,reward:Math.round(T.r*(1+0.1*(lv-1))/5)*5,xp:Math.round(60+25*lv)};
+}
+function mission(type,n,isMax){
+  const M=msSave(); let hit=false;
+  M.active.forEach(m=>{if(m.type!==type||m.prog>=m.target)return; m.prog=isMax?Math.max(m.prog,n):m.prog+n; if(m.prog>=m.target){m.prog=m.target;hit=true;toast('ach','Mission complete','Claim +'+m.reward+' credits in the Missions card',ICON.star);Snd.play('ach');}});
+  if(hit)writeSave(); msDirty=true;
+}
+let msDirty=true;
+function claimMission(i){
+  const M=msSave(), m=M.active[i]; if(!m||m.prog<m.target)return;
+  save.credits+=m.reward; addXp(m.xp); M.done++;
+  Snd.play('coin',1.2); confetti(50);
+  let extra='';
+  if(M.done%5===0){save.credits+=75;extra=' · Mission chest +75';setTimeout(()=>{toast('ach','Mission chest','5 missions done: +75 bonus credits',ICON.trophy);confetti(90);},700);}
+  if(M.done>=10)unlock('go10');
+  toast('ach','+'+m.reward+' credits','+'+m.xp+' XP'+extra,ICON.star);
+  M.active.splice(i,1,newMission(M.active.map(x=>x.type)));
+  writeSave(); msDirty=true; dirty=true;
+}
+function renderMissions(){
+  const el=$('#missions'); if(!el)return;
+  el.hidden=!!(game.building||game.town); const compact=actsList.length>0; if(compact!==renderMissions.c){renderMissions.c=compact;msDirty=true;} if(el.hidden||!msDirty)return; msDirty=false;
+  const M=msSave(), ready=M.active.filter(m=>m.prog>=m.target).length, next=5-M.done%5;
+  let h='<div class="ms-h"><b>Missions</b>'+(ready?'<span class="pill gold">'+ready+' to claim</span>':'')+'<span class="ms-chest" title="Every 5 missions opens a chest worth 75 credits">'+ICON.trophy+next+' to chest</span></div>';
+  M.active.forEach((m,i)=>{if(compact&&m.prog<m.target)return; const T=MISSIONS[m.type], pct=Math.min(100,m.prog/m.target*100), done=m.prog>=m.target;
+    h+='<div class="ms'+(done?' done':'')+'"><div class="ms-t"><span>'+esc(T.label(m.target))+'</span>'+(done?'<button class="act solid" data-claim="'+i+'">Claim +'+m.reward+'</button>':'<small class="mono">'+fmtN(Math.min(m.prog,m.target))+'/'+fmtN(m.target)+'</small>')+'</div><div class="meter'+(done?' gold':'')+'"><i style="width:'+pct+'%"></i></div>'+(done?'':'<div class="ms-r">+'+m.reward+' cr · +'+m.xp+' XP</div>')+'</div>';});
+  if(compact&&!ready)h+='<div class="ms-r">'+M.active.map(m=>Math.round(m.prog/m.target*100)+'%').join(' · ')+' · open when the actions are clear</div>';
+  el.innerHTML=h;
+}
+function streakMult(){return 1+Math.min(0.25,0.025*(delSave().streak||0));}
+function welcomeBack(){
+  const last=LAST_SEEN; if(!last)return;
+  const hrs=(Date.now()-last)/3600000; if(hrs<1/6)return;
+  const h=Math.min(8,hrs), rate=14+5*dlv('drv')+5*dlv('gps')+4*dlv('big')+3*dlv('ev')+Math.max(0,town.econ.net)*3+(save.town.unit7?LEASE.inc:0);
+  const cr=Math.round(h*rate); if(cr<1)return;
+  save.credits+=cr; writeSave();
+  game.welcome={h:hrs,capped:hrs>8,cr,trucks:Math.round(h*24),dels:Math.round(h*(7+2*dlv('drv')))};
+}
+const fmtAway=h=>h>=1?Math.floor(h)+'h '+pad(Math.round((h%1)*60))+'m':Math.round(h*60)+' min';
+
+/* ---------------- order requests and hands-on control ---------------- */
+const reqs=[]; let actsT=0;
+const REQ_TTL=16;
+function offerOrder(o){
+  if(reqs.length>=6){missReq(reqs.shift());}
+  reqs.push({o,t:0,ttl:REQ_TTL}); Snd.play('click'); dirty=true;
+}
+function acceptReq(r,rush){
+  const i=reqs.indexOf(r); if(i<0)return; reqs.splice(i,1);
+  const o=r.o, st=stockBySku(), coming=trucks.some(t=>t.state!=='departing'&&t.cargo.slice(t.assigned).includes(o.sku))||xfers.some(t=>t.to===game.siteIdx&&t.sku===o.sku);
+  if(rush){o.rush=true;o.due=clockMin()+25;}
+  if(st[o.sku].free===0&&!coming){
+    if(requestTransfer(o.sku)){spend(15);o.due=Math.max(o.due,xferEta(xfers[xfers.length-1])+20);log(o.id+' accepted · stock is on its way by transfer','info');}
+    else{if(game.phase==='shift'){game.st.backorders++;game.ledger.back-=15;addScore(-15,'back',-12,3.5,AISLE(ROWS[0]),true);}log(o.id+' backordered · no '+SKUS[o.sku].name+' in stock','bad');return;}
+  }
+  if(rush)sim.orders.unshift(o); else sim.orders.push(o);
+  log(o.id+' accepted'+(rush?' as a rush order':'')+' · '+SKUS[o.sku].name+(o.shop?' for '+o.shop.name:''),'info');
+  Snd.play('put'); dirty=true;
+}
+function declineReq(r){const i=reqs.indexOf(r); if(i<0)return; reqs.splice(i,1); const D=delSave(); D.rating=Math.max(0,Math.round((D.rating-0.05)*100)/100); log(r.o.id+' declined','');dirty=true;}
+function missReq(r){
+  const i=reqs.indexOf(r); if(i>=0)reqs.splice(i,1);
+  const D=delSave(); D.rating=Math.max(0,Math.round((D.rating-0.15)*100)/100);
+  if(game.phase==='shift'){game.st.missed=(game.st.missed||0)+1;game.ledger.late-=5;addScore(-5,'late',-12,3.5,AISLE(ROWS[0]),true);}
+  log(r.o.id+' request expired · customer went elsewhere','bad'); Snd.play('lost'); dirty=true;
+}
+function tickReqs(rdt){
+  if(!rdt)return;
+  for(const r of reqs.slice()){r.t+=rdt; if(r.t>=r.ttl)missReq(r);}
+}
+function setHands(on){
+  game.hands=!!on; save.settings.hands=game.hands; writeSave();
+  if(!on){sim.orders.forEach(o=>o.released=true);del.jobs.forEach(j=>j.go=true);}
+  toast('info',on?'Hands-on mode':'Autopilot',on?'You dock trucks, release orders and send vans yourself. Points ×1.25.':'Your crew handles docks, picking and vans again.',on?ICON.target:ICON.bolt);
+  dirty=true; renderActs(true);
+}
+function frontQueued(){return trucks.filter(t=>t.state==='queued'&&t.atGate).sort((a,b)=>a.z-b.z)[0]||null;}
+function manualDock(t){
+  if(!t||t.state!=='queued')return;
+  const bay=bays.find(b=>!b.truck); if(!bay){toast('info','No free dock','Wait for a truck to pull out',ICON.dock);return;}
+  if(trucks.some(x=>x.state==='departing'&&x.z>-16)||t!==frontQueued()){toast('info','Yard lane busy','The truck will be ready in a moment',ICON.truck);return;}
+  assignBay(t,bay); Snd.play('click'); dirty=true;
+}
+function buildActs(){
+  const A=[], now=clockMin();
+  reqs.forEach(r=>{const o=r.o,st=stockBySku()[o.sku],left=Math.max(0,r.ttl-r.t);
+    A.push({tone:left<5?'bad':'info',icon:destIcon(o.shop&&o.shop.home),title:'New order · '+(o.shop?o.shop.name:'walk-in'),sub:'1 pallet '+SKUS[o.sku].name+' · '+(st.free?st.free+' in stock':'out of stock, a transfer will be sent')+' · decide in '+Math.ceil(left)+'s',
+      pct:left/r.ttl*100,btns:[{l:'Accept',a:'acc',p:1},{l:'Rush +25',a:'rush'},{l:'Decline',a:'dec'}],ref:r,kind:'req'});});
+  if(game.hands){
+    const t=frontQueued(); if(t){const w=Math.round(now-t.times.gate),fb=bays.find(b=>!b.truck);
+      A.push({tone:w>15?'bad':w>8?'warn':'',icon:ICON.truck,title:t.id+' at the gate',sub:t.cargo.length+' pallets · waiting '+w+' min'+(w>15?' · detention running':'')+(fb?'':' · no free dock'),pct:Math.max(0,100-w/15*100),btns:[{l:fb?'Dock at Bay '+(fb.i+1):'Docks full',a:'dock',p:1,dis:!fb}],ref:t,kind:'dock'});}
+    sim.orders.filter(o=>!o.released).slice(0,3).forEach(o=>{const m=Math.round(o.due-now);
+      A.push({tone:m<10?'bad':m<20?'warn':'',icon:ICON.box,title:o.id+' ready to pick',sub:SKUS[o.sku].name+(o.shop?' for '+o.shop.name:'')+' · due in '+m+' min',pct:Math.max(0,Math.min(100,m/50*100)),btns:[{l:'Release to floor',a:'rel',p:1}],ref:o,kind:'rel'});});
+    del.jobs.filter(j=>!j.go).slice(0,3).forEach(j=>{const m=Math.round(j.due-now),free=vans.length<fleetSize();
+      A.push({tone:m<10?'bad':m<20?'warn':'',icon:destIcon(j.shop.home),title:j.id+' waiting for a van',sub:j.shop.name+' · '+j.dist+' blocks · promised in '+m+' min',pct:Math.max(0,Math.min(100,m/60*100)),btns:[{l:free?'Send van':'All vans out',a:'van',p:1,dis:!free}],ref:j,kind:'van'});});
+  }
+  return A;
+}
+let actsList=[];
+function renderActs(force){
+  const el=$('#acts'); if(!el)return;
+  el.hidden=!!(game.building||game.town); if(el.hidden)return;
+  actsList=buildActs();
+  const show=actsList.slice(0,innerWidth<=760?1:3);
+  let h='<div class="acts-h"><b>Actions</b>'+(actsList.length?'<span class="pill '+(actsList.some(a=>a.tone==='bad')?'bad':'info')+'">'+actsList.length+'</span>':'')+
+    '<span class="seg"><button data-hands="0" class="'+(game.hands?'':'on')+'">Autopilot</button><button data-hands="1" class="'+(game.hands?'on':'')+'">Hands-on ×1.25</button></span></div>';
+  if(!show.length)h+='<div class="acts-empty">'+(game.hands?'All caught up. Trucks, orders and vans that need you show up here.':game.phase==='shift'?'Order requests pop up here. Accept them before the timer runs out.':'Start a shift to get order requests, or switch to Hands-on to run everything yourself.')+'</div>';
+  show.forEach((a,i)=>{
+    h+='<div class="act-card '+a.tone+'"><span class="ac-ic">'+a.icon+'</span><div class="ac-t"><b>'+esc(a.title)+'</b><small>'+esc(a.sub)+'</small><div class="ac-b">'+
+      a.btns.map(b=>'<button class="act'+(b.p?' solid':'')+'" data-ac="'+i+':'+b.a+'"'+(b.dis?' disabled':'')+'>'+esc(b.l)+'</button>').join('')+'</div></div><i class="ac-bar" style="width:'+a.pct+'%"></i></div>';});
+  if(actsList.length>show.length)h+='<div class="acts-more">+'+(actsList.length-show.length)+' more</div>';
+  el.innerHTML=h;
+}
+function doAct(i,a){
+  const it=actsList[i]; if(!it)return; const r=it.ref;
+  if(a==='acc')acceptReq(r,false); else if(a==='rush')acceptReq(r,true); else if(a==='dec')declineReq(r);
+  else if(a==='dock')manualDock(r);
+  else if(a==='rel'){r.released=true;log(r.id+' released to the floor','');Snd.play('click');}
+  else if(a==='van'){r.go=true;Snd.play('click');}
+  dirty=true; renderActs(true);
+}
+
 const ratingStars=r=>{let s='';for(let k=1;k<=5;k++)s+='<span class="'+(r>=k-0.25?'on':'')+'">★</span>';return '<span class="rstars">'+s+'</span>';};
 function renderDelPanel(){
   const D=delSave(), now=clockMin(), out=vans.length, F=fleetSize();
-  let h='<div class="delhead"><div class="mini"><label>Net today</label><b>'+(del.today>=0?'+':'')+del.today+' <span>cr</span></b></div><div class="mini"><label>Customer rating</label><b>'+D.rating.toFixed(1)+' '+ratingStars(D.rating)+'</b></div><div class="mini"><label>Vans out</label><b>'+out+' <span>/ '+F+'</span></b></div></div>';
-  h+='<p class="delnote">Each shipped order becomes a delivery with a promised time. Early drops earn a 25% tip, late ones half pay, and your rating changes every fee. Every trip costs '+tripCost()+' cr to run.</p>';
+  let h='<div class="delhead"><div class="mini"><label>Net today</label><b>'+(del.today>=0?'+':'')+del.today+' <span>cr</span></b></div><div class="mini"><label>Customer rating</label><b>'+D.rating.toFixed(1)+' '+ratingStars(D.rating)+'</b></div><div class="mini"><label>Vans out</label><b>'+out+' <span>/ '+F+'</span></b></div></div>'+(D.streak?'<div class="delnote"><b>On-time streak: '+D.streak+'</b> · tips ×'+streakMult().toFixed(2)+'. A late drop resets it.</div>':'<div class="delnote">Chain on-time drops to build a streak: each one adds 2.5% to every fee, up to +25%.</div>');
+  h+=(dlv('drv')<1?'<div class="delnote"><b>North and South districts locked.</b> Hire one more driver to start delivering to 18 more homes per site, further out and better paid.</div>':'')+'<p class="delnote">Each shipped order becomes a delivery with a promised time. Early drops earn a 25% tip, late ones half pay, and your rating changes every fee. Every trip costs '+tripCost()+' cr to run.</p>';
   h+='<div class="sub"><span>Waiting at the depot · '+del.jobs.length+'</span></div>';
   if(!del.jobs.length)h+='<div class="empty">No deliveries waiting. Shipped orders show up here until a van is free.</div>';
   del.jobs.forEach((j,i)=>{const m=Math.round(j.due-now),c=m<0?'bad':m<10?'warn':'ok';
@@ -2011,7 +2215,7 @@ function tryPutaway(f){
   P.lift(0.1).go(DOCK_PICK_X,bayZ).wait(0.3)
    .act(()=>{const p=makePallet(sku);f.g.userData.carriage.add(p);p.position.set(0.55,0.03,0);f.carry=p;t.unloaded++;t.busyBy=null;task.picked=true;dirty=true;})
    .lift(0.3).mv(MAINX,bayZ,true).go(s.x,AISLE(s.z)).turn(FACE_NEG_Z).lift(s.y+0.28).mv(s.x,s.z+FORK_REACH,false,.65).lift(s.y-0.02)
-   .act(()=>{const p=f.carry;world.attach(p);placeInSlot(s,p);s.claimed=false;f.carry=null;sim.putaways++;f.moved++;
+   .act(()=>{const p=f.carry;world.attach(p);placeInSlot(s,p);s.claimed=false;f.carry=null;sim.putaways++;mission('put',1);f.moved++;
       if(game.phase==='shift'){game.st.recv++;game.ledger.put+=5;} addScore(5,'put',s.x,s.y+1.4,s.z);dirty=true;})
    .mv(s.x,AISLE(s.z),true,.6).lift(0.1);
   f.steps=P.steps; f.task=task; f.last='in';
@@ -2022,7 +2226,7 @@ function tryOutbound(f){
   if(blocked(ROWS.length-1))return false;
   const st=staging.find(x=>!x.pallet&&!x.claimed); if(!st)return false;
   let oi=-1,s=null;
-  for(let k=0;k<sim.orders.length&&!s;k++){const sku=sim.orders[k].sku;const c=slots.filter(x=>x.pallet&&!x.claimed&&!blocked(x.r)&&x.pallet.userData.sku===sku);if(c.length){oi=k;s=pick(nearestFirst(c,f.x,f.z).slice(0,4));}}
+  for(let k=0;k<sim.orders.length&&!s;k++){if(game.hands&&!sim.orders[k].released)continue;const sku=sim.orders[k].sku;const c=slots.filter(x=>x.pallet&&!x.claimed&&!blocked(x.r)&&x.pallet.userData.sku===sku);if(c.length){oi=k;s=pick(nearestFirst(c,f.x,f.z).slice(0,4));}}
   if(!s)return false;
   const order=sim.orders.splice(oi,1)[0];
   s.claimed=true; st.claimed=true;
@@ -2101,7 +2305,7 @@ function spawnTruck(sh,bay){
   const g=makeTruck(sh.car,!!sh.expedite); world.add(g);
   const now=clockMin();
   const t={kind:'tk',id:sh.id,ship:sh.ship,car:sh.car,cargo:sh.cargo,expedite:sh.expedite,g,bay:null,state:'queued',assigned:0,unloaded:0,busyBy:null,
-    x:21.6,z:160,loc:true,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,detPaid:0,blockT:0,ghost:0};
+    x:21.6,z:SPAWN_Z,loc:true,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,detPaid:0,blockT:0,ghost:0};
   const c=now-irand(260,420); t.times={confirmed:c,picked:c+irand(50,90),loaded:c+irand(110,150),gate:now,arrived:null,done:null};
   g.userData.sel=t; trucks.push(t);
   if(bay){ t.atGate=true; t.bay=bay; bay.truck=t; t.x=6.0;t.z=bay.z;t.yaw=0;t.state='unloading';t.times.arrived=now;t.times.gate=now;bay.open=1; }
@@ -2116,7 +2320,7 @@ function assignBay(t,bay){
 function dispatchQueue(){
   let q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z);
   const laneBusy=trucks.some(t=>t.state==='departing'&&t.z>-16);
-  if(!laneBusy)for(const t of q){if(t.z>30)break;const bay=bays.find(b=>!b.truck);if(!bay)break;assignBay(t,bay);break;}
+  if(!laneBusy&&!game.hands)for(const t of q){if(t.z>30)break;const bay=bays.find(b=>!b.truck);if(!bay)break;assignBay(t,bay);break;}
   q=trucks.filter(t=>t.state==='queued').sort((a,b)=>a.z-b.z);
   q.forEach((t,i)=>{let tz=[16,40,68,80][i]||80+12*(i-3);if(tz>t.z+0.1)tz=t.z;const s=t.steps[0];
     if(!(s&&Math.abs(s.z-tz)<.1)&&Math.abs(t.z-tz)>.1) t.steps=[{t:'move',x:21.6,z:tz}];
@@ -2129,9 +2333,10 @@ function departTruck(t){
   t.state='departing'; t.times.done=clockMin(); const bay=t.bay;
   const dur=t.times.done-t.times.gate;
   if(game.phase==='shift'){game.st.trucks++; const b=dur<=45?25:dur<=70?10:0; if(b){if(b===25)game.st.fast++;game.ledger.turn+=b;addScore(b,'turn',t.x,4.6,t.z);} }
+  if(dur<=45)mission('fast',1);
   log(t.id+' turned around in '+fmtDur(dur)+', leaving Bay '+(bay.i+1),'ok');
   const P=planner(t);
-  P.wait(1.2).mv(15,bay.z).mv(21.6,bay.z-4.5).mv(21.6,bay.z-7).act(()=>{bay.truck=null;dirty=true;}).mv(21.6,-165).act(()=>{world.remove(t.g);trucks.splice(trucks.indexOf(t),1);if(selected===t)select(null);dirty=true;});
+  P.wait(1.2).mv(15,bay.z).mv(21.6,bay.z-4.5).mv(21.6,bay.z-7).act(()=>{bay.truck=null;dirty=true;}).mv(21.6,EXIT_Z).act(()=>{world.remove(t.g);trucks.splice(trucks.indexOf(t),1);if(selected===t)select(null);dirty=true;});
   t.steps=P.steps;
 }
 function updateTruck(t,dt){
@@ -2158,6 +2363,7 @@ function newOrder(rush){
 function releaseOrder(){
   if(sim.orders.length>=8)return;
   const o=newOrder(false), st=stockBySku();
+  if(game.phase==='shift'&&!tut){offerOrder(o);return;}
   const coming=trucks.some(t=>t.state!=='departing'&&t.cargo.slice(t.assigned).includes(o.sku));
   if(st[o.sku].free===0&&!coming){
     if(game.phase==='shift'){game.st.backorders++;game.ledger.back-=15;addScore(-15,'back',-12,3.5,AISLE(ROWS[0]),true);}
@@ -2171,7 +2377,7 @@ function onStaged(o,st){
   if(game.phase!=='shift')return;
   if(o.stagedAt<=o.due){
     const before=comboMult(); game.combo++; game.bestCombo=Math.max(game.bestCombo,game.combo); const m=comboMult();
-    game.st.shipOn++; const base=o.rush?(game.mods.has('rush')?60:40):15; const pts=Math.round(base*m);
+    game.st.shipOn++; mission('ship',1); mission('combo',game.combo,true); const base=o.rush?(game.mods.has('rush')?60:40):15; const pts=Math.round(base*m);
     if(o.rush){game.ledger.rush+=base;game.st.rushOn++;} else game.ledger.ship+=base;
     game.ledger.combo+=pts-base;
     addScore(pts,'ship',st.x,1.6,STAGE_Z,false,m>1?'gold':'');
@@ -2200,6 +2406,7 @@ function checkLow(sku){
 /* ---------------- scoring & incidents ---------------- */
 function addScore(n,kind,x,y,z,bad,cls){
   if(game.phase!=='shift')return;
+  if(game.hands&&n>0){const b=Math.round(n*0.25);game.ledger.hands=(game.ledger.hands||0)+b;n+=b;}
   game.score+=n;
   const chip=$('#scoreChip'); chip.classList.add('bump'); setTimeout(()=>chip.classList.remove('bump'),160);
   if(x!=null) popup((n>0?'+':'')+n,x+OX,y,z,bad?'bad':(cls||(kind==='put'?'info':'')));
@@ -2386,7 +2593,7 @@ function spawnLiteTruck(L,dir,bay){
   const n=dir==='out'?irand(4,7):irand(3,6), now=clockMin();
   const t={kind:'tk',lite:L,ox:L.ox,id:'TRK-'+(++liteSeq),ship:'#SHP-'+(80000+liteSeq*7%9999),car,dir,n,done:0,g,bay:null,state:'queued',
     dest:dir==='out'?DESTS[(liteSeq*3)%DESTS.length]:L.s.code+' '+L.s.name,from:dir==='in'?car.from:L.s.code+' '+L.s.name,
-    x:21.6+L.ox,z:160,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,blockT:0,ghost:0,cargo:[],unloaded:0,
+    x:21.6+L.ox,z:SPAWN_Z,yaw:Math.PI/2,steps:[],spd:6,rspd:2.2,turn:1.0,gate:1.25,blockT:0,ghost:0,cargo:[],unloaded:0,
     times:{gate:now,arrived:null,done:null,confirmed:now-irand(260,420)}};
   t.times.picked=t.times.confirmed+irand(50,90); t.times.loaded=t.times.confirmed+irand(110,150);
   g.userData.sel=t; L.trucks.push(t); liteTrucks.push(t);
@@ -2405,7 +2612,7 @@ function liteDepart(L,t){
   L.done++; if(t.times.done-t.times.gate<=70)L.onTime++; else L.late++;
   L.fill=clamp(L.fill+(t.dir==='in'?0.035:-0.04),0.2,0.95);
   const P=planner(t);
-  P.wait(1.2).mv(15+ox,b.z).mv(21.6+ox,b.z-4.5).mv(21.6+ox,b.z-7).act(()=>{b.truck=null;setStack(L);}).mv(21.6+ox,-165).act(()=>{t.gone=true;});
+  P.wait(1.2).mv(15+ox,b.z).mv(21.6+ox,b.z-4.5).mv(21.6+ox,b.z-7).act(()=>{b.truck=null;setStack(L);}).mv(21.6+ox,EXIT_Z).act(()=>{t.gone=true;});
   t.steps=P.steps;
 }
 function liteForklift(L,f,dt){
@@ -2477,7 +2684,7 @@ function loadSite(idx){
   site=SITES[idx]; game.siteIdx=idx; L=computeLayout(site); OX=site.k*SLICE_W; world.position.set(OX,0,0); game.fly=null;
   while(world.children.length) world.remove(world.children[0]);
   trucks.length=0; forklifts.length=0; slots.length=0; staging.length=0; bays.length=0; spills.length=0; ghosts.length=0;
-  pops.forEach(p=>p.el.remove()); pops.length=0; buildEnv(); clearVans();
+  pops.forEach(p=>p.el.remove()); pops.length=0; reqs.length=0; buildEnv(); clearVans();
   removeLite(idx); SITES.forEach((_,i)=>{if(i!==idx)buildLite(i);});
   ROWS=[-11,-6,-1,4].slice(0,L.rows);
   ROW_LV=ROWS.map((_,r)=>L.l3.includes(r)?3:2);
@@ -2518,7 +2725,7 @@ function endShift(){
   const G=site.goals, st=game.st, n=st.shipOn+st.lateOrders;
   const otr=n?st.shipOn/n*100:0;
   const met=[st.recv>=G.recv, st.shipOn>=G.ship, n>=5&&otr>=G.ontime];
-  const stars=met.filter(Boolean).length;
+  const stars=met.filter(Boolean).length; if(stars>=2&&!tut)mission('stars',1); if(stars>=2&&game.hands&&!tut)unlock('handson'); reqs.length=0;
   let credits=Math.max(0,Math.round(game.score/6))+stars*10;
   const levelBefore=levelOf(save.xp), xpBefore=save.xp;
   const isDaily=game.mode==='daily';
@@ -2715,12 +2922,14 @@ function tileInfo(t){
   if(t.type==='road')return {title:t.owner==='player'?'Your road':'City road',sub:at+(town.lights.has(t.key)?' · traffic lights':''),kind:t.owner==='player'?'own':'city'};
   if(t.type==='private')return {title:'Your truck road',sub:'Private access for inbound and outbound trucks',kind:'city'};
   if(t.type==='hq')return {title:'Your warehouse',sub:site.name+' grounds',kind:'city'};
-  if(t.type==='cshop')return {title:t.shop.name,sub:'City shop · delivery customer',kind:'city'};
+  if(t.type==='cshop')return {title:t.shop.name,sub:'City shop · delivery customer'+(t.addr?' · '+t.addr:''),kind:'city'};
+  if(t.type==='chouse')return {title:t.addr||'City house',sub:'Home · delivery customer · not for sale',kind:'city'};
   if(t.type==='cbig'||t.type==='cpark')return {title:'City property',sub:'Not for sale',kind:'city'};
   if(t.type==='lease')return {title:'Unit 7 · for lease',sub:'Buy the whole warehouse for '+LEASE.cost+' cr. Earns '+LEASE.inc+'/h.',kind:'sale'};
   if(t.type==='bigdepot')return {title:'WareTrack Depot 2',sub:'Yours · '+(connected(t)?'earning '+LEASE.inc+'/h':'no road link'),kind:'own'};
   if(t.type==='grass')return t.owner==='player'?{title:'Your empty plot',sub:at+' · ready to build',kind:'own'}:{title:'For sale · '+landPrice(t)+' cr',sub:at+(t.wild?' · has trees':''),kind:'sale'};
-  const B=BTYPES[t.type], inc=bIncome(t);
+  const B=BTYPES[t.type]; if(!B)return {title:'City property',sub:'Not for sale',kind:'city'};
+  const inc=bIncome(t);
   return {title:(t.name||B.name),sub:(B.inc?(connected(t)?'Earning '+inc.toFixed(2)+'/h':'No road link to your warehouse'):B.desc),kind:'own'};
 }
 function applyTool(t){
@@ -3073,7 +3282,7 @@ el.addEventListener('pointermove',e=>{
       const upp=(cam.top-cam.bottom)/view.zoom/innerHeight;
       const rx=Math.cos(view.az),rz=-Math.sin(view.az), fx=-Math.sin(view.az),fz=-Math.cos(view.az);
       const k=dy*upp/Math.sin(EL);
-      view.targetT.x=clamp(view.targetT.x-rx*dx*upp+fx*k,-250,260); view.targetT.z=clamp(view.targetT.z-rz*dx*upp+fz*k,-80,80); game.fly=null;
+      view.targetT.x=clamp(view.targetT.x-rx*dx*upp+fx*k,-250,260); view.targetT.z=clamp(view.targetT.z-rz*dx*upp+fz*k,-130,140); game.fly=null;
       view.target.copy(view.targetT);
     }
   }else if(e.pointerType==='mouse'){ if(game.town){townHoverT=tileAtScreen(e.clientX,e.clientY);el.classList.add('hover');} else hoverAt(e.clientX,e.clientY); }
@@ -3366,7 +3575,7 @@ function openModal(v){
   if(v==='menu'&&game.phase==='shift'&&sim.speed!==0){prevSpeed=sim.speed;setSpeed(0);}
   renderModal(); $('#sheet').scrollTop=0;
 }
-function closeModal(){$('#modal').hidden=true;modalView=null;}
+function closeModal(){game.welcome=null;$('#modal').hidden=true;modalView=null;}
 const starRow=n=>[0,1,2].map(k=>'<span class="'+(k<n?'on':'')+'">'+STAR+'</span>').join('');
 function siteCard(s,i){
   const best=save.best[s.code], un=unlocked(i), sel=game.menuSel===i;
@@ -3406,7 +3615,8 @@ function menuHeader(){
   return '<div class="m-top"><div><h1>'+(inShift?'Shift paused':'WareTrack')+'</h1><p class="lede">'+(inShift?'The clock is stopped. Resume when you are ready.':'Run warehouse shifts, earn stars and credits, and grow your sites.')+'</p></div>'+
     '<div class="who"><div class="rankcard"><span class="n">'+lv+'</span><div><b>'+rankOf(lv)+'</b><small>'+fmtN(save.xp-xpFor(lv))+' / '+fmtN(xpFor(lv+1)-xpFor(lv))+' XP</small><div class="meter gold"><i style="width:'+pct+'%"></i></div></div></div>'+
     (sk?'<span class="flame">'+ICON.flame+sk+'</span>':'')+
-    '<div class="credits"><label>Credits</label><b>'+fmtN(save.credits)+'</b></div></div></div>';
+    '<div class="credits"><label>Credits</label><b>'+fmtN(save.credits)+'</b></div></div></div>'+
+    (game.welcome&&!inShift?'<div class="callout gold welcome"><b>Welcome back · +'+fmtN(game.welcome.cr)+' credits</b><span>While you were away for '+fmtAway(game.welcome.h)+(game.welcome.capped?' (pay counts up to 8 h)':'')+', your five warehouses turned about '+game.welcome.trucks+' trucks and your vans made about '+game.welcome.dels+' deliveries.</span></div>':'');
 }
 function renderModal(){
   const sh=$('#sheet'); let h='';
@@ -3466,6 +3676,8 @@ function renderModal(){
     if(lvUp) h+='<div class="callout gold">'+ICON.up+'Promoted to '+rankOf(lvl)+'! Promotion bonus added to your credits.</div>';
     if(R.daily) h+='<div class="callout '+(R.daily.cleared?'flame':'mute')+'">'+ICON.flame+(R.daily.cleared?(R.daily.newClear?'Daily cleared · '+R.daily.streak+'-day streak · +'+R.daily.reward+' credits':'Daily cleared again · best '+fmtN(R.daily.best)):'Target '+fmtN(R.daily.target)+' · you scored '+fmtN(R.score)+'. Play again to try for it.')+'</div>';
     if(R.newUnlock) h+='<div class="callout ok">Unlocked '+esc(R.newUnlock.name)+'. '+esc(R.newUnlock.blurb)+'</div>';
+    if(R.ledger&&R.ledger.hands) h+='<div class="callout gold">'+ICON.target+'Hands-on bonus +'+R.ledger.hands+' points</div>';
+    if(R.st.missed) h+='<div class="callout mute">'+ICON.clock+R.st.missed+' order request'+(R.st.missed>1?'s':'')+' expired before you answered.</div>';
     if(R.st.del) h+='<div class="callout ok">'+ICON.truck+'Deliveries earned '+R.st.del+' credits ('+(R.st.delOn||0)+' on time).</div>';
     if(R.st.town) h+='<div class="callout ok">'+ICON.map+'Your town earned '+R.st.town+' credits during this shift.</div>';
     if(R.ach.length) h+='<div class="callout gold">'+ICON.trophy+'New achievement'+(R.ach.length>1?'s':'')+': '+R.ach.map(id=>esc(ACH.find(a=>a.id===id).name)).join(', ')+'</div>';
@@ -3522,6 +3734,8 @@ $('#siteDD').addEventListener('click',e=>{const n=e.target.closest('[data-net]')
   else if(!unlocked(i))toast('info',SITES[i].name+' is locked','Earn 2 stars at '+SITES[i-1].name+' to run it. You can still watch it work.',ICON.lock);});
 $('#bellDD').addEventListener('click',e=>{if(e.target.closest('[data-clear]')){notices.length=0;renderBellDD();}});
 $('#track').addEventListener('click',e=>{const b=e.target.closest('[data-trk]');if(!b)return;e.stopPropagation();game.trk=b.dataset.trk;game.trkOrder=null;if(selected&&['tk','fl','van','dest'].includes(selected.kind))select(null);renderTrack();});
+$('#acts').addEventListener('click',e=>{const h=e.target.closest('[data-hands]');if(h){e.stopPropagation();setHands(h.dataset.hands==='1');return;}const b=e.target.closest('[data-ac]');if(b&&!b.disabled){e.stopPropagation();const [i,a]=b.dataset.ac.split(':');doAct(+i,a);}});
+$('#missions').addEventListener('click',e=>{const b=e.target.closest('[data-claim]');if(b){e.stopPropagation();claimMission(+b.dataset.claim);}});
 $('#insp').addEventListener('click',e=>{const b=e.target.closest('[data-ins]');if(b){const a=b.dataset.ins;if(a==='close')select(null);else if(a==='follow'){game.follow=game.follow===selected?null:selected;}else if(a==='focus')focusOn(selected);else if(a==='run'){flyToSite(+b.dataset.idx,true);return;}renderInspector();return;}
   const tro=e.target.closest('[data-trko]');if(tro){game.trk='out';game.trkOrder=tro.dataset.trko;renderTrack();return;}
   const lp=e.target.closest('[data-lpick]');if(lp){const t=liteTrucks.find(x=>x.id===lp.dataset.lpick);if(t){select(t);focusOn(t);}return;}
@@ -3603,6 +3817,7 @@ function tick(now){
         SKU_KEYS.forEach(checkLow);
         if(sim.sec>=SHIFT_LEN) endShift();
       }}
+    tickReqs(sim.speed?rdt:0);
     if(game.incident&&!tut){
       game.incident.t+=rdt;
       const tm=$('#incTimer'); if(tm) tm.style.width=Math.max(0,100-game.incident.t/game.incident.ttl*100)+'%';
@@ -3654,7 +3869,7 @@ function tick(now){
   renderer.render(scene,cam);
   $('#clock').textContent=fmtT(clockMin());
   hudT+=rdt;
-  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();}
+  if(hudT>0.4||dirty){hudT=0;dirty=false;renderKpis();renderShift();renderPanel();renderTrack();renderInspector();renderActs();renderMissions();}
   requestAnimationFrame(tick);
 }
 
@@ -3667,6 +3882,7 @@ function boot(){
   addEventListener('resize',resize);
   setSpeed(1); renderIncident(); syncSoundBtn();
   game.menuTab=save.daily.last!==todayKey()&&save.tutorial&&save.stats.shifts>0?'daily':'play';
+  welcomeBack(); setInterval(writeSave,20000); document.addEventListener('visibilitychange',writeSave);
   openModal('menu');
   setTimeout(hideHint,14000);
   requestAnimationFrame(t=>{last=t;tick(t);});
