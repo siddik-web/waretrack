@@ -884,6 +884,64 @@ setTimeout(()=>{game.hands=!!save.settings.hands;},0);
 function writeSave(){save.lastSeen=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 function unlocked(i){if(i===0||save.best[SITES[i].code])return true;const prev=save.best[SITES[i-1].code];return !!(prev&&prev.stars>=2);}
 function siteBuilds(code){return save.builds[code]||(save.builds[code]={bays:0,row:false,l3:[],fc:[],brk:false,decor:[]});}
+function constrDur(cost){return clamp(cost*0.12,5,25);}
+function constrProgress(c){return clamp((save.simClock-c.startMin)/c.dur,0,1);}
+let constrSeq=0;
+function queueConstr(entry){
+  const dur=constrDur(entry.cost);
+  const c=Object.assign({id:'C'+(++constrSeq)+'-'+Date.now(),startMin:save.simClock,dur},entry);
+  save.constr.push(c); writeSave(); return c;
+}
+const constrScaffolds=new Map();
+function removeScaffold(id){
+  const sc=constrScaffolds.get(id); if(sc&&sc.riser.parent)sc.riser.parent.remove(sc.riser);
+  constrScaffolds.delete(id);
+}
+function syncWhScaffolds(){
+  constrScaffolds.forEach((sc,id)=>{if(sc.kind==='wh')removeScaffold(id);});
+  save.constr.filter(c=>c.kind==='wh'&&c.site===site.k).forEach(c=>{
+    const size=c.size||[3,3,3];
+    const r=box(size[0]*0.55,1,size[2]*0.55,'#f0a623',c.pos[0],0,c.pos[2],world,false);
+    r.scale.y=0.02;
+    constrScaffolds.set(c.id,{riser:r,full:size[1]||3,kind:'wh'});
+  });
+}
+function completeConstr(c){
+  const i=save.constr.indexOf(c); if(i<0)return; save.constr.splice(i,1);
+  removeScaffold(c.id);
+  if(c.kind==='wh'){
+    const b=siteBuilds(SITES.find(s=>s.k===c.site).code), [k,a]=c.key.split(':');
+    if(k==='bay')b.bays=(b.bays|0)+1; else if(k==='row')b.row=true; else if(k==='l3')b.l3=(b.l3||[]).concat(+a);
+    else if(k==='fc')b.fc=(b.fc||[]).concat(+a); else if(k==='brk')b.brk=true; else if(k==='decor')b.decor=(b.decor||[]).concat(+a);
+    save.stats.builds++;
+    if(save.stats.builds>=5)unlock('builder');
+    if(Object.values(save.builds).reduce((n,x)=>n+((x.decor||[]).length),0)>=3)unlock('decor');
+    if(c.site===site.k&&game.phase!=='shift'){
+      const vt=view.targetT.clone(), vz=view.zoomT;
+      loadSite(game.siteIdx);
+      view.targetT.copy(vt); view.target.copy(vt); view.zoomT=vz;
+    }
+    if(c.site===site.k)popup('Built!',c.pos[0]+OX,c.pos[1]+2,c.pos[2],'gold');
+  }else{
+    const t=town.tiles.get(c.key);
+    if(t){
+      Object.assign(t,{type:c.meta.type,face:c.meta.face,name:c.meta.name,color:c.meta.color,wild:false});
+      save.town.b[c.key]={type:c.meta.type,face:c.meta.face,name:c.meta.name,color:c.meta.color};
+      townChanged([c.key],false);
+    }
+    popup('Built!',c.pos[0],2,c.pos[2],'gold');
+  }
+  toast('info','Built: '+c.label,'',ICON.hammer); Snd.play('build');
+  writeSave(); renderPanel();
+}
+function tickConstr(dt){
+  if(!save.constr.length)return;
+  for(let i=save.constr.length-1;i>=0;i--){
+    const c=save.constr[i], p=constrProgress(c), sc=constrScaffolds.get(c.id);
+    if(sc&&sc.riser.parent){sc.riser.scale.y=Math.max(0.02,sc.full*p); sc.riser.position.y=sc.riser.scale.y/2;}
+    if(p>=1)completeConstr(c);
+  }
+}
 const xpFor=l=>250*(l-1)*l;
 function levelOf(xp){let l=1;while(xp>=xpFor(l+1))l++;return l;}
 const rankOf=l=>RANKS[Math.min(l-1,RANKS.length-1)];
@@ -2725,6 +2783,7 @@ function loadSite(idx){
   $('#pEyebrow').textContent='Distribution center · '+site.code; $('#pName').textContent=site.name; $('#pAddr').textContent=site.addr;
   select(null); defaultView(); resize(); dirty=true;
   if(game.building) showGhosts();
+  syncWhScaffolds();
 }
 function freePlay(idx){game.mode='normal';game.mods=new Set();game.daily=null;RNG=Math.random;game.phase='free';loadSite(idx==null?game.siteIdx:idx);}
 function startShift(idx,mode){
