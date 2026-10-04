@@ -23,6 +23,7 @@ python3 -m http.server 8000
 - **Five warehouses in one live world:** Northgate DC, Riverside Hub, Eastport Cold Chain, Southfield Cross-Dock and Westgate Robotics Hub sit side by side on one road network. You run one site in full detail; the other four keep working on their own, with trucks queuing, docking, unloading or loading outbound freight, and yard forklifts moving pallets. Each site has its own building style (gable roof, cold store with silos, sawtooth cross-dock, solar-roofed robotics hub). Unlock each one with 2 stars at the previous site.
 - **Problems with choices:** breakdowns, spills, rush orders, late trucks, order surges and low stock.
 - **Progression:** XP and 8 ranks, 24 achievements, a daily challenge with streaks, upgrades, cosmetics, and a build mode for each warehouse.
+- **Delivery business:** every shipped order becomes a van delivery with a promised time. Early drops earn a tip, late ones half pay, and a customer rating scales every fee. Each trip costs a little to run, and jobs wait at the depot when all vans are out. Spend credits in the Vans tab on staff (more drivers, driver training, a dispatcher) and tools (scanners, route planner, bigger vans, electric vans) to deliver faster and earn more.
 - **Town planner:** buy plots, lay roads, and put up houses, shops, offices, depots and parks. Buildings linked to the warehouse by road earn credits, and shops you build become delivery customers. You can also buy the empty Unit 7 to run a second warehouse.
 - **Traffic rules:** right-hand driving, lane-following, traffic lights with amber and all-red phases, safe following distance and left-turn yielding. The game's trucks and vans obey them too.
 - **Inspector and selection:** tap a truck, forklift, dock bay, charger or pallet to see its details. Selected items get blue corner brackets, a label, and a route line with a destination pin. The follow camera tracks moving vehicles.
@@ -52,4 +53,4 @@ It's a static site, so any static host works (Vercel, Netlify, GitHub Pages). Wi
 
 ## Game rules spreadsheet
 
-`WareTrack_game_rules.xlsx` lists every warehouse, scoring rule, problem card, action, upgrade and the traffic rules, plus a shift calculator for estimating score, stars and credits.
+`WareTrack_game_rules.xlsx` lists every warehouse, scoring rule, problem card, action, upgrade, the delivery rules and delivery upgrades, and the traffic rules, plus a shift calculator for estimating score, stars and credits.

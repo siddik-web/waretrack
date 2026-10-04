@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="WareTrack: a 3D warehouse strategy game you play in the browser.">
-<title>WareTrack Northgate</title>
+<title>WareTrack Logistics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -32,6 +32,11 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+.delhead{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.delhead .mini b{font-size:15px}
+.delnote{font-size:11.5px;color:var(--ink-2);margin:6px 2px 8px;line-height:1.45}
+.rstars{letter-spacing:-1px;color:#d4dae4;font-size:12px}.rstars .on{color:#f2b51e}
+.badge svg{width:14px;height:14px}
 html,body{height:100%;overflow:hidden}
 body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:13px;-webkit-font-smoothing:antialiased}
 #stage{position:fixed;inset:0}
@@ -176,7 +181,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cobalt);outline
 .pill.rush{background:var(--bad);color:#fff;padding:1px 6px;font-size:9.5px}
 .tabs{display:flex;gap:0;margin:12px -14px 0;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{padding:9px 7px;font-weight:700;font-size:12px;color:var(--ink-3);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:4px;align-items:center;white-space:nowrap}
+.tabs button{padding:9px 6px;font-weight:700;font-size:12px;color:var(--ink-3);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:4px;align-items:center;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--cobalt)}
 .tabs .count{font-family:var(--f-mono);font-size:10px;background:var(--mute-soft);border-radius:5px;padding:0 4px;color:var(--ink-2)}
 .tabs .count.hot{background:var(--bad-soft);color:var(--bad)}
@@ -650,6 +655,7 @@ input[type=range]{width:140px;accent-color:var(--cobalt)}
         <button role="tab" id="t-dock" data-tab="dock" aria-selected="false">Docks <span class="count" id="cDock">0</span></button>
         <button role="tab" id="t-fl" data-tab="fl" aria-selected="false">Forklifts <span class="count" id="cFl">0</span></button>
         <button role="tab" id="t-tk" data-tab="tk" aria-selected="false">Trucks <span class="count" id="cTk">0</span></button>
+        <button role="tab" id="t-van" data-tab="van" aria-selected="false">Vans <span class="count" id="cVan">0</span></button>
         <button role="tab" id="t-inv" data-tab="inv" aria-selected="false">Stock</button>
         <button role="tab" id="t-log" data-tab="log" aria-selected="false">Log</button>
       </div>
@@ -744,7 +750,7 @@ const SITES=[
    bays:2,rows:3,forklifts:3,seed:28,orderRate:[15,20],truckRate:[80,105],eventRate:[70,100],orderSla:60,diff:1,dailyTarget:300,
    goals:{recv:18,ship:18,ontime:85},blurb:'A small two-door depot by the river. Fewer trucks, but only two docks to share.'},
   {code:'WH-03',name:'Eastport Cold Chain',k:1,type:'cold',addr:'12 Pier Road, Elizabeth NJ',accent:'#1f8f86',floor:'#f2f7f6',
-   bays:5,rows:3,forklifts:3,seed:30,orderRate:[13,18],truckRate:[38,52],eventRate:[50,80],orderSla:50,diff:2,dailyTarget:420,
+   bays:5,rows:3,forklifts:3,seed:30,orderRate:[13,18],truckRate:[42,58],eventRate:[50,80],orderSla:50,diff:2,dailyTarget:420,
    goals:{recv:36,ship:22,ontime:85},blurb:'Chilled port overflow site. Five docks and a long truck queue, but only three rack rows.'},
   {code:'WH-04',name:'Southfield Cross-Dock',k:-2,type:'cross',addr:'301 Southfield Ave, Edison NJ',accent:'#e0664f',floor:'#fbf5f3',
    bays:5,rows:3,forklifts:4,seed:26,orderRate:[11,15],truckRate:[34,46],eventRate:[48,76],orderSla:45,diff:3,dailyTarget:440,
@@ -803,6 +809,8 @@ const ACH=[
   {id:'mayor',name:'Town builder',desc:'Put up 10 buildings in town'},
   {id:'tycoon',name:'Two warehouses',desc:'Buy Unit 7 and run a second warehouse'},
   {id:'stylist',name:'Fresh paint',desc:'Buy your first item from the Shop'},
+  {id:'courier',name:'Courier',desc:'Make 10 on-time deliveries in one shift'},
+  {id:'fleet',name:'Fleet owner',desc:'Hire drivers for a fleet of 6 vans'},
 ];
 const SHIFT_LEN=480; // site minutes; 1 real second at 1x = 1 site minute
 const MAINX=-4.5;
@@ -1481,8 +1489,8 @@ function landPrice(t){
 }
 function customers(){
   const out=[];
-  town.tiles.forEach(t=>{ if(t.type!=='cshop')return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={name:t.shop.name,road:r,x:tcx(t.i),z:tcz(t.j)})); });
-  town.tiles.forEach(t=>{ if(t.type==='shop'&&t.owner==='player'){ const n=nbT(t,t.face); if(n&&town.reach.has(n.key)) out.push({name:t.name,road:n.key,x:tcx(t.i),z:tcz(t.j)}); }});
+  town.tiles.forEach(t=>{ if(t.type!=='cshop'||sliceOfI(t.i)!==site.k)return; const r=tkey(t.i+DIRS[t.face][0],t.j+DIRS[t.face][1]); if(town.reach.has(r)) out.push(t.cust||(t.cust={name:t.shop.name,road:r,x:tcx(t.i),z:tcz(t.j)})); });
+  town.tiles.forEach(t=>{ if(t.type==='shop'&&t.owner==='player'&&Math.abs(sliceOfI(t.i)-site.k)<=1){ const n=nbT(t,t.face); if(n&&town.reach.has(n.key)) out.push({name:t.name,road:n.key,x:tcx(t.i),z:tcz(t.j)}); }});
   return out;
 }
 function initTown(){
@@ -1595,22 +1603,116 @@ function routeThrough(path,h,startPos,endOut){
   });
   return {pts,h};
 }
-function spawnVan(o){
-  if(!o||!o.shop||vans.length>8)return;
-  const s=town.tiles.get(tkey(12*site.k-1,0)), dest=town.tiles.get(o.shop.road); if(!s||!dest)return;
-  const p1=bfs(s.key,dest.key); if(!p1)return;
-  const a=routeThrough(p1,0,null,null);
-  const stop=a.pts[a.pts.length-1];
-  const p2=bfs(dest.key,s.key); if(!p2)return;
-  const b=routeThrough(p2,a.h,stop,2);
-  const g=makeVan(); env.add(g);
-  const v={kind:'van',ox:OX,g,x:12+OX,z:-12.4,yaw:Math.PI/2,steps:[],spd:6,rspd:3,turn:3.6,gate:1.2,blockT:0,ghost:0};
-  const mv=p=>({t:'move',x:p[0],z:p[1]});
-  v.steps=[mv([12+OX,-17.2]),...a.pts.map(mv),{t:'do',fn:()=>{popup('Delivered',o.shop.x,5,o.shop.z,'info');}},{t:'wait',s:1.6},...b.pts.map(mv),mv([10.4+OX,-12.6]),{t:'do',fn:()=>{v.done=true;}}];
-  vans.push(v); place(v);
+/* ---------------- delivery business: jobs, fleet, upgrades ---------------- */
+const DEL_UP=[
+  {key:'drv',group:'Staff',name:'Delivery drivers',costs:[90,180,320],desc:l=>'Fleet of '+FLEET[l]+' vans'+(l<3?' · next: '+FLEET[l+1]:'')},
+  {key:'train',group:'Staff',name:'Driver training',costs:[70,150],desc:l=>'Vans drive '+(12*l)+'% faster'+(l<2?' · next: '+(12*(l+1))+'%':'')},
+  {key:'disp',group:'Staff',name:'Dispatcher',costs:[110],desc:()=>'Sends the most urgent job first and quotes 5 min longer promises'},
+  {key:'scan',group:'Tools',name:'Handheld scanners',costs:[60],desc:()=>'Drop-offs take half the time and earn a 1 cr tip'},
+  {key:'gps',group:'Tools',name:'Route planner',costs:[100,200],desc:l=>'Delivery fees +'+(15*l)+'%'+(l<2?' · next: +'+(15*(l+1))+'%':'')},
+  {key:'big',group:'Tools',name:'Bigger vans',costs:[160],desc:()=>'Each van carries 2 deliveries per trip'},
+  {key:'ev',group:'Tools',name:'Electric vans',costs:[120],desc:()=>'No more running cost: trips are free instead of 2 cr'},
+];
+const FLEET=[3,4,5,6];
+function delSave(){if(!save.del)save.del={};const d=save.del;d.lv=Object.assign({drv:0,train:0,disp:0,scan:0,gps:0,big:0,ev:0},d.lv||{});if(d.rating==null)d.rating=4;d.earned=d.earned|0;d.done=d.done|0;d.onTime=d.onTime|0;return d;}
+const dlv=k=>delSave().lv[k];
+const del={jobs:[],recent:[],today:0,seq:0};
+const fleetSize=()=>FLEET[dlv('drv')];
+const tripCost=()=>dlv('ev')?0:2;
+function routeTiles(a,b){const p=bfs(a,b);return p?p.length:null;}
+function queueDelivery(o){
+  if(!o||!o.shop)return;
+  const s=town.tiles.get(tkey(12*site.k-1,0)); const n=s?routeTiles(s.key,o.shop.road):null; if(n==null)return;
+  const now=clockMin(), due=now+25+Math.round(3*n)+(dlv('disp')?5:0);
+  del.jobs.push({id:o.id,shop:o.shop,dist:n,created:now,due,rush:!!o.rush});
+  dirty=true;
 }
-function updateVans(dt){for(let i=vans.length-1;i>=0;i--){const v=vans[i];runSteps(v,dt);place(v);if(v.done){env.remove(v.g);vans.splice(i,1);}}}
-function clearVans(){vans.forEach(v=>env.remove(v.g));vans.length=0;}
+function delFee(j){return (2+0.25*j.dist)*(1+0.15*dlv('gps'))*(0.8+0.1*delSave().rating);}
+function deliverJob(v,j){
+  const D=delSave(), now=clockMin(), left=j.due-now;
+  let fee=delFee(j), res;
+  if(left>=10){fee*=1.25;res='early';} else if(left>=0)res='on time'; else {fee*=0.5;res='late';}
+  if(dlv('scan'))fee+=1;
+  const cr=Math.max(1,Math.round(fee));
+  const target=res==='early'?5:res==='on time'?4.3:1.5; D.rating=Math.round((D.rating+(target-D.rating)*0.15)*100)/100;
+  save.credits+=cr; D.earned+=cr; D.done++; if(res!=='late')D.onTime++; del.today+=cr; v.earned+=cr;
+  if(game.phase==='shift'&&game.st){game.st.del=(game.st.del||0)+cr; if(res!=='late'){game.st.delOn=(game.st.delOn||0)+1; if(game.st.delOn>=10)unlock('courier');}}
+  del.recent.unshift({id:j.id,shop:j.shop.name,cr,res,t:now,wait:Math.round(j.sent-j.created),drive:Math.round(now-j.sent),promise:j.due-j.created}); if(del.recent.length>6)del.recent.pop();
+  popup('+'+cr+' cr'+(res==='early'?' · early':res==='late'?' · late':''),j.shop.x,5,j.shop.z,res==='late'?'bad':'gold');
+  log(j.id+' delivered to '+j.shop.name+' '+res+' · +'+cr+' credits',res==='late'?'warn':'ok');
+  writeSave(); dirty=true;
+}
+function depotClear(){const x=12+OX,z=-12.4;return !vans.some(v=>Math.hypot(v.x-x,v.z-z)<3.4);}
+function dispatchVans(){
+  if(!del.jobs.length||vans.length>=fleetSize()||!depotClear())return;
+  if(dlv('disp'))del.jobs.sort((a,b)=>a.due-b.due);
+  const take=del.jobs.splice(0,dlv('big')?2:1); take.forEach(j=>j.sent=clockMin());
+  if(!spawnVan(take)){del.jobs.unshift(...take);}
+}
+function spawnVan(jobs){
+  const s=town.tiles.get(tkey(12*site.k-1,0)); if(!s)return false;
+  const mv=p=>({t:'move',x:p[0],z:p[1]}), steps=[];
+  let h=0, pos=null, at=s.key;
+  const v={kind:'van',id:'VAN-'+(++del.seq),ox:OX,g:null,x:12+OX,z:-12.4,yaw:Math.PI/2,steps:[],spd:8.5*(1+0.12*dlv('train')),rspd:3,turn:3.6,gate:1.2,blockT:0,ghost:0,jobs:jobs.slice(),earned:0,state:'Leaving depot',driver:hpick(DRIVERS,'v'+del.seq)};
+  steps.push(mv([12+OX,-17.2]));
+  for(const j of jobs){
+    const p=bfs(at,j.shop.road); if(!p)return false;
+    const r=routeThrough(p,h,pos,null); steps.push({t:'do',fn:()=>{v.state='Driving to '+j.shop.name;}},...r.pts.map(mv));
+    steps.push({t:'do',fn:()=>{v.state='Dropping off at '+j.shop.name;}},{t:'wait',s:dlv('scan')?0.8:1.6},{t:'do',fn:()=>{deliverJob(v,j);v.jobs=v.jobs.filter(x=>x!==j);}});
+    h=r.h; pos=r.pts.length?r.pts[r.pts.length-1]:pos; at=j.shop.road;
+  }
+  const back=bfs(at,s.key); if(!back)return false;
+  const b=routeThrough(back,h,pos,2);
+  steps.push({t:'do',fn:()=>{v.state='Returning to depot';}},...b.pts.map(mv),mv([10.4+OX,-12.6]),{t:'do',fn:()=>{v.done=true;}});
+  v.g=makeVan(); v.g.userData.sel=v; env.add(v.g); v.steps=steps;
+  save.credits=Math.max(0,save.credits-tripCost()); del.today-=tripCost();
+  vans.push(v); place(v); dirty=true; return true;
+}
+function vanAhead(o,dt){
+  if(o.ghost>0){o.ghost-=dt;return false;}
+  const [dx,dz]=heading(o),fx=o.x+dx*1.9,fz=o.z+dz*1.9;
+  for(const v of vans){if(v===o)continue;for(const p of bodyPts(v)){const rx=p[0]-fx,rz=p[1]-fz,ah=rx*dx+rz*dz;if(ah<-0.4||ah>2.6)continue;
+    if(Math.abs(rx*dz-rz*dx)<1.1){o.blocker=v;o.gateT=(o.gateT||0)+dt;if((v.blocker===o&&o.gateT>1.5)||o.gateT>20){o.ghost=1.2;o.gateT=0;return false;}return true;}}}
+  o.gateT=0; o.blocker=null; return false;
+}
+function updateVans(dt){
+  if(dt>0)dispatchVans();
+  for(let i=vans.length-1;i>=0;i--){const v=vans[i];runSteps(v,dt);place(v);if(v.done){env.remove(v.g);vans.splice(i,1);if(selected===v)select(null);}}
+  if(dt>0){const now=clockMin();del.jobs.forEach(j=>{if(!j.warned&&now>j.due){j.warned=true;log(j.id+' is waiting at the depot past its promised time','bad');}});}
+}
+function clearVans(){vans.forEach(v=>env.remove(v.g));vans.length=0;del.jobs.length=0;del.today=0;del.recent.length=0;}
+function buyDel(key){
+  const u=DEL_UP.find(x=>x.key===key), l=dlv(key), c=u&&u.costs[l]; if(!u||c==null)return;
+  if(save.credits<c){toast('info','Not enough credits',u.name+' costs '+c+' credits',ICON.lock);return;}
+  save.credits-=c; delSave().lv[key]++; writeSave(); Snd.play('build');
+  toast('info',u.name+' upgraded',u.desc(dlv(key)),key==='drv'||key==='train'||key==='disp'?ICON.up:ICON.wrench);
+  if(key==='drv'&&dlv('drv')>=3)unlock('fleet');
+  dirty=true; renderPanel();
+}
+const ratingStars=r=>{let s='';for(let k=1;k<=5;k++)s+='<span class="'+(r>=k-0.25?'on':'')+'">★</span>';return '<span class="rstars">'+s+'</span>';};
+function renderDelPanel(){
+  const D=delSave(), now=clockMin(), out=vans.length, F=fleetSize();
+  let h='<div class="delhead"><div class="mini"><label>Net today</label><b>'+(del.today>=0?'+':'')+del.today+' <span>cr</span></b></div><div class="mini"><label>Customer rating</label><b>'+D.rating.toFixed(1)+' '+ratingStars(D.rating)+'</b></div><div class="mini"><label>Vans out</label><b>'+out+' <span>/ '+F+'</span></b></div></div>';
+  h+='<p class="delnote">Each shipped order becomes a delivery with a promised time. Early drops earn a 25% tip, late ones half pay, and your rating changes every fee. Every trip costs '+tripCost()+' cr to run.</p>';
+  h+='<div class="sub"><span>Waiting at the depot · '+del.jobs.length+'</span></div>';
+  if(!del.jobs.length)h+='<div class="empty">No deliveries waiting. Shipped orders show up here until a van is free.</div>';
+  del.jobs.forEach((j,i)=>{const m=Math.round(j.due-now),c=m<0?'bad':m<10?'warn':'ok';
+    h+='<div class="row'+(m<0?' late':'')+'"><div class="badge">'+(i+1)+'</div><div class="t"><b class="mono">'+j.id+'</b><small>'+esc(j.shop.name)+' · '+j.dist+' blocks · about '+Math.round(delFee(j))+' cr</small></div><div class="r"><span class="pill '+c+'">'+(m>=0?'due in '+m+' min':'late '+(-m)+' min')+'</span></div></div>';});
+  h+='<div class="sub"><span>On the road · '+out+'</span></div>';
+  if(!out)h+='<div class="empty">All vans are at the depot.</div>';
+  vans.forEach(v=>{const j=v.jobs[0],m=j?Math.round(j.due-now):null;
+    h+='<div class="row click'+(selected===v?' hl':'')+'" data-van="'+v.id+'"><div class="badge tk">V</div><div class="t"><b class="mono">'+v.id+'</b><small>'+esc(v.state)+(v.jobs.length>1?' · '+v.jobs.length+' drops':'')+'</small></div><div class="r">'+(j?'<span class="pill '+(m<0?'bad':m<10?'warn':'info')+'">'+(m>=0?m+' min left':'late')+'</span>':'<span class="pill">Back soon</span>')+'</div></div>';});
+  if(del.recent.length){h+='<div class="sub"><span>Recent drops</span></div>';
+    del.recent.forEach(r=>{h+='<div class="row"><div class="badge '+(r.res==='late'?'down':'')+'">'+(r.res==='early'?'★':r.res==='late'?'!':'✓')+'</div><div class="t"><b class="mono">'+r.id+'</b><small>'+esc(r.shop)+' · '+r.res+' · '+fmtT(r.t)+'</small></div><div class="r"><span class="pill gold">+'+r.cr+' cr</span></div></div>';});}
+  ['Staff','Tools'].forEach(g=>{
+    h+='<div class="sub"><span>'+g+'</span><span class="pill gold">'+fmtN(save.credits)+' cr</span></div>';
+    DEL_UP.filter(u=>u.group===g).forEach(u=>{const l=dlv(u.key),max=u.costs.length,c=u.costs[l];
+      h+='<div class="row"><div class="badge fl">'+(g==='Staff'?ICON.up:ICON.wrench)+'</div><div class="t"><b>'+esc(u.name)+(max>1?' <span class="pips">'+u.costs.map((_,k)=>'<i class="'+(k<l?'on':'')+'"></i>').join('')+'</span>':'')+'</b><small>'+esc(u.desc(l))+'</small></div><div class="r">'+
+        (l>=max?'<span class="pill ok">'+(max>1?'Maxed':'Owned')+'</span>':'<button class="act'+(save.credits>=c?' solid':'')+'" data-dbuy="'+u.key+'"'+(save.credits>=c?'':' disabled')+'>'+c+' cr</button>')+'</div></div>';});
+  });
+  h+='<div class="delnote">Lifetime: '+fmtN(D.done)+' deliveries · '+(D.done?Math.round(D.onTime/D.done*100):0)+'% on time · '+fmtN(D.earned)+' cr earned</div>';
+  return h;
+}
 
 /* ---------------- docks ---------------- */
 const bays=[];
@@ -1727,7 +1829,7 @@ function runSteps(o,dt){
       const ty=s.rev?Math.atan2(dz,-dx):Math.atan2(-dz,dx);
       const diff=angDiff(ty,o.yaw);
       o.yaw+=clamp(diff,-o.turn*budget,o.turn*budget);
-      if((o.kind==='tk'||o.kind==='van')&&!s.rev&&!(o.kind==='tk'&&lx(o)<15.5)&&!(o.kind==='van'&&o.z>-18.6&&Math.abs(lx(o)-12)<2.7)&&vehBlocked(o,budget)){budget=0;break;}
+      if((o.kind==='tk'||o.kind==='van')&&!s.rev&&!(o.kind==='tk'&&lx(o)<15.5)&&(o.kind==='van'&&o.z>-18.6&&Math.abs(lx(o)-12)<2.7?vanAhead(o,budget):vehBlocked(o,budget))){budget=0;break;}
       if(Math.abs(diff)<o.gate){
         const f=Math.cos(Math.min(Math.abs(diff),1.4));
         const sp=(s.rev?o.rspd:o.spd)*(s.slow||1)*f;
@@ -2609,7 +2711,7 @@ function makePin(lift){
   g.userData.head=[head,tip,dot]; return g;
 }
 const brk=new THREE.Group(); brk.visible=false; scene.add(brk);
-const BRK_DIM={tk:[11,4.2,2.9,0],fl:[2.8,2.7,1.5,0.2],lfl:[2.8,2.7,1.5,0.2],lbay:[1.2,4.8,4.2,0],site:[21.6,7.6,27.6,0],bay:[1.2,4.8,4.2,0],chg:[1.5,1.4,1.6,0],pal:[1.4,1.5,1.4,0]};
+const BRK_DIM={van:[3.4,2.1,1.6,-0.3],tk:[11,4.2,2.9,0],fl:[2.8,2.7,1.5,0.2],lfl:[2.8,2.7,1.5,0.2],lbay:[1.2,4.8,4.2,0],site:[21.6,7.6,27.6,0],bay:[1.2,4.8,4.2,0],chg:[1.5,1.4,1.6,0],pal:[1.4,1.5,1.4,0]};
 function bracketGeo(w,h,d){const pts=[],e=Math.min(w,h,d)*0.28+0.18;
   for(const x of [-w/2,w/2])for(const y of [0,h])for(const z of [-d/2,d/2]){const sx=x<0?1:-1,sy=y===0?1:-1,sz=z<0?1:-1;pts.push(x,y,z,x+sx*e,y,z,x,y,z,x,y+sy*e,z,x,y,z,x,y,z+sz*e);}
   const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3)); return g;}
@@ -2627,7 +2729,7 @@ const routeMat=new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opa
 const dashMat=new THREE.MeshBasicMaterial({color:'#2f5be0',transparent:true,opacity:.45,depthWrite:false});
 function rebuildRoute(){
   while(route.children.length)route.remove(route.children[0]);
-  const s=selected; if(!s||!(s.kind==='tk'||s.kind==='fl'||s.kind==='lfl'))return;
+  const s=selected; if(!s||!(s.kind==='tk'||s.kind==='fl'||s.kind==='lfl'||s.kind==='van'))return;
   const o0=s.loc?OX:0, pts=[[s.x+o0,s.z]]; for(const st of s.steps){if(st.t==='move')pts.push([st.x+o0,st.z]); if(pts.length>9)break;}
   if(pts.length<2)return;
   let solid=0;
@@ -2641,6 +2743,7 @@ function rebuildRoute(){
 function selPos(s){
   if(!s)return null;
   if(s.kind==='tk')return {x:wx(s),y:0,z:s.z,yaw:s.yaw,h:4.6};
+  if(s.kind==='van')return {x:s.x,y:0,z:s.z,yaw:s.yaw,h:2.6};
   if(s.kind==='fl'||s.kind==='lfl')return {x:wx(s),y:0,z:s.z,yaw:s.yaw,h:2.9};
   if(s.kind==='bay')return {x:0.4+OX,y:0,z:s.bay.z,yaw:0,h:5.3};
   if(s.kind==='lbay')return {x:0.4+s.bay.lite.ox,y:0,z:s.bay.z,yaw:0,h:5.3};
@@ -2662,6 +2765,7 @@ function selLabel(s){
   if(s.kind==='fl')return esc(s.id)+'<small>'+esc(s.broken?'Broken down':s.task?s.task.type:'Idle')+'</small>';
   if(s.kind==='bay'||s.kind==='lbay')return 'Bay '+(s.bay.i+1)+'<small>'+(s.bay.truck?esc(truckStatus(s.bay.truck)[0]):'Free')+'</small>';
   if(s.kind==='lfl')return esc(s.id)+'<small>'+esc(s.task)+'</small>';
+  if(s.kind==='van')return esc(s.id)+'<small>'+esc(s.state)+'</small>';
   if(s.kind==='site')return esc(SITES[s.idx].code)+'<small>'+esc(SITES[s.idx].name)+'</small>';
   if(s.kind==='chg')return 'C'+(s.i+1)+'<small>'+(chgActive(s)?'Charging':'Free')+'</small>';
   if(s.kind==='pal')return esc(s.g.userData.meta.id)+'<small>'+esc(SKUS[s.g.userData.sku].name)+'</small>';
@@ -2710,6 +2814,11 @@ function renderInspector(){
     h+='<div class="isub"><span>Forklift fleet</span><span>'+working.length+'/'+forklifts.length+' working</span></div>';
     if(f0) h+='<div class="invrow" data-goto="fl"><span class="mono" style="font-weight:700">'+f0.id+'</span><span>'+esc(f0.task?f0.task.text:'Idle')+'</span>'+ibar(f0.battery,f0.battery<25?'bad':'ok','')+'<span class="mono">'+Math.round(f0.battery)+'%</span></div>';
   }else if(s.kind==='site'){ h=liteCard(lites.get(s.idx),true);
+  }else if(s.kind==='van'){
+    const j=s.jobs[0],m=j?Math.round(j.due-clockMin()):null;
+    h+=insHead('DELIVERY VAN · '+site.code,s.id,s.driver+' · WareTrack Express',ICON.truck,true);
+    h+=istat(j?(m<0?'Running late':'Out for delivery'):'Returning',j?(m<0?'bad':'info'):'',s.state)+ibar(j?Math.max(4,100-Math.max(0,m)/Math.max(1,j.due-j.created)*100):100,j&&m<0?'bad':'',j?(m>=0?m+' min left':'late'):'');
+    h+='<div class="irows">'+irow('Next drop',j?esc(j.shop.name):'Depot')+irow('Promised by',j?fmtT(j.due):'—')+irow('Drops left',s.jobs.length)+irow('Earned this trip',s.earned+' cr')+irow('Speed',(moved(s)?Math.round(s.spd*5):0)+' km/h')+irow('Customer rating',delSave().rating.toFixed(1)+' / 5')+'</div>';
   }else if(s.kind==='tk'&&s.lite){
     const Ls=s.lite.s,[stt,c]=liteTruckStatus(s), mv=moved(s);
     const prog=s.state==='queued'?(s.atGate?8:3):s.state==='docking'?20:s.state==='departing'?100:s.done/s.n*100;
@@ -2853,7 +2962,7 @@ function setRay(x,y){ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); ray.setFrom
 function pickAt(x,y){
   setRay(x,y);
   const LT=[...lites.values()];
-  let hit=ray.intersectObjects([...trucks.map(t=>t.g),...forklifts.map(f=>f.g),...liteTrucks.map(t=>t.g),...LT.flatMap(Lt=>Lt.fls.map(f=>f.g))],true).find(h=>!h.object.isSprite);
+  let hit=ray.intersectObjects([...trucks.map(t=>t.g),...forklifts.map(f=>f.g),...liteTrucks.map(t=>t.g),...vans.map(v=>v.g),...LT.flatMap(Lt=>Lt.fls.map(f=>f.g))],true).find(h=>!h.object.isSprite);
   if(!hit){const extra=[...slots.map(s=>s.pallet),...staging.map(s=>s.pallet)].filter(Boolean).concat(bays.map(b=>b.g),chargers.map(c=>c.g),LT.flatMap(Lt=>Lt.bays.map(b=>b.door.parent)));hit=ray.intersectObjects(extra,true).find(h=>!h.object.isSprite);}
   if(!hit&&LT.length)hit=ray.intersectObjects(LT.map(Lt=>Lt.G),true).find(h=>!h.object.isSprite);
   if(!hit)return null;
@@ -2877,12 +2986,14 @@ function focusOn(o){const p=selPos(o);if(p)view.targetT.set(p.x,0,p.z);}
 let tab='ord',dirty=true,hl=null;
 const pBody=$('#pBody');
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setTab(b.dataset.tab);}));
-function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
+function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.tab===t));if(b.dataset.tab===t&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'nearest'});});
   const p=$('#panel');if(innerWidth<=760&&!p.classList.contains('open')){p.classList.add('open');setTimeout(updateSheetVar,30);}
   renderPanel();}
 $('#pHead').addEventListener('click',()=>{if(innerWidth>760||game.building)return;$('#panel').classList.toggle('open');setTimeout(updateSheetVar,30);});
 pBody.addEventListener('click',e=>{
   const tl=e.target.closest('[data-tool]'); if(tl&&game.town){game.townTool=tl.dataset.tool;renderPanel();return;}
+  const db=e.target.closest('[data-dbuy]'); if(db){e.stopPropagation();buyDel(db.dataset.dbuy);return;}
+  const dv=e.target.closest('[data-van]'); if(dv){const v=vans.find(x=>x.id===dv.dataset.van);if(v){select(v);focusOn(v);}return;}
   const bb=e.target.closest('[data-buy-build]'); if(bb){e.stopPropagation();buyBuild(bb.dataset.buyBuild);return;}
   const br=e.target.closest('[data-bkey]'); if(br&&game.building){buildSel=br.dataset.bkey;const g=ghosts.find(x=>x.userData.build===buildSel);if(g)view.targetT.set(g.position.x+OX,0,g.position.z);renderPanel();return;}
   const a=e.target.closest('[data-act]');
@@ -2930,7 +3041,7 @@ function renderPanel(){
     (queued?'<span class="pill '+(queued>1?'bad':'warn')+'">'+queued+' at gate</span>':'')+
     '<span class="pill">'+staging.filter(s=>s.pallet).length+' staged</span>';
   const co=$('#cOrd'); co.textContent=sim.orders.length; co.className='count'+(lateN?' hot':'');
-  $('#cDock').textContent=docked+'/'+bays.length; $('#cFl').textContent=forklifts.filter(f=>f.steps.length&&!f.charging&&!f.broken).length+'/'+forklifts.length; $('#cTk').textContent=trucks.filter(t=>t.state!=='departing').length;
+  $('#cDock').textContent=docked+'/'+bays.length; $('#cFl').textContent=forklifts.filter(f=>f.steps.length&&!f.charging&&!f.broken).length+'/'+forklifts.length; $('#cTk').textContent=trucks.filter(t=>t.state!=='departing').length; {const cv=$('#cVan');cv.textContent=del.jobs.length+vans.length;cv.className='count'+(del.jobs.some(j=>clockMin()>j.due)?' hot':'');}
   const cost=c=>game.phase==='shift'?' · −'+c:'';
   let h='';
   if(tab==='ord'){
@@ -2966,6 +3077,8 @@ function renderPanel(){
   }else if(tab==='tk'){
     h+='<div class="sub"><span>Trucks on site · '+trucks.filter(t=>t.state!=='departing').length+'</span></div>';
     trucks.forEach(t=>{const [s,c]=truckStatus(t);h+='<div class="row click'+(selected===t?' hl':'')+'" data-pick="'+t.id+'"><div class="badge tk">'+t.car.name[0]+'</div><div class="t"><b class="mono">'+t.id+'</b><small>'+esc(t.car.name)+(t.bay?' · Bay '+(t.bay.i+1):' · gate')+'</small></div><div class="r"><span class="pill '+c+'">'+s+'</span></div></div>';});
+  }else if(tab==='van'){
+    h+=renderDelPanel();
   }else{
     h+='<div class="sub"><span>Today at '+esc(site.name)+'</span></div>';
     sim.log.slice(0,50).forEach(l=>{h+='<div class="log '+l.kind+'"><time>'+fmtT(l.t)+'</time><span>'+esc(l.text)+'</span></div>';});
@@ -3188,6 +3301,7 @@ function renderModal(){
     if(lvUp) h+='<div class="callout gold">'+ICON.up+'Promoted to '+rankOf(lvl)+'! Promotion bonus added to your credits.</div>';
     if(R.daily) h+='<div class="callout '+(R.daily.cleared?'flame':'mute')+'">'+ICON.flame+(R.daily.cleared?(R.daily.newClear?'Daily cleared · '+R.daily.streak+'-day streak · +'+R.daily.reward+' credits':'Daily cleared again · best '+fmtN(R.daily.best)):'Target '+fmtN(R.daily.target)+' · you scored '+fmtN(R.score)+'. Play again to try for it.')+'</div>';
     if(R.newUnlock) h+='<div class="callout ok">Unlocked '+esc(R.newUnlock.name)+'. '+esc(R.newUnlock.blurb)+'</div>';
+    if(R.st.del) h+='<div class="callout ok">'+ICON.truck+'Deliveries earned '+R.st.del+' credits ('+(R.st.delOn||0)+' on time).</div>';
     if(R.st.town) h+='<div class="callout ok">'+ICON.map+'Your town earned '+R.st.town+' credits during this shift.</div>';
     if(R.ach.length) h+='<div class="callout gold">'+ICON.trophy+'New achievement'+(R.ach.length>1?'s':'')+': '+R.ach.map(id=>esc(ACH.find(a=>a.id===id).name)).join(', ')+'</div>';
     h+='<div class="m-grid"><div class="m-box brief"><h2>Goals</h2><ul>'+
@@ -3314,7 +3428,7 @@ function tick(now){
     for(let i=forklifts.length-1;i>=0;i--){const f=forklifts[i];if(f.remove){world.remove(f.g);forklifts.splice(i,1);if(selected===f)select(null);}}
     staging.forEach(s=>{if(!s.pallet)return;s.t+=dt;
       if(s.t>6){s.pallet.scale.setScalar(Math.max(.001,1-(s.t-6)/0.8));
-        if(s.t>6.8){world.remove(s.pallet);s.pallet=null;sim.shipped++;const o=s.order;s.order=null;spawnVan(o);log((o?o.id:'Order')+' loaded out and shipped'+(o&&o.stagedAt>o.due?' (late)':''),o&&o.stagedAt>o.due?'warn':'ok');}}});
+        if(s.t>6.8){world.remove(s.pallet);s.pallet=null;sim.shipped++;const o=s.order;s.order=null;queueDelivery(o);log((o?o.id:'Order')+' loaded out and shipped'+(o&&o.stagedAt>o.due?' (late)':''),o&&o.stagedAt>o.due?'warn':'ok');}}});
     slowT+=dt;
     if(slowT>=1){slowT=0;lateCheck();clearSpills();
       if(game.phase==='shift'){
