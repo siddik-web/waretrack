@@ -942,6 +942,20 @@ function tickConstr(dt){
     if(p>=1)completeConstr(c);
   }
 }
+function constrSelfCheck(){
+  const okDur=constrDur(25)===5&&constrDur(1000)===25&&Math.abs(constrDur(100)-12)<1e-9;
+  const save0=save.simClock;
+  const fakeC={startMin:save.simClock,dur:10};
+  const p0=constrProgress(fakeC);
+  save.simClock+=10; const p1=constrProgress(fakeC);
+  save.simClock+=50; const p2=constrProgress(fakeC);
+  save.simClock=save0;
+  const okProgress=p0===0&&p1===1&&p2===1;
+  console.assert(okDur,'constrDur failed');
+  console.assert(okProgress,'progress math failed',{p0,p1,p2});
+  return okDur&&okProgress;
+}
+window.__constrSelfCheck=constrSelfCheck;
 const xpFor=l=>250*(l-1)*l;
 function levelOf(xp){let l=1;while(xp>=xpFor(l+1))l++;return l;}
 const rankOf=l=>RANKS[Math.min(l-1,RANKS.length-1)];
