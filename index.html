@@ -1957,6 +1957,7 @@ function tickReqs(rdt){
   for(const r of reqs.slice()){r.t+=rdt; if(r.t>=r.ttl)missReq(r);}
 }
 function setHands(on){
+  if(tut)return;
   game.hands=!!on; save.settings.hands=game.hands; writeSave();
   if(!on){sim.orders.forEach(o=>o.released=true);del.jobs.forEach(j=>j.go=true);}
   toast('info',on?'Hands-on mode':'Autopilot',on?'You dock trucks, release orders and send vans yourself. Points ×1.25.':'Your crew handles docks, picking and vans again.',on?ICON.target:ICON.bolt);
@@ -2795,7 +2796,7 @@ const TUT=[
   {t:'Speed it up',b:'Switch to 3× when the floor runs smoothly. Press Space to pause any time.',target:'.speed',wait:()=>sim.speed===3,waitText:'Tap 3×'},
   {t:'You\'re ready',b:'Finish this shift for stars and credits. Afterwards, spend credits on upgrades and in Build mode, and try the daily challenge.',btn:'Finish training',pause:true},
 ];
-function startTutorial(){tut={i:-1,flags:{}};game.nextEvent=1e9;document.body.classList.add('coaching');nextTut();}
+function startTutorial(){tut={i:-1,flags:{},prevHands:game.hands};game.hands=false;game.nextEvent=1e9;document.body.classList.add('coaching');nextTut();}
 function nextTut(){
   if(!tut)return; clearSpot();
   tut.i++; const s=TUT[tut.i];
@@ -2820,7 +2821,7 @@ function tutTick(){
   if(s.wait&&s.wait()){if(tut.waitAt==null)tut.waitAt=perf;else if(perf-tut.waitAt>0.35){tut.waitAt=null;nextTut();}}
 }
 function endTutorial(done,silent){
-  if(!tut)return; clearSpot(); tut=null; $('#coach').hidden=true; document.body.classList.remove('coaching','coach-top');
+  if(!tut)return; clearSpot(); game.hands=tut.prevHands; tut=null; $('#coach').hidden=true; document.body.classList.remove('coaching','coach-top');
   game.nextEvent=rand(40,60); if(sim.speed===0&&game.phase==='shift')setSpeed(1);
   const first=!save.tutorial; save.tutorial=true;
   if(done){ if(first){save.credits+=50;toast('info','Training complete','+50 credits. Finish the shift for your first stars.',ICON.star);} unlock('tutorial'); }
