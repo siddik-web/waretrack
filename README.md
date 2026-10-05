@@ -6,6 +6,21 @@ A 3D warehouse strategy game that runs in the browser. Manage a distribution cen
 
 Everything lives in a single file, `index.html`. It uses [three.js r128](https://threejs.org/) from cdnjs and Google Fonts. There's no build step and no backend.
 
+<p align="center">
+  <a href="https://siddik-web.github.io/waretrack/"><img src="docs/media/preview.gif" alt="WareTrack gameplay: trucks dock, forklifts put pallets away, and order requests pop up during a shift" width="900"></a>
+</p>
+
+## Screenshots
+
+| | |
+|---|---|
+| ![A shift in progress at Northgate DC, with shift goals, inventory and the order queue](docs/media/shift.jpg) | ![The inspector showing a selected truck's shipment, ETA and cargo](docs/media/inspector.jpg) |
+| **Running a shift:** goals, live stock, docks, forklifts and the pick queue | **Inspector:** tap a truck to see its shipment, bay and ETA |
+| ![Order requests with Accept, Rush and Decline buttons next to a broken-down forklift](docs/media/order-requests.jpg) | ![The town planner panel with tools for land, roads, houses, shops and more](docs/media/town-planner.jpg) |
+| **Order requests and problems:** decide before the timer runs out | **Town planner:** buy land, lay roads and put up buildings |
+| ![The site picker listing all five warehouses with difficulty and unlock goals](docs/media/site-select.jpg) | ![Zoomed out over the city around the warehouse, with other sites and traffic](docs/media/city.jpg) |
+| **Five warehouses:** unlock each one with stars at the previous site | **A living city:** streets, homes, shops and traffic around every site |
+
 ## Play locally
 
 Open `index.html` in a browser, or serve the folder:
